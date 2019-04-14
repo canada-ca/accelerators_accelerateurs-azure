@@ -1,0 +1,88 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageObject": {
+            "type": "object",
+            "metadata": {
+                "description": "Object of storage parameters."
+            }
+        },
+        "containerSasToken": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "storageAccountName": "[concat(pspc.storageName(parameters('storageObject').storageAccountPrefix), uniquestring(resourceGroup().id))]",
+        "containersUrl": "[concat(uri(deployment().properties.templateLink.uri, 'nested'),'/createContainers.json',parameters('containerSasToken'))]"
+    },
+    "functions": [
+        {
+            "namespace": "pspc",
+            "members": {
+                "storageName": {
+                    "parameters": [
+                        {
+                            "name": "name",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[toLower(if(greater(length(parameters('name')),11), concat(substring(parameters('name'), 0, 11)), parameters('name')))]"
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "name": "[variables('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2018-02-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "supportsHttpsTrafficOnly": "[parameters('storageObject').supportsHttpsTrafficOnly]"
+            },
+            "sku": {
+                "name": "[parameters('storageObject').accountType]"
+            },
+            "kind": "[parameters('storageObject').kind]",
+            "resources": [
+                {
+                    "condition": "[contains(parameters('storageObject'), 'advancedThreatProtectionEnabled')]",
+                    "type": "providers/advancedThreatProtectionSettings",
+                    "name": "Microsoft.Security/current",
+                    "apiVersion": "2017-08-01-preview",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+                    ],
+                    "properties": {
+                        "isEnabled": "[if(contains(parameters('storageObject'), 'advancedThreatProtectionEnabled'),parameters('storageObject').advancedThreatProtectionEnabled,'false')]"
+                    }
+                }
+            ]
+        },
+        {
+            "condition": "[contains(parameters('storageObject'), 'containerName')]",
+            "name": "createContrainers",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-08-01",
+            "dependsOn": [
+                "[variables('storageAccountName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('containersUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageObject": {"value": "[parameters('storageObject')]"},
+                    "storageAccountName": {"value": "[variables('storageAccountName')]"}
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

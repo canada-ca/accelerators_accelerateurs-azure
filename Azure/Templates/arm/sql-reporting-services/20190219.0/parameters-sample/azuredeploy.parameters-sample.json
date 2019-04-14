@@ -1,0 +1,102 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "value": "[SasToken]"
+        },
+        "sqlSettings": {
+            "value": {
+                "dbSAUsername": "shared\\azureadmin",
+                "dbSAUserPasswordKey": "server2016DefaultPassword",
+                "sqlLB": "10.250.29.4"
+            }
+        },
+        "vmBaseUrl": {
+            "value": "https://azpwsdeployment.blob.core.windows.net/library/arm/servers/20190219.1/servers.json"
+        },
+        "vmObject": {
+            "value": {
+                "comment": "This is for the sql server reporting services",
+                "resourceGroup": "AzPwS01-Shared-CRM-SSRS-RG",
+                "vmKeyVault": {
+                    "keyVaultResourceGroupName": "AzPwS01-Shared-CRM-KeyVault-RG",
+                    "keyVaultName": "AzPwS01-CRMSQL-Keyvault",
+                    "vaultCertificates": [
+                        {
+                            "certificateUrl": "https://azpws01-crmsql-keyvault.vault.azure.net/secrets/GCcaseCDT/b314b666960c46d4ab34c0d87900429b",
+                            "certificateStore": "My"
+                        }
+                    ]
+                },
+                "domainObject": {
+                    "domainToJoin": "shared.azpws01.pspc.gc.ca.local",
+                    "domainUsername": "azureadmin",
+                    "domainAdminPasswordKey": "adDefaultPassword",
+                    "domainJoinOptions": 3,
+                    "ouPath": "OU=Windows,OU=Servers,OU=PSPC,DC=shared,DC=azpws01,DC=pspc,DC=gc,DC=ca,DC=local"
+                },
+                "numberOfVMInstances": 1,
+                "deploymentSuffix": "AzPwS01-CRMRS",
+                "vm": {
+                    "computerName": "AzPwS01-CRMRS",
+                    "adminUsername": "azureadmin",
+                    "licenseType": "Windows_Server",
+                    "shutdownConfig": {
+                        "autoShutdownStatus": "Enabled",
+                        "autoShutdownTime": "19:00",
+                        "autoShutdownTimeZone": "Eastern Standard Time",
+                        "autoShutdownNotificationStatus": "Disabled"
+                    },
+                    "vmSize": "Standard_DS3_v2",
+                    "bootDiagnostic": true,
+                    "backupConfig": {
+                        "existingBackupVaultRG": "AzPwS01-Shared-CRM-Backup-RG",
+                        "existingBackupVaultName": "AzPwS01-Shared-CRM-Backup-Vault",
+                        "existingBackupPolicy": "DailyBackupPolicy"
+                    },
+                    "storageProfile": {
+                        "osDisk": {
+                            "createOption": "fromImage",
+                            "caching": "ReadWrite",
+                            "managedDisk": {
+                                "storageAccountType": "StandardSSD_LRS"
+                            }
+                        },
+                        "dataDisks": [                         
+                        ],
+                        "imageReference": {
+                            "publisher": "MicrosoftSQLServer",
+                            "offer": "SQL2016SP2-WS2016",
+                            "sku": "Enterprise",
+                            "version": "latest"
+                        }
+                    },
+                    "availabilitySetName": "AzPwS01-CRMRS-AS"
+                },
+                "networkSecurityGroups": {
+                    "name": "AzPwS01-CRMRS-NSG",
+                    "properties": {
+                        "securityRules": []
+                    }
+                },
+                "networkInterfaces": {
+                    "name": "AzPwS01-CRMRS1-NIC",
+                    "acceleratedNetworking": false,
+                    "vnetResourceGroupName": "AzPwS01-Infra-NetShared-RG",
+                    "vnetName": "AzPwS01-Infra-NetShared-VNET",
+                    "subnetName": "APP-CRM"
+                },
+                "tagValues": {
+                    "Owner": "john.nephin@tpsgc-pwgsc.gc.ca",
+                    "CostCenter": "PSPC-EA",
+                    "Enviroment": "Sandbox",
+                    "Classification": "Unclassified",
+                    "Organizations": "PSPC-CCC-E&O",
+                    "DeploymentVersion": "2019-01-24",
+                    "Workload": "Report Server"
+                }
+            }
+        }
+    }
+}

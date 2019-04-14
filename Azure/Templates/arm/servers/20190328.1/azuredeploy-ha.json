@@ -1,0 +1,227 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string"
+        },
+        "vmObject": {
+            "type": "object",
+            "metadata": {
+                "description": "virtual machine settings for the high availavility set"
+            }
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URI where artifacts required by this template are located including a trailing '/'"
+            },
+            "defaultValue": "[deployment().properties.templateLink.uri]"
+        }
+    },
+    "variables": {
+        "baseVMUrl": "[concat(uri(parameters('_artifactsLocation'), 'servers.json'), parameters('containerSasToken'))]",
+        "vnetName": "[parameters('vmObject').networkInterfaces.vnetName]",
+        "availabilitySetName": "[concat(parameters('vmObject').deploymentSuffix,'-AS')]",
+        "loadBalancerName": "[concat(parameters('vmObject').deploymentSuffix,'-LB')]",
+        "loadBalencerFrontendName": "[concat(variables('loadBalancerName'),'Frontend')]",
+        "loadBalencerBackendPools": "[concat(variables('loadBalancerName'),'BackendPool1')]",
+        "loadBalencerRuleName": "[concat(variables('loadBalancerName'),'RuleSSL')]",
+        "loadBalencerProbeName": "[concat(variables('loadBalancerName'),'ProbeSSL')]",
+        "vnetId": "[resourceId(parameters('vmObject').networkInterfaces.vnetResourceGroupName, 'Microsoft.Network/virtualNetworks',variables('vnetName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('vmObject').networkInterfaces.subnetName)]"
+    },
+    "functions": [
+        {
+            "namespace": "pspc",
+            "members": {
+                "replaceVMName": {
+                    "parameters": [
+                        {
+                            "name": "vmObj",
+                            "type": "object"
+                        },
+                        {
+                            "name": "vmIndex",
+                            "type": "int"
+                        }
+                    ],
+                    "output": {
+                        "type": "object",
+                        "value": {
+                            "resourceGroup": "[parameters('vmObj').resourceGroup]",
+                            "vmKeyVault": "[parameters('vmObj').vmKeyVault]",
+                            "domainObject": "[parameters('vmObj').domainObject]",
+                            "vm": {
+                                "computerName": "[concat(parameters('vmObj').vm.computerName, parameters('vmIndex'))]",
+                                "adminUsername": "[parameters('vmObj').vm.adminUsername]",
+                                "licenseType": "[parameters('vmObj').vm.licenseType]",
+                                "[if(contains(parameters('vmObj').vm, 'shutdownConfig'), 'shutdownConfig', 'nothing')]": "[if(contains(parameters('vmObj').vm, 'shutdownConfig'), parameters('vmObj').vm.shutdownConfig, 'nothing')]",
+                                "vmSize": "[parameters('vmObj').vm.vmSize]",
+                                "bootDiagnostic": "[parameters('vmObj').vm.bootDiagnostic]",
+                                "[if(contains(parameters('vmObj').vm, 'backupConfig'), 'backupConfig', 'nothing')]": "[if(contains(parameters('vmObj').vm, 'backupConfig'), parameters('vmObj').vm.backupConfig, 'nothing')]",
+                                "[if(contains(parameters('vmObj').vm, 'antimalwareInfo'), 'antimalwareInfo', 'nothing')]": "[if(contains(parameters('vmObj').vm, 'antimalwareInfo'), parameters('vmObj').vm.antimalwareInfo, 'nothing')]",
+                                "storageProfile": "[parameters('vmObj').vm.storageProfile]",
+                                "availabilitySetName": "[parameters('vmObj').vm.availabilitySetName]",
+                                "[if(contains(parameters('vmObj').vm, 'WebServerSettings'), 'WebServerSettings', 'nothing')]": "[if(contains(parameters('vmObj').vm, 'WebServerSettings'), parameters('vmObj').vm.WebServerSettings, 'nothing')]",
+                                "[if(contains(parameters('vmObj').vm, 'storageAccountName'), 'storageAccountName', 'nothing')]": "[if(contains(parameters('vmObj').vm, 'storageAccountName'), parameters('vmObj').vm.storageAccountName, 'nothing')]"
+                            },
+                            "networkSecurityGroups": "[parameters('vmObj').networkSecurityGroups]",
+                            "networkInterfaces": "[parameters('vmObj').networkInterfaces]",
+                            "tagValues": "[parameters('vmObj').tagValues]"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "apiVersion": "2017-03-30",
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[variables('availabilitySetName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 2
+            },
+            "sku": {
+                "name": "Aligned"
+            },
+            "tags": "[parameters('vmObject').tagValues]"
+        },
+        {
+            "apiVersion": "2017-10-01",
+            "type": "Microsoft.Network/loadBalancers",
+            "name": "[variables('loadBalancerName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic"
+                        },
+                        "name": "[variables('loadBalencerFrontendName')]"
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[variables('loadBalencerBackendPools')]"
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/frontendIpConfigurations/', variables('loadBalencerFrontendName'))]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/backendAddressPools/', variables('loadBalencerBackendPools'))]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/probes/', variables('loadBalencerProbeName'))]"
+                            },
+                            "protocol": "Tcp",
+                            "frontendPort": "[parameters('vmObject').loadBalencerConfig.frontendPort]",
+                            "backendPort": "[parameters('vmObject').loadBalencerConfig.backendPort]",
+                            "idleTimeoutInMinutes": 15
+                        },
+                        "Name": "[variables('loadBalencerRuleName')]"
+                    }
+                ],
+                "probes": [
+                    {
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": "[parameters('vmObject').loadBalencerConfig.probePort]",
+                            "intervalInSeconds": 15,
+                            "numberOfProbes": 2
+                        },
+                        "name": "[variables('loadBalencerProbeName')]"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[concat('vmGroupdeploy', parameters('vmObject').vm.computerName, copyIndex(1))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "resourceGroup": "[parameters('vmObject').resourceGroup]",
+            "copy": {
+                "name": "vmObj",
+                "count": "[parameters('vmObject').numberOfVMInstances]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "vmObject": {
+                        "value": "[pspc.replaceVMName(parameters('vmObject'), copyIndex(1))]"
+                    },
+                    "containerSaSToken": {
+                        "value": "[parameters('containerSasToken')]"
+                    },
+                    "_artifactsLocation": {"value": "[parameters('_artifactsLocation')]"}
+                },
+                "templateLink": {
+                    "uri": "[variables('baseVMUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "apiVersion": "2015-01-01",
+            "type": "Microsoft.Resources/deployments",
+            "name": "[concat(parameters('vmObject').vm.computerName, copyIndex(1), '-updateNics')]",
+            "copy": {
+                "name": "nicCopy",
+                "count": "[parameters('vmObject').numberOfVMInstances]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/','vmGroupdeploy', parameters('vmObject').vm.computerName, copyIndex(1))]",
+                "[resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {},
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "name": "[concat(parameters('vmObject').vm.computerName, copyIndex(1), '-', parameters('vmObject').networkInterfaces.name)]",
+                            "type": "Microsoft.Network/networkInterfaces",
+                            "apiVersion": "2017-06-01",
+                            "location": "[resourceGroup().location]",
+                            "tags": "[parameters('vmObject').tagValues]",
+                            "properties": {
+                                "ipConfigurations": [
+                                    {
+                                        "name": "ipconfig1",
+                                        "properties": {
+                                            "subnet": {
+                                                "id": "[concat(subscription().id, '/resourceGroups/', parameters('vmObject').networkInterfaces.vnetResourceGroupName, '/providers/Microsoft.Network/virtualNetworks/', parameters('vmObject').networkInterfaces.vnetName, '/subnets/', parameters('vmObject').networkInterfaces.subnetName)]"
+                                            },
+                                            "privateIPAllocationMethod": "Static",
+                                            "privateIPAddress": "[reference(concat('Microsoft.Resources/deployments/','vmGroupdeploy', parameters('vmObject').vm.computerName, copyIndex(1))).outputs.nic.value.ipConfigurations[0].properties.privateIpAddress]",
+                                            "loadBalancerBackendAddressPools": [
+                                                {
+                                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('loadBalancerName')), '/backendAddressPools/', variables('loadBalencerBackendPools'))]"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

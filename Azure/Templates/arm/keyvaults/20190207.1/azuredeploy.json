@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string"
+        },
+        "keyvaultArray": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of keyvault objects."
+            }
+        }
+    },
+    "variables": {
+        "baseVMUrl": "[concat(uri(deployment().properties.templateLink.uri, 'keyvaults.json'), parameters('containerSasToken'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat('keyVault-Deploy', parameters('keyvaultArray')[copyIndex()].name)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "resourceGroup": "[parameters('keyvaultArray')[copyIndex()].resourceGroup]",
+            "dependsOn": [],
+            "copy": {
+                    "name": "obj",
+                    "count": "[length(parameters('keyvaultArray'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "keyvaultObj": {
+                        "value": "[parameters('keyvaultArray')[copyIndex()]]"
+                    }
+                },
+                "templateLink": {
+                    "uri": "[variables('baseVMUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }  
+        }
+    ],
+    "outputs": {}
+}

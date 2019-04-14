@@ -1,0 +1,61 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": { "value": "[SasToken]" },
+        "msFirewallArray": {
+            "value" : [
+                {
+                    "resourceGroup": "rgCore", "vnet": "vnet-core",
+                    "applicationRuleCollections": [
+                        {
+                            "name": "appRc1","properties": {"priority": 101,"action": {"type": "Allow"},"rules": [
+                                    { "name": "Allow all web access","protocols": [{"port": "80","protocolType": "http"},{"port": "443","protocolType": "https"}],"targetUrls": ["*"]}
+                                ]
+                            }
+                        }
+                    ],
+                    "networkRuleCollections": [
+                        {
+                            "name": "netRc1", "properties": {"priority": 200,"action": {"type": "Allow"},"rules": [
+                                    { "name": "Allow all access","protocols": ["ANY"],"sourceAddresses": ["10.0.0.0/8"],"destinationAddresses": ["*"],"destinationPorts": ["*"] }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "resourceGroup": "rgManagement", "vnet": "vnet-management",
+                    "applicationRuleCollections": [
+                        {
+                            "name": "appRc1","properties": {"priority": 101,"action": {"type": "Allow"},"rules": [
+                                    { "name": "appRule1","protocols": [{"port": "80","protocolType": "http"},{"port": "443","protocolType": "https"}],"targetUrls": ["*microsoft.com"]}
+                                ]
+                            }
+                        }
+                    ],
+                    "networkRuleCollections": [
+                        {
+                            "name": "pazin", "properties": {"priority": 100,"action": {"type": "Allow"},"rules": [
+                                    { "name": "pazsrv connect to appsrv","protocols": ["ANY"],"sourceAddresses": ["10.1.2.0/24"],"destinationAddresses": ["10.1.3.0/24"],"destinationPorts": ["*"] }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "appin", "properties": {"priority": 200,"action": {"type": "Allow"},"rules": [
+                                    { "name": "appsrv connect to pazsrv","protocols": ["ANY"],"sourceAddresses": ["10.1.3.0/24"],"destinationAddresses": ["10.1.2.0/24"],"destinationPorts": ["*"] }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "corein", "properties": {"priority": 300,"action": {"type": "Allow"},"rules": [
+                                    { "name": "Allow jumpboxes access to everything","protocols": ["ANY"],"sourceAddresses": ["10.0.4.0/24"],"destinationAddresses": ["10.1.0.0/16"],"destinationPorts": ["*"] }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]    
+        }
+    }
+}

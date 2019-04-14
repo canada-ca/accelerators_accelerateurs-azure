@@ -1,0 +1,67 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    },
+    "variables": {
+        "dependsOn": [
+            "start",
+            "start2"
+        ]
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-05-01",
+            "name": "start",
+            "type": "Microsoft.Resources/deployments",
+            "location": "canadacentral",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": []
+                }
+            }
+        },
+        {
+            "apiVersion": "2018-05-01",
+            "name": "start2",
+            "type": "Microsoft.Resources/deployments",
+            "location": "canadacentral",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": []
+                }
+            }
+        },
+        {
+            "apiVersion": "2018-05-01",
+            "name": "start3",
+            "type": "Microsoft.Resources/deployments",
+            "location": "canadacentral",
+            "dependsOn": ["[json(replace(replace(string(variables('dependsOn')), '[', ''), ']', ''))]"],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": []
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "dependsOn": {
+            "type": "string",
+            "value": "[replace(replace(string(variables('dependsOn')), '[', ''), ']', '')]"
+        },
+        "dependsOnString": {
+            "type": "string",
+            "value": "\"start\",\"start2\""
+        }
+    }
+}

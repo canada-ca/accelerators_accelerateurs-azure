@@ -1,0 +1,56 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "NSGArray": {
+            "value": [
+                {
+                    "resourceGroup": "temptest", "networkSecurityGroupName": "testNSG1",
+                    "securityRules": [
+                        {
+                            "name": "PAZAPPFlows",
+                            "properties": {
+                                "access": "Allow", "priority": 100, "direction": "Inbound",
+                                "protocol": "*", "sourcePortRange": "*", "sourceAddressPrefix": "10.250.0.0/24",
+                                "destinationAddressPrefix": "10.250.1.0/24", "destinationPortRanges": [ "443", "8080-8090" ]
+                            }
+                        },
+                        {
+                            "name": "APPDBFlows",
+                            "properties": {
+                                "access": "Allow", "priority": 200, "direction": "Inbound",
+                                "protocol": "*", "sourcePortRange": "*", "sourceAddressPrefix": "10.250.1.0/24",
+                                "destinationAddressPrefix": "10.250.2.0/24", "destinationPortRanges": [ "443", "8080-8090" ]
+                            }
+                        }
+                    ],
+                    "tagValues": { "compositeApp": "NA", "businessOwner": "PSPC-CCC", "costCenter": "PSPC-EA", "deploymentStage": "Sandbox",
+                        "vmWorkload": "Test", "vmRole": "Testing", "dataProfile": "Unclassified", "version": "0.1" }
+                },
+                {
+                    "resourceGroup": "temptest", "networkSecurityGroupName": "testNSG2",
+                    "securityRules": [
+                        {
+                            "name": "PAZAPPFlows",
+                            "properties": {
+                                "access": "Allow", "priority": 100, "direction": "Inbound",
+                                "protocol": "*", "sourcePortRange": "*", "sourceAddressPrefix": "10.250.0.0/24",
+                                "destinationAddressPrefix": "10.250.1.0/24", "destinationPortRanges": [ "443", "8080-8090" ]
+                            }
+                        },
+                        {
+                            "name": "APPDBFlowsASG",
+                            "properties": {
+                                "access": "Allow", "priority": 200, "direction": "Inbound",
+                                "protocol": "*", "sourcePortRange": "*", "sourceApplicationSecurityGroups": [ { "id": "[resourceId('Microsoft.Network/applicationSecurityGroups', 'teswtASG')]"} ],
+                                "destinationAddressPrefix": "10.250.2.0/24", "destinationPortRanges": [ "443", "8080-8090" ]
+                            }
+                        }
+                    ],
+                    "tagValues": { "compositeApp": "NA", "businessOwner": "PSPC-CCC", "costCenter": "PSPC-EA", "deploymentStage": "Sandbox",
+                        "vmWorkload": "Test", "vmRole": "Testing", "dataProfile": "Unclassified", "version": "0.1" }
+                }
+            ]
+        }
+    }
+}

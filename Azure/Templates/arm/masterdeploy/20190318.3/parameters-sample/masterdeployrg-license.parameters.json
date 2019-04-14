@@ -1,0 +1,22 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deploymentRGArray": {
+            "value": [
+                {
+                    "name": "jumpbox01-MGMT-RDS",
+                    "resourceGroup": "Demo-MGMT-RDS-RG",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/servers/20190307.1/azuredeploy.json",
+                    "parametersFile": "deploy-60-servers.parameters.json"
+                },
+                {
+                    "name": "dockerdemo-Shared-Sandbox",
+                    "resourceGroup": "Demo-Shared-Sandbox-RG",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/servers/20190307.1/azuredeploy.json",
+                    "parametersFile": "deploy-61-servers.parameters.json"
+                }
+            ]
+        }
+    }
+}

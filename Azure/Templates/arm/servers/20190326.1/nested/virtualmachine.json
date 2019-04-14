@@ -1,0 +1,195 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmObject": {
+      "type": "object",
+      "metadata": {
+        "description": "Object of MS firewall objects."
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password for the Virtual Machine."
+      }
+    },
+    "keyVaultId": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "storageAccountName": "[concat('vmdiag', uniquestring(resourceGroup().id))]",
+    "empty": [],
+    "winRm": {
+      "listeners": [
+        {
+          "protocol": "Http"
+        },
+        {
+          "protocol": "Https",
+          "certificateUrl": "[if(contains(parameters('vmObject').vm, 'winRmCertUrl'), parameters('vmObject').vm.winRmCertUrl, 'nothing')]"
+        }
+      ]
+    },
+    "secrets": [
+      {
+        "sourceVault": {
+          "id": "[parameters('keyVaultId')]"
+        },
+        "vaultCertificates": "[if(contains(parameters('vmObject').vmKeyVault,'vaultCertificates'), parameters('vmObject').vmKeyVault.vaultCertificates, variables('empty'))]"
+      }
+    ]
+  },
+  "functions": [
+    {
+      "namespace": "pspc",
+      "members": {
+        "objAvailabilitySetConfig": {
+          "parameters": [
+            {
+              "name": "strAvailabilitySetName",
+              "type": "string"
+            }
+          ],
+          "output": {
+            "type": "object",
+            "value": {
+              "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('strAvailabilitySetName'))]"
+            }
+          }
+        },
+        "arrayASGConfig": {
+          "parameters": [
+            {
+              "name": "ASGArray",
+              "type": "array"
+            }
+          ],
+          "output": {
+            "type": "array",
+            "value": "[parameters('ASGArray')]"
+          }
+        },
+        "objOsProfileWindows": {
+          "parameters": [
+            {
+              "name": "properties",
+              "type": "object"
+            },
+            {
+              "name": "adminPassword",
+              "type": "securestring"
+            },
+            {
+              "name": "secrets",
+              "type": "array"
+            },
+            {
+              "name": "empty",
+              "type": "array"
+            },
+            {
+              "name": "winRmListners",
+              "type": "array"
+            }
+          ],
+          "output": {
+            "type": "object",
+            "value": {
+              "computerName": "[parameters('properties').vm.computerName]",
+              "adminUsername": "[parameters('properties').vm.adminUsername]",
+              "adminPassword": "[parameters('adminPassword')]",
+              "secrets": "[if(contains(parameters('properties').vmKeyVault, 'vaultCertificates'), parameters('secrets'), parameters('empty'))]",
+              "windowsConfiguration": {
+                "provisionVMAgent": true,
+                "timeZone": "Eastern Standard Time",
+                "winRM": {
+                  "listeners": "[if(contains(parameters('properties').vm, 'winRmCertUrl'), parameters('winRmListners'), parameters('empty'))]"
+                }
+              }
+            }
+          }
+        },
+        "objOsProfileLinux": {
+          "parameters": [
+            {
+              "name": "properties",
+              "type": "object"
+            },
+            {
+              "name": "adminPassword",
+              "type": "securestring"
+            }
+          ],
+          "output": {
+            "type": "object",
+            "value": {
+              "computerName": "[parameters('properties').vm.computerName]",
+              "adminUsername": "[parameters('properties').vm.adminUsername]",
+              "adminPassword": "[parameters('adminPassword')]"
+            }
+          }
+        },
+        "diskName": {
+          "parameters": [
+            {
+              "name": "inputNameDisk",
+              "type": "string"
+            },
+            {
+              "name": "indexdisk",
+              "type": "int"
+            }
+          ],
+          "output": {
+            "type": "string",
+            "value": "[concat(toLower(parameters('inputNameDisk')), '-osdisk', padLeft(parameters('indexdisk'),3,'0'))]"
+          }
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "[parameters('vmObject').vm.computerName]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2018-04-01",
+      "tags": "[parameters('vmObject').tagValues]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "osProfile": "[if(contains(parameters('vmObject').vm, 'licenseType'), pspc.objOsProfileWindows(parameters('vmObject'), parameters('adminPassword'), variables('secrets'), variables('empty'), variables('winRm').listeners), pspc.objOsProfileLinux(parameters('vmObject'), parameters('adminPassword')))]",
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmObject').vm.vmSize]"
+        },
+        "storageProfile": {
+          "imageReference": "[parameters('vmObject').vm.storageProfile.imageReference]",
+          "osDisk": {
+            "name": "[pspc.diskName(parameters('vmObject').vm.computerName,1)]",
+            "createOption": "[parameters('vmObject').vm.storageProfile.osDisk.createOption]",
+            "managedDisk": {
+              "storageAccountType": "[parameters('vmObject').vm.storageProfile.osDisk.managedDisk.storageAccountType]"
+            }
+          },
+          "dataDisks": "[parameters('vmObject').vm.storageProfile.dataDisks]"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmObject').vm.computerName, '-', parameters('vmObject').networkInterfaces.name))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": "[parameters('vmObject').vm.bootDiagnostic]",
+            "storageUri": "[concat('https://', variables('storageAccountName'), '.blob.core.windows.net/')]"
+          }
+        },
+        "availabilitySet": "[if(contains(parameters('vmObject').vm, 'availabilitySetName'), pspc.objAvailabilitySetConfig(parameters('vmObject').vm.availabilitySetName), json('null'))]"
+      },
+      "plan": "[if(contains(parameters('vmObject'), 'plan'), parameters('vmObject').plan, json('null'))]"
+    }
+  ],
+  "outputs": {}
+}

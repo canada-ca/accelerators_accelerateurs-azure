@@ -1,0 +1,117 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "value": "[SasToken]"
+        },
+        "keyVaultConfig": {
+            "value": {
+                "existingRGName": "AzPwS01-Shared-CRM-KeyVault-RG",
+                "existingVaultName": "AzPwS01-CRMSQL-Keyvault",
+                "localAdminPasswordSecret": "server2016DefaultPassword",
+                "domainAdminPasswordSecret": "adDefaultPassword"
+            }
+        },
+        "vnetConfig": {
+            "value": {
+                "existingVnetName": "AzPwS01-Infra-NetShared-VNET",
+                "existingVnetRG": "AzPwS01-Infra-NetShared-RG",
+                "sqlSubnet": "10.250.29.0/26",
+                "dbSubnetName": "DB-CRM"
+            }
+        },
+        "location": {
+            "value": "canadacentral"
+        },
+        "adminUsername": {
+            "value": "azureadmin"
+        },
+        "dnsServerName":{
+            "value": "AzPwS01ShdDC01"
+        },
+        "sqlServerConfig": {
+            "value": {
+                "ClusterIp": "169.254.1.1",
+                "sqlLBIPAddress": "10.250.29.4",
+                "sqlAOListenerPort": "1433",
+                "deploymentPrefix": "AzPwS01-CRMSQL",
+                "vmSize": "Standard_DS3_v2",
+                "vmName": "AzPwS01-CRMSQL",
+                "patchingConfig": {
+                    "autoPatchingEnabled": true,
+                    "autoPatchingDay": "Sunday",
+                    "autoPatchingStartHour": "2",
+                    "autoPatchingMainenanceWindowDuration": 60,
+                    "autoUpgradeMinorVersion": true
+                },
+                "backupConfig": {
+                    "backupEnabled": true,
+                    "RetentionPeriod": 30,
+                    "EnableEncryption": true
+                },
+                "imageReference": {
+                    "sqlImagePublisher": "MicrosoftSQLServer",
+                    "offer": "SQL2016SP2-WS2016",
+                    "sku": "Enterprise",
+                    "version": "latest"
+                },
+                "dataDisks": {
+                    "numberOfSqlVMDisks": "2",
+                    "diskSizeGB": "1024"
+                },
+                "workloadType": "OLTP",
+                "sqlServerServiceAccountUserName": "svc-crmsql",
+                "sqlStorageAccountName": "crmsqlstorage01",
+                "sqlStorageAccountType": "Standard_LRS",
+                "sqlDatabases": "ReportServer",
+                "sqlServerServiceAccountPassword": "sqlServerServiceAccountPassword",
+                "enableAcceleratedNetworking": true
+            }
+        },
+        "witnessServerConfig": {
+            "value": {
+                "vmSize": "Standard_DS2_v2",
+                "vmName": "AzPwS01-CRMSQLW",
+                "imageReference": {
+                    "publisher": "MicrosoftWindowsServer",
+                    "offer": "WindowsServer",
+                    "sku": "2016-Datacenter",
+                    "version": "latest"
+                },
+                "dataDisks": {
+                    "diskSizeGB": "128"
+                },
+                "sqlStorageAccountType": "Standard_LRS",
+                "enableAcceleratedNetworking": true
+            }
+        },
+        "adConfig": 
+        {
+            "value": {
+                "domainName": "shared.azpws01.pspc.gc.ca.local",
+                "serverOUPath":"OU=Windows,OU=Servers,OU=PSPC,DC=shared,DC=azpws01,DC=pspc,DC=gc,DC=ca,DC=local",
+                "accountOUPath": "OU=Service Accounts,OU=PSPC,DC=shared,DC=azpws01,DC=pspc,DC=gc,DC=ca,DC=local"
+                
+            }
+        },
+        "backupConfig": {
+            "value": {
+                "existingBackupVaultRG": "AzPwS01-Shared-CRM-Backup-RG",
+                "existingBackupVaultName": "AzPwS01-Shared-CRM-Backup-Vault",
+                "existingBackupPolicy": "DailyBackupPolicy"
+            }
+        },
+        "tagValues": {
+            "value": {
+                "workload": "Database",
+                "owner": "john.nephin@tpsgc-pwgsc.gc.ca",
+                "businessUnit": "PSPC-CCC",
+                "costCenterOwner": "PSPC-EA",
+                "environment": "Sandbox",
+                "classification": "Unclassified",
+                "version": "0.1"
+            }
+        }
+    }
+}

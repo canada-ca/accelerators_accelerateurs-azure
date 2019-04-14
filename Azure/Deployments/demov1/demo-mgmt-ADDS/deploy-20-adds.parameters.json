@@ -1,0 +1,61 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "keyVaultResourceGroupName": {
+      "value": "Demo-Infra-Keyvault-RG"
+    },
+    "keyVaultName": {
+      "value": "Demo-Infra-KV-[unique]"
+    },
+    "DomainName": {
+      "value": "mgmt.demo.gc.ca.local"
+    },
+    "createChildDomain": {
+      "value": false
+    },
+    "VMSize": {
+      "value": "Standard_DS2_v2"
+    },
+    "vnetRG": {
+      "value": "Demo-Infra-NetMGMT-RG"
+    },
+    "vnetName": {
+      "value": "Demo-Infra-NetMGMT-VNET"
+    },
+    "vnetAddressRange": {
+      "value": "10.25.0.0/20"
+    },
+    "adSubnetName": {
+      "value": "APP-AD"
+    },
+    "adSubnet": {
+      "value": "10.25.8.16/28"
+    },
+    "RootDC1Name": {
+      "value": "DemoMGMTDC01"
+    },
+    "RootDC1IPAddress": {
+      "value": "10.25.8.20"
+    },
+    "RootDC2Name": {
+      "value": "DemoMGMTDC02"
+    },
+    "RootDC2IPAddress": {
+      "value": "10.25.8.21"
+    },
+    "tagValues": {
+      "value": {
+        "Owner": "yann.gagnon@tpsgc-pwgsc.gc.ca",
+        "CostCenter": "PSPC-EA",
+        "Enviroment": "Sandbox",
+        "Classification": "Unclassified",
+        "Organizations": "PSPC-CCC-E&O",
+        "DeploymentVersion": "2019-01-30-01"
+      }
+    },
+    "ReverseZoneObject": {
+      "value":["4.25.10","8.25.10","12.25.10"]
+    }
+  }
+}

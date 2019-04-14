@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "fwObject": {
+            "value": {
+                "vmKeyVault": {
+                    "keyVaultResourceGroupName": "Demo-Infra-Keyvault-RG",
+                    "keyVaultName": "Demo-Infra-KV-[unique]"
+                },
+                "vmName": "demo-asav-mgmt",
+                "softwareVersion": "910.1.0",
+                "adminUsername": "azureadmin",
+                "adminSecret": "fwpassword",
+                "sshPublicKey": "",
+                "authenticationType": "password",
+                "vmSize": "Standard_D3_v2",
+                "location": "canadacentral",
+                "storageAccountName": "demoasav",
+                "storageAccountType": "Standard_LRS",
+                "storageAccountNewOrExisting": "new",
+                "storageAccountRG": "Demo-Infra-FWMGMT-RG",
+                "publicIPAddressName": "demo-asav-mgmt-pubip",
+                "publicIPDnsLabel": "demo-asav-mgmt",
+                "publicIPNewOrExisting": "none",
+                "publicIPRG": "Demo-Infra-FWMGMT-RG",
+                "publicIPAllocationMethod": "Static",
+                "publicIPsku": "Basic",
+                "virtualNetworkName": "Demo-Infra-NetMGMT-VNET",
+                "virtualNetworkRG": "Demo-Infra-NetMGMT-RG",
+                "Subnet1Name": "MgmtToCore",
+                "subnet1StartAddress": "10.25.0.4",
+                "Subnet2Name": "PAZ-Interconnect",
+                "subnet2StartAddress": "10.25.0.20",
+                "Subnet3Name": "APP-Interconnect",
+                "subnet3StartAddress": "10.25.0.36",
+                "Subnet4Name": "DB-Interconnect",
+                "subnet4StartAddress": "10.25.0.52"
+            }
+        }
+    }
+}

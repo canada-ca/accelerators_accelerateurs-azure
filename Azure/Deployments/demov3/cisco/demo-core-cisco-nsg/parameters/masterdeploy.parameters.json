@@ -1,0 +1,104 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deploymentSubArray": {
+            "value": [
+                {
+                    "name": "routes-core",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
+                    "parametersFile": "deploy-15-routes-core.parameters.json"
+                },
+                {
+                    "name": "routes-mgmt",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
+                    "parametersFile": "deploy-15-routes-mgmt.parameters.json"
+                },
+                {
+                    "name": "routes-shared",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
+                    "parametersFile": "deploy-15-routes-shared.parameters.json"
+                },
+                {
+                    "name": "nsg-shared",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/nsg/20190313.1/azuredeploysub.json",
+                    "parametersFile": "deploy-17-nsg-shared.parameters.json"
+                },
+                {
+                    "name": "vnet-subnet-core",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/vnet-subnet/20190313.1/azuredeploysub.json",
+                    "parametersFile": "deploy-20-vnet-subnet-core.parameters.json",
+                    "dependsOn": [
+                        "routes-core"
+                    ]
+                },
+                {
+                    "name": "vnet-subnet-mgmt",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/vnet-subnet/20190319.1/azuredeploysub.json",
+                    "parametersFile": "deploy-20-vnet-subnet-mgmt.parameters.json",
+                    "dependsOn": [
+                        "routes-mgmt"
+                    ]
+                },
+                {
+                    "name": "vnet-subnet-shared",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/vnet-subnet/20190319.1/azuredeploysub.json",
+                    "parametersFile": "deploy-20-vnet-subnet-shared.parameters.json",
+                    "dependsOn": [
+                        "routes-shared",
+                        "nsg-shared"
+                    ]
+                },
+                {
+                    "name": "vnet-peering-core",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/vnet-peering/20190323.1/azuredeploysub.json",
+                    "parametersFile": "deploy-30-vnet-peering-core.parameters.json",
+                    "dependsOn": [
+                        "vnet-subnet-core",
+                        "vnet-subnet-mgmt",
+                        "vnet-subnet-shared"
+                    ]
+                },
+                {
+                    "name": "vnet-peering-mgmt",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/vnet-peering/20190323.1/azuredeploysub.json",
+                    "parametersFile": "deploy-30-vnet-peering-mgmt.parameters.json",
+                    "dependsOn": [
+                        "vnet-peering-core"
+                    ]
+                },
+                {
+                    "name": "vnet-peering-shared",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/vnet-peering/20190323.1/azuredeploysub.json",
+                    "parametersFile": "deploy-30-vnet-peering-shared.parameters.json",
+                    "dependsOn": [
+                        "vnet-peering-core"
+                    ]
+                }
+            ]
+        },
+        "deploymentRGArray": {
+            "value": [
+                {
+                    "name": "core-cisco",
+                    "resourceGroup": "Demo-Infra-FWCore-RG",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/ciscoasav2NIC/20190327.4/azuredeploy.json",
+                    "parametersFile": "deploy-50-ciscoasav-core.parameters.json",
+                    "dependsOn": [
+                        "vnet-subnet-core"
+                    ]
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,151 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "routeTables": {
+            "value": [
+                {
+                    "name": "Demo-Infra-NetMGMT-PAZ-Test-RT",
+                    "properties": {
+                        "disableBgpRoutePropagation": false,
+                        "routes": [
+                            {
+                                "name": "mgmt-paz-test",
+                                "properties": {
+                                    "addressPrefix": "10.25.4.32/27",
+                                    "nextHopType": "vnetLocal"
+                                }
+                            },
+                            {
+                                "name": "mgmt-vnet",
+                                "properties": {
+                                    "addressPrefix": "10.25.0.0/20",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "10.25.0.20"
+                                }
+                            },
+                            {
+                                "name": "core-vnet",
+                                "properties": {
+                                    "addressPrefix": "10.10.10.0/23",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "10.25.0.20"
+                                }
+                            },
+                            {
+                                "name": "default",
+                                "properties": {
+                                    "addressPrefix": "0.0.0.0/0",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "10.25.0.20"
+                                }
+                            }
+                        ]
+                    },
+                    "tagValues": {
+                        "Owner": "cloudteam@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Sandbox",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-19-01"
+                    }
+                },
+                {
+                    "name": "Demo-Infra-NetMGMT-APP-Test-RT",
+                    "properties": {
+                        "disableBgpRoutePropagation": false,
+                        "routes": [
+                            {
+                                "name": "mgmt-app-test",
+                                "properties": {
+                                    "addressPrefix": "10.25.8.32/27",
+                                    "nextHopType": "vnetLocal"
+                                }
+                            },
+                            {
+                                "name": "mgmt-vnet",
+                                "properties": {
+                                    "addressPrefix": "10.25.0.0/20",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "10.25.0.36"
+                                }
+                            },
+                            {
+                                "name": "core-vnet",
+                                "properties": {
+                                    "addressPrefix": "10.10.10.0/23",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "10.25.0.36"
+                                }
+                            },
+                            {
+                                "name": "default",
+                                "properties": {
+                                    "addressPrefix": "0.0.0.0/0",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "10.25.0.36"
+                                }
+                            }
+                        ]
+                    },
+                    "tagValues": {
+                        "Owner": "cloudteam@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Sandbox",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-19-01"
+                    }
+                },
+                {
+                    "name": "Demo-Infra-NetMGMT-DB-Test-RT",
+                    "properties": {
+                        "disableBgpRoutePropagation": false,
+                        "routes": [
+                            {
+                                "name": "mgmt-db-test",
+                                "properties": {
+                                    "addressPrefix": "10.25.12.32/27",
+                                    "nextHopType": "vnetLocal"
+                                }
+                            },
+                            {
+                                "name": "mgmt-vnet",
+                                "properties": {
+                                    "addressPrefix": "10.25.0.0/20",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "10.25.0.52"
+                                }
+                            },
+                            {
+                                "name": "core-vnet",
+                                "properties": {
+                                    "addressPrefix": "10.10.10.0/23",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "10.25.0.52"
+                                }
+                            },
+                            {
+                                "name": "default",
+                                "properties": {
+                                    "addressPrefix": "0.0.0.0/0",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "10.25.0.52"
+                                }
+                            }
+                        ]
+                    },
+                    "tagValues": {
+                        "Owner": "cloudteam@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Sandbox",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-19-01"
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,27 @@
+
+keyvault_infra --> resourcegroups
+routes_core --> resourcegroups
+routes_mgmt --> resourcegroups
+routes_shared --> resourcegroups
+nsg_shared --> resourcegroups
+vnet_subnet_core --> routes_core
+vnet_subnet_mgmt --> routes_mgmt
+vnet_subnet_shared --> routes_shared
+vnet_subnet_shared --> nsg_shared
+vnet_peering_core --> vnet_subnet_core
+vnet_peering_core --> vnet_subnet_mgmt
+vnet_peering_core --> vnet_subnet_shared
+vnet_peering_mgmt --> vnet_peering_core
+vnet_peering_shared --> vnet_peering_core
+storage_vmdiag_MGMT_RDS --> resourcegroups
+storage_vmdiag_Shared_Sandbox --> resourcegroups
+azfw_core --> vnet_peering_core
+azfw_core --> vnet_peering_shared
+azfw_core --> vnet_peering_mgmt
+dockerdemo_Shared_Sandbox_prep --> keyvault_infra
+dockerdemo_Shared_Sandbox_prep --> storage_vmdiag_Shared_Sandbox
+dockerdemo_Shared_Sandbox_prep --> vnet_peering_shared
+dockerdemo_Shared_Sandbox --> azfw_core
+dockerdemo_Shared_Sandbox --> keyvault_infra
+dockerdemo_Shared_Sandbox --> storage_vmdiag_Shared_Sandbox
+dockerdemo_Shared_Sandbox --> vnet_peering_shared

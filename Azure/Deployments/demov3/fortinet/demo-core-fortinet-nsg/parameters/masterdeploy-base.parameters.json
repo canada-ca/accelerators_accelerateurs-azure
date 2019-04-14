@@ -1,0 +1,25 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deploymentSubArray": {
+            "value": [
+                {
+                    "name": "resourcegroups",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/resourcegroups/20190207.2/azuredeploysub.json",
+                    "parametersFile": "deploy-10-resourcegroups-canadacentral.parameters.json"
+                },
+                {
+                    "name": "keyvault-infra",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/keyvaults/20190311.1/azuredeploysub.json",
+                    "parametersFile": "deploy-40-keyvaults.parameters.json",
+                    "dependsOn": [
+                        "resourcegroups"
+                    ]
+                }
+            ]
+        }
+    }
+}

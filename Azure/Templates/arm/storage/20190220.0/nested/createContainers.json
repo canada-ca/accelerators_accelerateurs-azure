@@ -1,0 +1,33 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageObject": {
+            "type": "object",
+            "metadata": {
+                "description": "Object of storage parameters."
+            }
+        },
+        "storageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the storage account"
+            }
+        }
+    },
+    "variables": {
+    },
+    "functions": [],
+    "resources": [
+        {
+            "name": "[concat(parameters('storageAccountName'),'/default/',parameters('storageObject').containerName[copyIndex()])]",
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2018-07-01",
+            "copy": {
+                "name": "containerLoop",
+                "count": "[length(parameters('storageObject').containerName)]"
+            }
+        }
+    ],
+    "outputs": {}
+}

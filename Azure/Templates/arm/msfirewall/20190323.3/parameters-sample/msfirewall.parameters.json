@@ -1,0 +1,93 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "msFirewallArray": {
+            "value": [
+                {
+                    "name": "fwCore",
+                    "azureFirewallresourceGroup": "Demo-Infra-FWCore-RG",
+                    "vnetName": "Demo-Infra-NetCore-VNET",
+                    "vnetResourceGroup": "Demo-Infra-NetCore-RG",
+                    "networkRuleCollections": [
+                        {
+                            "name": "all",
+                            "properties": {
+                                "provisioningState": "Succeeded",
+                                "priority": 100,
+                                "action": {
+                                    "type": "Allow"
+                                },
+                                "rules": [
+                                    {
+                                        "name": "all",
+                                        "protocols": [
+                                            "Any"
+                                        ],
+                                        "sourceAddresses": [
+                                            "*"
+                                        ],
+                                        "destinationAddresses": [
+                                            "*"
+                                        ],
+                                        "destinationPorts": [
+                                            "*"
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "applicationRuleCollections": [],
+                    "natRuleCollections": [
+                        {
+                            "name": "DNAT",
+                            "properties": {
+                                "priority": 100,
+                                "action": {
+                                    "type": "Dnat"
+                                },
+                                "rules": [
+                                    {
+                                        "name": "dockerssh",
+                                        "protocols": [
+                                            "TCP"
+                                        ],
+                                        "translatedAddress": "10.25.21.68",
+                                        "translatedPort": "22",
+                                        "sourceAddresses": [
+                                            "*"
+                                        ],
+                                        "destinationAddresses": [
+                                            "FWPubIP"
+                                        ],
+                                        "destinationPorts": [
+                                            "22"
+                                        ]
+                                    },
+                                    {
+                                        "name": "docker80",
+                                        "protocols": [
+                                            "TCP"
+                                        ],
+                                        "translatedAddress": "10.25.21.68",
+                                        "translatedPort": "8080",
+                                        "sourceAddresses": [
+                                            "*"
+                                        ],
+                                        "destinationAddresses": [
+                                            "FWPubIP"
+                                        ],
+                                        "destinationPorts": [
+                                            "80"
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

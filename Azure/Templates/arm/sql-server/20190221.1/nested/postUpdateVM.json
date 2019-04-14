@@ -1,0 +1,95 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "type": "string"
+        },
+        "backupConfig": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "backupItemName": "[concat('vm;iaasvmcontainerv2;', resourceGroup().name,';',parameters('vmName'))]",
+        "antimalwareInfo": {
+            "exclusionPaths": "f:\\;c:\\WindowsAzure",
+            "exclusionExtensions": "",
+            "exclusionProcesses": "sqlserver.exe; reportingservicesservice; msmdsrv.exe;WaAppAgent.exe;WindowsAzureTelemetryService.exe;WindowsAzureGuestAgent.exe",
+            "realtimeProtectionEnabled": "true",
+            "scheduledScanSettingsEnabled": "true",
+            "scheduledScanSettingsType": "Full",
+            "scheduledScanSettingsDay": "0",
+            "scheduledScanSettingsTime": "60"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[concat(parameters('vmName'), '-' , 'BackupIntent')]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('backupConfig').existingBackupVaultRG]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [  {
+                        "name": "[concat(parameters('backupConfig').existingBackupVaultName, '/','Azure', '/', variables('backupItemName'))]",
+                        "apiVersion": "2017-07-01",
+                        "type": "Microsoft.RecoveryServices/vaults/backupFabrics/backupProtectionIntent",
+                        "properties": {
+                            "friendlyName": "[concat(parameters('vmName'), 'BackupIntent')]",
+                            "protectionIntentItemType": "AzureResourceItem",
+                            "policyId": "[resourceId(parameters('backupConfig').existingBackupVaultRG, 'Microsoft.RecoveryServices/vaults/backupPolicies', parameters('backupConfig').existingBackupVaultName, parameters('backupconfig').existingBackupPolicy)]",
+                            "sourceResourceId": "[resourceId(resourceGroup().name, 'Microsoft.Compute/virtualMachines', concat(parameters('vmName')))]"
+                        }
+                    }]
+                }
+            }
+        },
+        {
+            "name": "[concat('microsoft.antimalware-windows-20180924102643', parameters('vmName'))]",
+            "apiVersion": "2015-01-01",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://gallery.azure.com/artifact/20161101/microsoft.antimalware-windows-arm.1.0.2/Artifacts/MainTemplate.json"
+                },
+                "parameters": {
+                    "vmName": {
+                        "value": "[parameters('vmName')]"
+                    },
+                    "location": {
+                        "value": "[resourceGroup().location]"
+                    },
+                    "ExclusionsPaths": {
+                        "value": "[variables('antimalwareInfo').exclusionPaths]"
+                    },
+                    "ExclusionsExtensions": {
+                        "value": "[variables('antimalwareInfo').exclusionExtensions]"
+                    },
+                    "ExclusionsProcesses": {
+                        "value": "[variables('antimalwareInfo').exclusionProcesses]"
+                    },
+                    "RealtimeProtectionEnabled": {
+                        "value": "[variables('antimalwareInfo').realtimeProtectionEnabled]"
+                    },
+                    "ScheduledScanSettingsIsEnabled": {
+                        "value": "[variables('antimalwareInfo').scheduledScanSettingsEnabled]"
+                    },
+                    "ScheduledScanSettingsScanType": {
+                        "value": "[variables('antimalwareInfo').scheduledScanSettingsType]"
+                    },
+                    "ScheduledScanSettingsDay": {
+                        "value": "[variables('antimalwareInfo').scheduledScanSettingsDay]"
+                    },
+                    "ScheduledScanSettingsTime": {
+                        "value": "[variables('antimalwareInfo').scheduledScanSettingsTime]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

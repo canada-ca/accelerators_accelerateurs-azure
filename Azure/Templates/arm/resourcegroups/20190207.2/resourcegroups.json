@@ -1,0 +1,59 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rgLocation": {
+            "type": "string"
+        },
+        "rgObj": {
+            "type": "object",
+            "metadata": {
+                "description": "Object containing resourcegroup to create"
+            }
+        },
+        "tagValues": {
+            "type": "object"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('rgLocation')]",
+            "name": "[parameters('rgObj').resourceGroup]",
+            "tags": "[parameters('tagValues')]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "[concat(parameters('rgObj').resourceGroup, '-lock')]",
+            "condition": "[contains(parameters('rgObj'), 'lock')]",
+            "resourceGroup": "[parameters('rgObj').resourceGroup]",
+            "apiVersion": "2017-08-01",
+            "dependsOn": [
+                "[parameters('rgObj').resourceGroup]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/locks",
+                            "apiVersion": "2015-01-01",
+                            "name": "[concat(parameters('rgObj').resourceGroup, '-Lock')]",
+                            "properties": {
+                                "level": "[parameters('rgObj').lock]",
+                                "notes": "Do not Delete this ressource group"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

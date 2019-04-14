@@ -1,0 +1,16 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deploymentSubArray": {
+            "value": [
+                {
+                    "name": "vnet-subnet-core",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/vnet-subnet/20190313.1/azuredeploysub.json",
+                    "parametersFile": "deploy-20-vnet-subnet-mgmt-post-adds.parameters.json"
+                }
+            ]
+        }
+    }
+}

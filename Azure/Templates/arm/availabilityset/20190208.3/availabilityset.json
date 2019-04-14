@@ -1,0 +1,29 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ASObj": {
+            "type": "object",
+            "metadata": {
+                "description": "Object containing keyvault parameters"
+            }
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2016-04-30-preview",
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[parameters('ASObj').name]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "platformUpdateDomainCount": "[parameters('ASObj').updateDomains]",
+                "platformFaultDomainCount": "[parameters('ASObj').faultDomains]",
+                "virtualMachines": []
+            },
+            "tags": "[parameters('ASObj').tagValues]",
+            "sku": {
+                "name": "[parameters('ASObj').sku]"
+            }
+        }
+    ]
+}

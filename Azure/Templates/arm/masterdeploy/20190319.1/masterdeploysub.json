@@ -1,0 +1,62 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "parametersSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "templateSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "baseParametersURL": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "deploymentSubArray": {
+            "type": "array"
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-05-01",
+            "name": "start",
+            "type": "Microsoft.Resources/deployments",
+            "location": "canadacentral",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": []
+                }
+            }
+        },
+        {
+            "name": "[parameters('deploymentSubArray')[copyIndex()].name]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('deploymentSubArray')[copyIndex()].location]",
+            "dependsOn": ["[if(contains(parameters('deploymentSubArray')[copyIndex()], 'dependsOn'), json(replace(replace(string(parameters('deploymentSubArray')[copyIndex()].dependsOn), '[', ''), ']', '')), json('\"start\"'))]"],
+            "copy": {
+                "name": "obj",
+                "count": "[length(parameters('deploymentSubArray'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "parametersLink": {
+                    "uri": "[concat(parameters('baseParametersURL'), parameters('deploymentSubArray')[copyIndex()].parametersFile, parameters('parametersSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "templateLink": {
+                    "uri": "[concat(parameters('deploymentSubArray')[copyIndex()].templateLink, parameters('templateSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

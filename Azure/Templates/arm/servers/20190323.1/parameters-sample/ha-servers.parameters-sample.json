@@ -1,0 +1,94 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmObject": {
+            "value": {
+                "resourceGroup": "testHAVM2",
+                "vmKeyVault": {
+                    "keyVaultResourceGroupName": "AzPwS01-Infra-Keyvault-RG",
+                    "keyVaultName": "AzPwS01-Infra-Keyvault"
+                },
+                "domainObject": {
+                    "domainToJoin": "azpws01.pspc.gc.ca.local",
+                    "domainUsername": "azureadmin",
+                    "domainJoinOptions": 3,
+                    "ouPath": ""
+                },
+                "numberOfVMInstances": 2,
+                "deploymentSuffix": "hatest",
+                "vm": {
+                    "computerName": "win-ha-tst",
+                    "adminUsername": "azureadmin",
+                    "licenseType": "Windows_Server",
+                    "shutdownConfig": {
+                        "autoShutdownStatus": "Enabled",
+                        "autoShutdownTime": "17:00",
+                        "autoShutdownTimeZone": "Eastern Standard Time",
+                        "autoShutdownNotificationStatus": "Disabled"
+                    },
+                    "vmSize": "Standard_B2s",
+                    "bootDiagnostic": true,
+                    "backupConfig": {
+                        "existingBackupVaultRG": "AzPwS01-Infra-Backup-RG",
+                        "existingBackupVaultName": "AzPwS01-Infra-Backup-Vault",
+                        "existingBackupPolicy": "DailyBackupPolicy"
+                    },
+                    "antimalwareInfo": {
+                        "exclusionPaths": "C:\\Windows\\System32\\inetsrv;C:\\Windows\\SysWOW64\\inetsrv;c:\\WindowsAzure",
+                        "exclusionExtensions": ".log",
+                        "exclusionProcesses": "w3wp.exe;explorer.exe;WaAppAgent.exe;WindowsAzureTelemetryService.exe;WindowsAzureGuestAgent.exe",
+                        "realtimeProtectionEnabled": "true",
+                        "scheduledScanSettingsEnabled": "false",
+                        "scheduledScanSettingsType": "Quick",
+                        "scheduledScanSettingsDay": "1",
+                        "scheduledScanSettingsTime": "120"
+                    },
+                    "storageProfile": {
+                        "imageReference": {
+                            "publisher": "MicrosoftWindowsServer",
+                            "offer": "WindowsServer",
+                            "sku": "2016-Datacenter",
+                            "version": "latest"
+                        },
+                        "dataDisks": [],
+                        "osDisk": {
+                            "createOption": "fromImage",
+                            "managedDisk": {
+                                "storageAccountType": "StandardSSD_LRS"
+                            }
+                        }
+                    },
+                    "availabilitySetName": "hatest-as"
+                },
+                "networkSecurityGroups": {
+                    "name": "nsg",
+                    "properties": {
+                        "securityRules": []
+                    }
+                },
+                "networkInterfaces": {
+                    "name": "nic1",
+                    "acceleratedNetworking": false,
+                    "vnetResourceGroupName": "AzPwS01-Infra-NetMGMT-RG",
+                    "vnetName": "AzPwS01-Infra-NetMGMT-VNET",
+                    "subnetName": "APP-AD"
+                },
+                "loadBalencerConfig": {
+                    "frontendPort": 443,
+                    "backendPort": 443,
+                    "probePort": 59999
+                },
+                "tagValues": {
+                    "workload": "test",
+                    "owner": "john.nephin@tpsgc-pwgsc.gc.ca",
+                    "businessUnit": "PSPC-CCC",
+                    "costCenterOwner": "PSPC-EA",
+                    "environment": "Sandbox",
+                    "classification": "Unclassified",
+                    "version": "0.1"
+                }
+            }
+        }
+    }
+}

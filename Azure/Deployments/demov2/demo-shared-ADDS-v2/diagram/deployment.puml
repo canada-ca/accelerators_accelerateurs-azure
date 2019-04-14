@@ -1,0 +1,9 @@
+@startuml
+
+artifact Base_Infrastructure
+artifact MGMT_ADDS
+artifact Encryption
+MGMT_ADDS <-- Base_Infrastructure
+Encryption <-- MGMT_ADDS
+
+@enduml

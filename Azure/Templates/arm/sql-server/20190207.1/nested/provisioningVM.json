@@ -1,0 +1,189 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sqlAvailabilitySetName": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "adminUsername": {
+            "type": "string"
+        },
+        "adminPassword": {
+            "type": "securestring"
+        },
+        "sqlServerConfig": {
+            "type": "object"
+        },
+        "witnessServerConfig": {
+            "type": "object"
+        },
+        "tagValues": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "diagstorageName": "[concat('sqldiag',uniquestring(parameters('sqlServerConfig').sqlStorageAccountName))]"
+
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[parameters('sqlAvailabilitySetName')]",
+            "apiVersion": "2017-03-30",
+            "location": "[parameters('location')]",
+            "properties": {
+                "platformFaultDomainCount": 3,
+                "platformUpdateDomainCount": 3
+            },
+            "sku": {
+                "name": "Aligned"
+            },
+            "tags": "[parameters('tagValues')]"
+        },
+        {
+            "apiVersion": "2018-04-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(parameters('sqlServerConfig').vmName, copyindex())]",
+            "location": "[parameters('location')]",
+            "tags": "[parameters('tagValues')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/availabilitySets/',parameters('sqlAvailabilitySetName'))]"
+            ],
+            "copy": {
+                "name": "sqlvirtualMachineLoop",
+                "count": 2
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('sqlServerConfig').vmSize]"
+                },
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('sqlAvailabilitySetName'))]"
+                },
+                "osProfile": {
+                    "computerName": "[concat(parameters('sqlServerConfig').vmName, copyindex())]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "windowsConfiguration": {
+                        "provisionVmAgent": "true",
+                        "timeZone": "Eastern Standard Time"
+                    }
+                },
+                    "storageProfile": {
+                        "imageReference": {
+                            "publisher": "[parameters('sqlServerConfig').imageReference.sqlImagePublisher]",
+                            "offer": "[parameters('sqlServerConfig').imageReference.offer]",
+                            "sku": "[parameters('sqlServerConfig').imageReference.sku]",
+                            "version": "[parameters('sqlServerConfig').imageReference.version]"
+                        },
+                        "osDisk": {
+                            "name": "[concat(parameters('sqlServerConfig').vmName, copyIndex(), '-osDisk')]",
+                            "managedDisk": {
+                                "storageAccountType": "[parameters('sqlServerConfig').sqlStorageAccountType]"
+                            },
+                            "caching": "ReadWrite",
+                            "createOption": "FromImage"
+                        },
+                        "copy": [
+                            {
+                                "name": "dataDisks",
+                                "count": "[int(parameters('sqlServerConfig').dataDisks.numberOfSqlVMDisks)]",
+                                "input": {
+                                    "name": "[concat(parameters('sqlServerConfig').vmName, copyIndex('sqlvirtualMachineLoop'),'-data-disk',copyIndex('dataDisks',1))]",
+                                    "lun": "[copyIndex('dataDisks')]",
+                                    "createOption": "Empty",
+                                    "caching": "ReadOnly",
+                                    "diskSizeGB": "[parameters('sqlServerConfig').dataDisks.diskSizeGB]",
+                                    "managedDisk": {
+                                        "storageAccountType": "[parameters('sqlServerConfig').sqlStorageAccountType]"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "networkProfile": {
+                        "networkInterfaces": [
+                            {
+                                "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('sqlServerConfig').vmName, copyindex(),'-nic'))]"
+                            }
+                        ]
+                    },
+                    "diagnosticsProfile": {
+                        "bootDiagnostics": {
+                            "enabled": "true",
+                            "storageUri": "[concat('http://',variables('diagstorageName'),'.blob.core.windows.net')]"
+                        }
+                    }
+                }
+            
+        },
+        {
+            "apiVersion": "2018-04-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('witnessServerConfig').vmName]",
+            "location": "[parameters('location')]",
+            "tags": "[parameters('tagValues')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/availabilitySets/',parameters('sqlAvailabilitySetName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('witnessServerConfig').vmSize]"
+                },
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('sqlAvailabilitySetName'))]"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('witnessServerConfig').vmName]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[parameters('witnessServerConfig').imageReference.publisher]",
+                        "offer": "[parameters('witnessServerConfig').imageReference.offer]",
+                        "sku": "[parameters('witnessServerConfig').imageReference.sku]",
+                        "version": "[parameters('witnessServerConfig').imageReference.version]"
+                    },
+                    "osDisk": {
+                        "name": "osdisk",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('sqlServerConfig').sqlStorageAccountType]"
+                        },
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    },
+                    "dataDisks": [
+                        {
+                            "name": "[concat(parameters('witnessServerConfig').vmName,'-data-disk1')]",
+                            "caching": "None",
+                            "createOption": "Empty",
+                            "diskSizeGB": "[parameters('witnessServerConfig').dataDisks.diskSizeGB]",
+                            "lun": 0,
+                            "managedDisk": {
+                                "storageAccountType": "[parameters('sqlServerConfig').sqlStorageAccountType]"
+                            }
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('witnessServerConfig').vmName, '-nic'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": "true",
+                        "storageUri": "[concat('http://',variables('diagstorageName'),'.blob.core.windows.net')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

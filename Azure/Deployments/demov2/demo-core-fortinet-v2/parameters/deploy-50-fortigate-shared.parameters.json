@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "fwObject": {
+            "value": {
+                "vmKeyVault": {
+                    "keyVaultResourceGroupName": "Demo-Infra-Keyvault-RG",
+                    "keyVaultName": "Demo-Infra-KV-[unique]"
+                },
+                "FortiGateName": "DemoFWSHRD01",
+                "adminUsername": "fwadmin",
+                "adminSecret": "fwpassword",
+                "FortiGateImageSKU": "fortinet_fg-vm",
+                "FortiGateImageVersion": "latest",
+                "instanceType": "Standard_F4s",
+                "publicIPAddressName": "publicip-fortigate",
+                "publicIPAddressType": "Static",
+                "publicIPNewOrExistingOrNone": "none",
+                "publicIPResourceGroup": "Demo-Infra-FWShared-RG",
+                "location": "canadacentral",
+                "vnetNewOrExisting": "existing",
+                "vnetName": "Demo-Infra-NetShared-VNET",
+                "vnetResourceGroup": "Demo-Infra-NetShared-RG",
+                "Subnet1Name": "SharedToCore",
+                "Subnet2Name": "PAZ-Interconnect",
+                "Subnet3Name": "APP-Interconnect",
+                "Subnet4Name": "DB-Interconnect",
+                "FirewallConfig": "Y29uZmlnIHN5c3RlbSBnbG9iYWwKc2V0IGFkbWluLXNwb3J0IDg0NDMKZW5kCmNvbmZpZyBzeXN0ZW0gaW50ZXJmYWNlCmVkaXQgInBvcnQxIgpzZXQgbW9kZSBkaGNwCnNldCBhbGxvd2FjY2VzcyBwaW5nIGh0dHBzIHNzaCBmZ2ZtCnNldCB0eXBlIHBoeXNpY2FsCnNldCBkZXNjcmlwdGlvbiAiU2hhcmVkVG9Db3JlIgpzZXQgYWxpYXMgIlNoYXJlZFRvQ29yZSIKbmV4dAplZGl0ICJwb3J0MiIKc2V0IG1vZGUgZGhjcApzZXQgYWxsb3dhY2Nlc3MgcGluZyBodHRwcyBzc2ggaHR0cCBmZ2ZtCnNldCB0eXBlIHBoeXNpY2FsCnNldCBkZXNjcmlwdGlvbiAiUEFaX0ludGVyY29ubmVjdCIKc2V0IGFsaWFzICJQQVpfSW50ZXJjb25uZWN0IgpzZXQgZGVmYXVsdGd3IGRpc2FibGUKbmV4dAplZGl0ICJwb3J0MyIKc2V0IG1vZGUgZGhjcApzZXQgYWxsb3dhY2Nlc3MgcGluZyBodHRwcyBzc2ggaHR0cCBmZ2ZtCnNldCB0eXBlIHBoeXNpY2FsCnNldCBkZXNjcmlwdGlvbiAiQVBQX0ludGVyY29ubmVjdCIKc2V0IGFsaWFzICJBUFBfSW50ZXJjb25uZWN0IgpzZXQgZGVmYXVsdGd3IGRpc2FibGUKbmV4dAplZGl0ICJwb3J0NCIKc2V0IG1vZGUgZGhjcApzZXQgYWxsb3dhY2Nlc3MgcGluZyBodHRwcyBzc2ggaHR0cCBmZ2ZtCnNldCB0eXBlIHBoeXNpY2FsCnNldCBkZXNjcmlwdGlvbiAiREJfSW50ZXJjb25uZWN0IgpzZXQgYWxpYXMgIkRCX0ludGVyY29ubmVjdCIKc2V0IGRlZmF1bHRndyBkaXNhYmxlCm5leHQKZW5kCmNvbmZpZyByb3V0ZXIgc3RhdGljCmVkaXQgMQpzZXQgZHN0IDEwLjI1LjI0LjAgMjU1LjI1NS4yNTIuMApzZXQgZ2F0ZXdheSAxMC4yNS4xNi4zMwpzZXQgZGV2aWNlICJwb3J0MyIKbmV4dAplZGl0IDIKc2V0IGRzdCAxMC4yNS4yOC4wIDI1NS4yNTUuMjUyLjAKc2V0IGdhdGV3YXkgMTAuMjUuMTYuNDkKc2V0IGRldmljZSAicG9ydDQiCm5leHQKZWRpdCAzCnNldCBkc3QgMTAuMjUuMjAuMCAyNTUuMjU1LjI1Mi4wCnNldCBnYXRld2F5IDEwLjI1LjE2LjE3CnNldCBkZXZpY2UgInBvcnQyIgpuZXh0CmVuZApjb25maWcgZmlyZXdhbGwgcG9saWN5CmVkaXQgMApzZXQgbmFtZSAiRG9ja2VyIEFjY2VzcyIKc2V0IHNyY2ludGYgInBvcnQxIiAKc2V0IGRzdGludGYgInBvcnQyIiAKc2V0IHNyY2FkZHIgImFsbCIgCnNldCBkc3RhZGRyICJhbGwiIApzZXQgYWN0aW9uIGFjY2VwdApzZXQgc2NoZWR1bGUgImFsd2F5cyIKc2V0IHNlcnZpY2UgIkFMTCIgCnNldCBsb2d0cmFmZmljIGFsbApzZXQgbG9ndHJhZmZpYy1zdGFydCBlbmFibGUKc2V0IGZzc28gZGlzYWJsZQp1bnNldCBncm91cHMKdW5zZXQgdXNlcnMKdW5zZXQgZGV2aWNlcwp1bnNldCBjdXN0b20tbG9nLWZpZWxkcwp1bnNldCBzc2wtbWlycm9yLWludGYKZW5kCmNvbmZpZyBmaXJld2FsbCBwb2xpY3kKZWRpdCAwCnNldCBuYW1lICJJbnRlcm5ldCBBY2Nlc3MiCnNldCBzcmNpbnRmICJwb3J0MiIgCnNldCBkc3RpbnRmICJwb3J0MSIgCnNldCBzcmNhZGRyICJhbGwiIApzZXQgZHN0YWRkciAiYWxsIiAKc2V0IGFjdGlvbiBhY2NlcHQKc2V0IHNjaGVkdWxlICJhbHdheXMiCnNldCBzZXJ2aWNlICJBTEwiIApzZXQgbG9ndHJhZmZpYyBhbGwKc2V0IGxvZ3RyYWZmaWMtc3RhcnQgZW5hYmxlCnNldCBmc3NvIGRpc2FibGUKdW5zZXQgZ3JvdXBzCnVuc2V0IHVzZXJzCnVuc2V0IGRldmljZXMKdW5zZXQgY3VzdG9tLWxvZy1maWVsZHMKdW5zZXQgc3NsLW1pcnJvci1pbnRmCmVuZApjb25maWcgbG9nIHNldHRpbmcKc2V0IGZ3cG9saWN5LWltcGxpY2l0LWxvZyBlbmFibGUKZW5k"
+            }
+        }
+    }
+}

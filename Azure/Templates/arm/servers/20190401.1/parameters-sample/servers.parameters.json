@@ -1,0 +1,402 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmArray": {
+            "value": [
+                {
+                    "comment": "This is a Linux vm without data disks. Notice the absence of the licenseType parameter in the vm configuration.",
+                    "vmKeyVault": {
+                        "keyVaultResourceGroupName": "rgkeyVaults",
+                        "keyVaultName": "pspckeys"
+                    },
+                    "vm": {
+                        "computerName": "azpws01-test03",
+                        "adminUsername": "azureadmin",
+                        "adminPassword": "ubuntuDefaultPassword",
+                        "shutdownConfig": {
+                            "autoShutdownStatus": "Enabled",
+                            "autoShutdownTime": "17:00",
+                            "autoShutdownTimeZone": "Eastern Standard Time",
+                            "autoShutdownNotificationStatus": "Disabled"
+                        },
+                        "omsAgentForLinux": {
+                            "workspaceId": "23b01bc4-90a3-4bf2-9928-d260605e2f12",
+                            "workspaceKey": "myWorkSpaceKey"
+                        },
+                        "vmSize": "Standard_B1s",
+                        "bootDiagnostic": true,
+                        "existingBackupVaultRG": "nothing",
+                        "storageProfile": {
+                            "osDisk": {
+                                "createOption": "fromImage",
+                                "managedDisk": {
+                                    "storageAccountType": "StandardSSD_LRS"
+                                }
+                            },
+                            "dataDisks": [],
+                            "imageReference": {
+                                "publisher": "Canonical",
+                                "offer": "UbuntuServer",
+                                "sku": "18.04-LTS",
+                                "version": "latest"
+                            }
+                        },
+                        "linuxScript": {
+                            "commandToExecute": "['sudo sh linux-script.sh']"
+                        }
+                    },
+                    "networkSecurityGroups": {
+                        "name": "nsg",
+                        "properties": {
+                            "securityRules": []
+                        }
+                    },
+                    "networkInterfaces": {
+                        "name": "NIC1",
+                        "vnetResourceGroupName": "AzPwS01-Infra-NetMGMT-RG",
+                        "vnetName": "AzPwS01-Infra-NetMGMT-VNET",
+                        "subnetName": "PAZ",
+                        "acceleratedNetworking": false
+                    },
+                    "tagValues": {
+                        "Owner": "charles.vriesendorp@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Sandbox",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-19-01"
+                    }
+                },
+                {
+                    "comment": "This is a Linux vm with optional omsAgentForLinux configuration.",
+                    "vmKeyVault": {
+                        "keyVaultResourceGroupName": "rgkeyVaults",
+                        "keyVaultName": "pspckeys"
+                    },
+                    "vm": {
+                        "computerName": "azpws01-test03",
+                        "adminUsername": "azureadmin",
+                        "adminPassword": "ubuntuDefaultPassword",
+                        "OmsAgentForLinux": {
+                            "workspaceId": "23b01bc4-90a3-4bf2-9928-d260605e2f12",
+                            "workspaceKey": "myWorkSpaceKey"
+                        },
+                        "vmSize": "Standard_B1s",
+                        "bootDiagnostic": true,
+                        "existingBackupVaultRG": "nothing",
+                        "storageProfile": {
+                            "osDisk": {
+                                "createOption": "fromImage",
+                                "managedDisk": {
+                                    "storageAccountType": "StandardSSD_LRS"
+                                }
+                            },
+                            "dataDisks": [],
+                            "imageReference": {
+                                "publisher": "Canonical",
+                                "offer": "UbuntuServer",
+                                "sku": "18.04-LTS",
+                                "version": "latest"
+                            }
+                        },
+                        "linuxScript": {
+                            "commandToExecute": "['sudo sh linux-script.sh']"
+                        }
+                    },
+                    "networkSecurityGroups": {
+                        "name": "nsg",
+                        "properties": {
+                            "securityRules": []
+                        }
+                    },
+                    "networkInterfaces": {
+                        "name": "NIC1",
+                        "vnetResourceGroupName": "AzPwS01-Infra-NetMGMT-RG",
+                        "vnetName": "AzPwS01-Infra-NetMGMT-VNET",
+                        "subnetName": "PAZ",
+                        "acceleratedNetworking": false
+                    },
+                    "tagValues": {
+                        "Owner": "charles.vriesendorp@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Sandbox",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-19-01"
+                    }
+                },
+                {
+                    "comment": "This is a Linux vm with data disks. Notice the absence of the licenseType parameter in the vm configuration.",
+                    "vmKeyVault": {
+                        "keyVaultResourceGroupName": "rgkeyVaults",
+                        "keyVaultName": "pspckeys"
+                    },
+                    "vm": {
+                        "computerName": "testas1",
+                        "adminUsername": "azureadmin",
+                        "adminPassword": "ubuntuDefaultPassword",
+                        "shutdownConfig": {
+                            "autoShutdownStatus": "Enabled",
+                            "autoShutdownTime": "17:00",
+                            "autoShutdownTimeZone": "Eastern Standard Time",
+                            "autoShutdownNotificationStatus": "Disabled"
+                        },
+                        "vmSize": "Standard_B1s",
+                        "bootDiagnostic": true,
+                        "availabilitySetName": "test-as",
+                        "storageProfile": {
+                            "osDisk": {
+                                "createOption": "fromImage",
+                                "managedDisk": {
+                                    "storageAccountType": "StandardSSD_LRS"
+                                }
+                            },
+                            "dataDisks": [
+                                {
+                                    "diskSizeGB": "1024",
+                                    "lun": 0,
+                                    "createOption": "Empty",
+                                    "managedDisk": {
+                                        "storageAccountType": "StandardSSD_LRS"
+                                    }
+                                },
+                                {
+                                    "diskSizeGB": "512",
+                                    "lun": 1,
+                                    "createOption": "Empty",
+                                    "managedDisk": {
+                                        "storageAccountType": "StandardSSD_LRS"
+                                    }
+                                }
+                            ],
+                            "imageReference": {
+                                "publisher": "Canonical",
+                                "offer": "UbuntuServer",
+                                "sku": "18.04-LTS",
+                                "version": "latest"
+                            }
+                        }
+                    },
+                    "networkSecurityGroups": {
+                        "name": "nsg",
+                        "properties": {
+                            "securityRules": []
+                        }
+                    },
+                    "networkInterfaces": {
+                        "name": "NIC1",
+                        "acceleratedNetworking": false,
+                        "vnetResourceGroupName": "rgManagement",
+                        "vnetName": "vnet-management",
+                        "subnetName": "PAZ"
+                    },
+                    "tagValues": {
+                        "Owner": "charles.vriesendorp@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Sandbox",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-19-01"
+                    }
+                },
+                {
+                    "comment": "This vm demonstrate the association to an Availability Set named test-as. This is an optional parameter.",
+                    "availabilitySetName": "test-as",
+                    "vmKeyVault": {
+                        "keyVaultResourceGroupName": "rgkeyVaults",
+                        "keyVaultName": "pspckeys"
+                    },
+                    "vm": {
+                        "computerName": "testas2",
+                        "adminUsername": "azureadmin",
+                        "adminPassword": "ubuntuDefaultPassword",
+                        "shutdownConfig": {
+                            "autoShutdownStatus": "Enabled",
+                            "autoShutdownTime": "17:00",
+                            "autoShutdownTimeZone": "Eastern Standard Time",
+                            "autoShutdownNotificationStatus": "Disabled"
+                        },
+                        "vmSize": "Standard_B1s",
+                        "bootDiagnostic": true,
+                        "availabilitySetName": "test-as",
+                        "storageProfile": {
+                            "osDisk": {
+                                "createOption": "fromImage",
+                                "managedDisk": {
+                                    "storageAccountType": "StandardSSD_LRS"
+                                }
+                            },
+                            "dataDisks": [],
+                            "imageReference": {
+                                "publisher": "Canonical",
+                                "offer": "UbuntuServer",
+                                "sku": "18.04-LTS",
+                                "version": "latest"
+                            }
+                        }
+                    },
+                    "networkSecurityGroups": {
+                        "name": "nsg",
+                        "properties": {
+                            "securityRules": []
+                        }
+                    },
+                    "networkInterfaces": {
+                        "name": "NIC1",
+                        "acceleratedNetworking": false,
+                        "vnetResourceGroupName": "rgManagement",
+                        "vnetName": "vnet-management",
+                        "subnetName": "PAZ"
+                    },
+                    "tagValues": {
+                        "Owner": "charles.vriesendorp@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Sandbox",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-19-01"
+                    }
+                },
+                {
+                    "comment": "This Windows vm demonstrate the use of the licenseType parameter and antimalware settings. This is only needed for Windows type vm.",
+                    "vmKeyVault": {
+                        "keyVaultResourceGroupName": "rgkeyVaults",
+                        "keyVaultName": "pspckeys"
+                    },
+                    "domainObject": {
+                        "domainToJoin": "pspc.gc.ca.local",
+                        "domainUsername": "azureadmin",
+                        "domainUserSecretName": "adDefaultPassword",
+                        "domainJoinOptions": 3,
+                        "ouPath": ""
+                    },
+                    "vm": {
+                        "computerName": "test-win-srv1",
+                        "adminUsername": "azureadmin",
+                        "licenseType": "Windows_Server",
+                        "shutdownConfig": {
+                            "autoShutdownStatus": "Enabled",
+                            "autoShutdownTime": "17:00",
+                            "autoShutdownTimeZone": "Eastern Standard Time",
+                            "autoShutdownNotificationStatus": "Disabled"
+                        },
+                        "vmSize": "Standard_B2s",
+                        "bootDiagnostic": true,
+                        "antimalwareInfo": {
+                            "exclusionPaths": "c:\\Users",
+                            "exclusionExtensions": ".txt; .ps1",
+                            "exclusionProcesses": "w3wp.exe;explorer.exe",
+                            "realtimeProtectionEnabled": "true",
+                            "scheduledScanSettingsEnabled": "false",
+                            "scheduledScanSettingsType": "Quick",
+                            "scheduledScanSettingsDay": "1",
+                            "scheduledScanSettingsTime": "120"
+                        },
+                        "storageProfile": {
+                            "imageReference": {
+                                "publisher": "MicrosoftWindowsServer",
+                                "offer": "WindowsServer",
+                                "sku": "2016-Datacenter",
+                                "version": "latest"
+                            },
+                            "dataDisks": [],
+                            "osDisk": {
+                                "createOption": "fromImage",
+                                "managedDisk": {
+                                    "storageAccountType": "StandardSSD_LRS"
+                                }
+                            }
+                        },
+                        "availabilitySet": {}
+                    },
+                    "networkSecurityGroups": {
+                        "name": "nsg",
+                        "properties": {
+                            "securityRules": []
+                        }
+                    },
+                    "networkInterfaces": {
+                        "name": "NIC1",
+                        "acceleratedNetworking": false,
+                        "vnetResourceGroupName": "rgManagement",
+                        "vnetName": "vnet-management",
+                        "subnetName": "APP"
+                    },
+                    "tagValues": {
+                        "Owner": "charles.vriesendorp@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Sandbox",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-19-01"
+                    }
+                },
+                {
+                    "comment": "This vm demonstrate the association to two Application Security Groups. This is an optional parameter.",
+                    "vmKeyVault": {
+                        "keyVaultResourceGroupName": "rgkeyVaults",
+                        "keyVaultName": "pspckeys"
+                    },
+                    "vm": {
+                        "computerName": "testasgvm2",
+                        "adminUsername": "azureadmin",
+                        "adminPassword": "ubuntuDefaultPassword",
+                        "shutdownConfig": {
+                            "autoShutdownStatus": "Enabled",
+                            "autoShutdownTime": "17:00",
+                            "autoShutdownTimeZone": "Eastern Standard Time",
+                            "autoShutdownNotificationStatus": "Disabled"
+                        },
+                        "vmSize": "Standard_B1s",
+                        "bootDiagnostic": true,
+                        "applicationSecurityGroups": [
+                            {
+                                "id": "[resourceId('Microsoft.Network/applicationSecurityGroups', 'testASG1')]"
+                            },
+                            {
+                                "id": "[resourceId('Microsoft.Network/applicationSecurityGroups', 'testASG2')]"
+                            }
+                        ],
+                        "storageProfile": {
+                            "osDisk": {
+                                "createOption": "fromImage",
+                                "managedDisk": {
+                                    "storageAccountType": "StandardSSD_LRS"
+                                }
+                            },
+                            "dataDisks": [],
+                            "imageReference": {
+                                "publisher": "Canonical",
+                                "offer": "UbuntuServer",
+                                "sku": "18.04-LTS",
+                                "version": "latest"
+                            }
+                        }
+                    },
+                    "networkSecurityGroups": {
+                        "name": "nsg",
+                        "properties": {
+                            "securityRules": []
+                        }
+                    },
+                    "networkInterfaces": {
+                        "name": "NIC1",
+                        "acceleratedNetworking": false,
+                        "vnetResourceGroupName": "rgManagement",
+                        "vnetName": "vnet-management",
+                        "subnetName": "PAZ"
+                    },
+                    "tagValues": {
+                        "Owner": "charles.vriesendorp@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Sandbox",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-19-01"
+                    }
+                }
+            ]
+        }
+    }
+}

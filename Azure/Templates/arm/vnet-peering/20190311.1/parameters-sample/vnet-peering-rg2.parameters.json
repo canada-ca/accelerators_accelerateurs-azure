@@ -1,0 +1,23 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "peerArray": {
+            "value": [
+                {
+                    "vnet": "PwS2-validate-vnet-peering-2-VNET",
+                    "peer": [
+                        {
+                            "vnetName": "PwS2-validate-vnet-peering-1-VNET",
+                            "rgName": "PwS2-validate-vnet-peering-1-RG",
+                            "allowVirtualNetworkAccess": true,
+                            "allowForwardedTraffic": true,
+                            "allowGatewayTransit": true,
+                            "useRemoteGateways": false
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

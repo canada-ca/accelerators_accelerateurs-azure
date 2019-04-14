@@ -1,0 +1,66 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyVaultResourceGroupName": {
+            "value": "Demo-Infra-Keyvault-RG"
+        },
+        "keyVaultName": {
+            "value": "Demo-Infra-KV-[unique]"
+        },
+        "adminUsername": {
+            "value": "azureadmin"
+        },
+        "adminPasswordSecret": {
+            "value": "server2016DefaultPassword"
+        },
+        "adDomainName": {
+            "value": "mgmt.demo.gc.ca.local"
+        },
+        "dnsServerPrivateIp": {
+            "value": [
+                "10.25.8.20",
+                "10.25.8.21"
+            ]
+        },
+        "rdsVnetRG": {
+            "value": "Demo-Infra-NetMGMT-RG"
+        },
+        "rdsVnetName": {
+            "value": "Demo-Infra-NetMGMT-VNET"
+        },
+        "rdsPAZSubnetName": {
+            "value": "Demo-MGMT-PAZ-RDS"
+        },
+        "rdsAPPSubnetName": {
+            "value": "Demo-MGMT-APP-RDS"
+        },
+        "rdsGatewayName": {
+            "value": "DEMORDSGW"
+        },
+        "rdsBrokerName": {
+            "value": "DEMORDSCBRK"
+        },
+        "rdsSessionHostNamePrefix": {
+            "value": "DEMORDSSH"
+        },
+        "numberOfRdshInstances": {
+            "value": 2
+        },
+        "imageSKU": {
+            "value": "2016-Datacenter"
+        },
+        "rdshVmSize": {
+            "value": "Standard_A4_v2"
+        },
+        "tagValues": {
+            "value": {
+                "Owner": "yann.gagnon@tpsgc-pwgsc.gc.ca",
+                "CostCenter": "PSPC-EA",
+                "Enviroment": "Sandbox",
+                "Classification": "Unclassified",
+                "Organizations": "PSPC-CCC-E&O"
+            }
+        }
+    }
+}

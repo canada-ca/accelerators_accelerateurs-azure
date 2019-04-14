@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "routeTables": {
+            "type": "object",
+            "metadata": {
+                "description": "Array of routeTables objects."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/routeTables",
+            "name": "[parameters('routeTables').name]",
+            "apiVersion": "2018-02-01",
+            "tags": "[parameters('routeTables').tagValues]",
+            "location": "[resourceGroup().location]",
+            "properties": "[parameters('routeTables').properties]"
+        }
+    ],
+    "outputs": {}
+}

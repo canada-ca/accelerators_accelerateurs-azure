@@ -1,0 +1,96 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyvaultObj": {
+            "type": "object",
+            "metadata": {
+                "description": "Object containing keyvault parameters"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2016-10-01",
+            "name": "[parameters('keyvaultObj').name]",
+            "location": "[resourceGroup().location]",
+            "type": "Microsoft.KeyVault/vaults",
+            "tags": "[parameters('keyvaultObj').tagValues]",
+            "properties": {
+                "tenantId": "[subscription().tenantId]",
+                "enabledForDeployment": "[parameters('keyvaultObj').enabledForDeployment]",
+                "enabledForTemplateDeployment": "[parameters('keyvaultObj').enabledForTemplateDeployment]",
+                "enabledForDiskEncryption": "[parameters('keyvaultObj').enabledForDiskEncryption]",
+                "accessPolicies": [
+                    {
+                        "objectId": "[parameters('keyvaultObj').accessPoliciesObjectId]",
+                        "tenantId": "[subscription().tenantId]",
+                        "permissions": {
+                            "keys": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Create",
+                                "Import",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore"
+                            ],
+                            "secrets": [
+                                "Get",
+                                "List",
+                                "Set",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore"
+                            ],
+                            "certificates": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Create",
+                                "Import",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore",
+                                "ManageContacts",
+                                "ManageIssuers",
+                                "GetIssuers",
+                                "ListIssuers",
+                                "SetIssuers",
+                                "DeleteIssuers"
+                            ]
+                        }
+                    }
+                ],
+                "sku": {
+                    "name": "[parameters('keyvaultObj').sku]",
+                    "family": "A"
+                },
+                "networkAcls": "[parameters('keyvaultObj').networkAcls]"
+            }
+        },
+        {
+            "comments": "Change the temporary secret created by this template to a value of your choice in the Azure Portal",
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(parameters('keyvaultObj').name, '/', parameters('keyvaultObj').secrets[copyIndex()].name)]",
+            "apiVersion": "2016-10-01",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "secret",
+                "count": "[length(parameters('keyvaultObj').secrets)]"
+            },
+            "properties": {
+                "value": "[parameters('keyvaultObj').secrets[copyIndex()].properties.value]"
+            },
+            "dependsOn": [
+                "[parameters('keyvaultObj').name]"
+            ]
+        }
+    ],
+    "outputs": {}
+}

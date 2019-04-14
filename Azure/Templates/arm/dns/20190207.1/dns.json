@@ -1,0 +1,52 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "DNSObj": {
+            "type": "object",
+            "metadata": {
+                "description": "Object containing DNS parameters"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/dnszones",
+            "name": "[parameters('DNSObj').dnsZoneName]",
+            "apiVersion": "2016-04-01",
+            "location": "global",
+            "properties": {}
+        },
+        {
+            "comments": "Deploy A records.",
+            "type": "Microsoft.Network/dnszones/A",
+            "name": "[concat(parameters('DNSObj').dnsZoneName, '/', parameters('DNSObj').ARecords[copyIndex()].name)]",
+            "apiVersion": "2018-05-01",
+            "scale": null,
+            "copy": {
+                "name": "obj",
+                "count": "[length(parameters('DNSObj').ARecords)]"
+            },
+            "properties": "[parameters('DNSObj').ARecords[copyIndex()].properties]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/dnszones', parameters('DNSObj').dnsZoneName)]"
+            ]
+        },
+        {
+            "comments": "Deploy CNAME records.",
+            "type": "Microsoft.Network/dnszones/CNAME",
+            "name": "[concat(parameters('DNSObj').dnsZoneName, '/', parameters('DNSObj').CNAMERecords[copyIndex()].name)]",
+            "apiVersion": "2018-05-01",
+            "scale": null,
+            "copy": {
+                "name": "obj",
+                "count": "[length(parameters('DNSObj').CNAMERecords)]"
+            },
+            "properties": "[parameters('DNSObj').CNAMERecords[copyIndex()].properties]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/dnszones', parameters('DNSObj').dnsZoneName)]"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,62 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vpnObj": {
+            "type": "object",
+            "metadata": {
+                "description": "Object of vpn objects. Make sure the GatewaySubnet subnet exist in the VNET you are deploying in."
+            }
+        }
+    },
+    "variables": {
+        "vpnName": "[concat(parameters('vpnObj').vnet, '-vpn')]",
+        "vpnPubIpName": "[concat(variables('vpnName'), '-pubip')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('vpnPubIpName')]",
+            "apiVersion": "2018-02-01",
+            "tags": "[parameters('vpnObj').tagValues]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "publicIPAddressVersion": "IPv4"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworkGateways",
+            "name": "[variables('vpnName')]",
+            "apiVersion": "2018-07-01",
+            "tags": "[parameters('vpnObj').tagValues]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('vpnPubIpName'))]"
+            ],
+            "scale": null,
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('vpnPubIpName'))]"
+                            },
+                            "subnet": {
+                                "id": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('vpnObj').vnet, '/subnets/', 'GatewaySubnet')]"
+                            }
+                        }
+                    }
+                ],
+                "sku": "[parameters('vpnObj').sku]",
+                "gatewayType": "[parameters('vpnObj').gatewayType]",
+                "vpnType": "[parameters('vpnObj').vpnType]",
+                "enableBgp": "[parameters('vpnObj').enableBgp]",
+                "activeActive": "[parameters('vpnObj').activeActive]",
+                "vpnClientConfiguration": "[parameters('vpnObj').vpnClientConfiguration]"
+            }
+        }
+    ]
+}

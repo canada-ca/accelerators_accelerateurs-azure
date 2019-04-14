@@ -1,0 +1,25 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deploymentRGArray": {
+            "value": [
+                {
+                    "name": "Demo-Shared-ADDS",
+                    "resourceGroup": "Demo-Shared-ADDS-RG",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/active-directory/20190319.1/azuredeploy.json",
+                    "parametersFile": "deploy-20-shared-adds.parameters.json"
+                },
+                {
+                    "name": "Demo-ADDS-encrypt-disk",
+                    "resourceGroup": "Demo-Shared-ADDS-RG",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/servers-encryptVMDisks/20190314.4/azuredeploy.json",
+                    "parametersFile": "deploy-60-encryptVMDisk.parameters.json",
+                    "dependsOn": [
+                        "Demo-Shared-ADDS"
+                    ]
+                }
+            ]
+        }
+    }
+}

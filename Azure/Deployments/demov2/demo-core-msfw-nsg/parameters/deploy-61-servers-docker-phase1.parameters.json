@@ -1,0 +1,63 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmArray": {
+            "value": [
+                {
+                    "comment": "Test Linux vm used to present a demo landing web page",
+                    "resourceGroup": "Demo-Shared-Sandbox-RG",
+                    "vmKeyVault": {
+                        "keyVaultResourceGroupName": "Demo-Infra-Keyvault-RG",
+                        "keyVaultName": "Demo-Infra-KV-[unique]"
+                    },
+                    "vm": {
+                        "computerName": "DockerDemo",
+                        "adminUsername": "azureadmin",
+                        "adminPassword": "linuxDefaultPassword",
+                        "vmSize": "Standard_B1s",
+                        "bootDiagnostic": true,
+                        "storageProfile": {
+                            "osDisk": {
+                                "createOption": "fromImage",
+                                "managedDisk": {
+                                    "storageAccountType": "StandardSSD_LRS"
+                                }
+                            },
+                            "dataDisks": [
+                            ],
+                            "imageReference": {
+                                "publisher": "Canonical",
+                                "offer": "UbuntuServer",
+                                "sku": "18.04-LTS",
+                                "version": "latest"
+                            }
+                        }
+                    },
+                    "networkSecurityGroups": {
+                        "name": "nsg",
+                        "properties": {
+                            "securityRules": []
+                        }
+                    },
+                    "networkInterfaces": {
+                        "name": "NIC1",
+                        "acceleratedNetworking": false,
+                        "privateIPAddress": "10.25.21.68",
+                        "vnetResourceGroupName": "Demo-Infra-NetShared-RG",
+                        "vnetName": "Demo-Infra-NetShared-VNET",
+                        "subnetName": "PAZ-Sandbox"
+                    },
+                    "tagValues": {
+                        "Owner": "bernard.maltais@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Validate",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2019-01-11-01"
+                    }
+                }
+            ]
+        }
+    }
+}
