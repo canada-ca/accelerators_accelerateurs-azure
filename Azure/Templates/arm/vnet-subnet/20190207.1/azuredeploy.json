@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string"
+        },
+        "vnetArray": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of vnet and subnets objects."
+            }
+        }
+    },
+    "variables": {
+        "baseVMUrl": "[concat(uri(deployment().properties.templateLink.uri, 'vnet-subnet.json'), parameters('containerSasToken'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat('vnet-subnet-Deploy-', parameters('vnetArray')[copyIndex()].name)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "resourceGroup": "[parameters('vnetArray')[copyIndex()].resourceGroup]",
+            "dependsOn": [],
+            "copy": {
+                    "name": "obj",
+                    "count": "[length(parameters('vnetArray'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "vnetObj": {
+                        "value": "[parameters('vnetArray')[copyIndex()]]"
+                    }
+                },
+                "templateLink": {
+                    "uri": "[variables('baseVMUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }  
+        }
+    ],
+    "outputs": {}
+}

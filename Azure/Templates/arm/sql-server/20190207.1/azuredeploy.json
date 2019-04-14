@@ -1,0 +1,634 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string"
+        },
+        "keyVaultConfig": {
+            "type": "object",
+            "defaultValue": {
+                "existingRGName": "AzPwS01-Infra-Keyvault-RG",
+                "existingVaultName": "AzPwS01-Infra-Keyvault"
+            }
+        },
+        "vnetConfig": {
+            "type": "object"
+        },
+       "location": {
+            "type": "string",
+            "metadata": {
+                "description": "The location of the template deployment"
+            },
+            "defaultValue": "canadacentral"
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Administrator of the new VMs and Domain"
+            }
+        },
+        "dnsServerName": {
+            "type": "string"
+        },
+        "sqlServerConfig":{
+            "type": "object"
+        },
+        "witnessServerConfig":{
+            "type": "object"
+        },
+        "adConfig":{
+            "type": "object"
+        },
+        "templatesBaseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Linked Templates base url"
+            },
+            "defaultValue": "[concat(uri(deployment().properties.templateLink.uri, 'nested'))]"
+        },
+        "scriptsBaseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "DSC Scripts base url"
+            },
+            "defaultValue": "[concat(uri(deployment().properties.templateLink.uri, 'DSC'))]"
+        },
+        "backupConfig": {
+            "type": "object"
+        },
+        "tagValues": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "lbSettings": {
+            "sqlLBFE": "sqlLBFE",
+            "sqlLBBE": "sqlLBBE",
+            "sqlLBName": "sqlLoadBalancer"
+        },
+        "SQLAOProbe": "SQLAlwaysOnEndPointProbe",
+       
+        "vmSettings": {
+            "availabilitySets": {
+                "sqlAvailabilitySetName": "[concat(parameters('sqlServerConfig').deploymentPrefix,'-AS')]"
+            },
+            "rdpPort": 3389
+        },
+        "sqlAOEPName": "[concat(parameters('sqlServerConfig').deploymentPrefix,'-HADR')]",
+        "sqlAOAGName": "[concat(parameters('sqlServerConfig').deploymentPrefix,'-AG')]",
+        "sqlAOListenerName": "[concat(parameters('sqlServerConfig').deploymentPrefix,'L')]",
+        "sharePath": "[concat(parameters('sqlServerConfig').deploymentPrefix,'-FSW')]",
+        "clusterName": "[concat(parameters('sqlServerConfig').deploymentPrefix,'C')]",
+        "sqlwNicName": "[concat(parameters('witnessServerConfig').vmName,'-NIC')]",
+        "sqlSubnetRef": "[concat(variables('derivedIds').vnetID,'/subnets/',parameters('vnetConfig').dbSubnetName)]",
+        "sqllbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbSettings').sqlLBName)]",
+        "derivedIds": {
+            "vnetID": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vnetConfig').existingVnetRG,'/providers/Microsoft.Network/virtualNetworks/', parameters('vnetConfig').existingVnetName)]",
+            "sqlBEAddressPoolID": "[concat(variables('sqllbID'),'/backendAddressPools/',variables('lbSettings').sqlLBBE)]",
+            "sqllbFEConfigID": "[concat(variables('sqllbID'),'/frontendIPConfigurations/',variables('lbSettings').sqlLBFE)]",
+            "sqllbProbeID": "[concat(variables('sqllbID'),'/probes/',variables('SQLAOProbe'))]",
+            "keyVaultId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('keyVaultConfig').existingRGName, '/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultConfig').existingVaultName)]"
+        },
+        "configuration": {
+            "nicTemplateURL": "[concat(parameters('templatesBaseUrl'),'/nic.json', parameters('containerSasToken'))]",
+            "setupLBsUrl": "[concat(parameters('templatesBaseUrl'),'/setupLBs-i.json',parameters('containerSasToken'))]",
+            "creatingNicsUrl": "[concat(parameters('templatesBaseUrl'),'/creatingNICS.json',parameters('containerSasToken'))]",
+            "storageAccount": "[concat(parameters('templatesBaseUrl'),'/storageAccount.json',parameters('containerSasToken'))]",
+            "provisioningVMs": "[concat(parameters('templatesBaseUrl'),'/provisioningVM.json',parameters('containerSasToken'))]",
+            "preparingAlwaysOnSqlServer": "[concat(parameters('templatesBaseUrl'),'/preparingSqlServer.json',parameters('containerSasToken'))]",
+            "configuringAlwaysOn": "[concat(parameters('templatesBaseUrl'),'/configuringAlwaysOn.json',parameters('containerSasToken'))]",
+            "fswModulesURL": "[concat(parameters('scriptsBaseUrl'),'/CreateFileShareWitness.ps1.zip',parameters('containerSasToken'))]",
+            "fswConfigurationFunction": "CreateFileShareWitness.ps1\\CreateFileShareWitness",
+            "sqlAOPrepareModulesURL": "[concat(parameters('scriptsBaseUrl'),'/PrepareAlwaysOnSqlServer.ps1.zip',parameters('containerSasToken'))]",
+            "sqlAOPrepareConfigurationFunction": "PrepareAlwaysOnSqlServer.ps1\\PrepareAlwaysOnSqlServer",
+            "createClusterModulesURL": "[concat(parameters('scriptsBaseUrl'),'/CreateFailoverCluster.ps1.zip',parameters('containerSasToken'))]",
+            "createClusterConfigurationFunction": "CreateFailoverCluster.ps1\\CreateFailoverCluster",
+            "postUpdateVms": "[concat(parameters('templatesBaseUrl'),'/postUpdateVM.json',parameters('containerSasToken'))]"
+        }        
+    },
+    "resources": [
+        {
+            "name": "StorageAccounts",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "comments": "This resource will create storage accounts for SQL Server, File Share Witness and Diagnostics. ",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configuration').storageAccount]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "sqlStorageAccountName": {
+                        "value": "[parameters('sqlServerConfig').sqlStorageAccountName]"
+                    },
+                    "SqlStorageAccountType": {
+                        "value": "[parameters('sqlServerConfig').sqlStorageAccountType]"
+                    },
+                    "tagValues":{
+                         "value": "[parameters('tagValues')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "LoadBalancers",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "Create Load Balancers for SQL",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/StorageAccounts"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configuration').setupLBsUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "sqlLBName": {
+                        "value": "[variables('lbSettings').sqlLBName]"
+                    },
+                    "sqlLBFE": {
+                        "value": "[variables('lbSettings').sqlLBFE]"
+                    },
+                    "sqlLBIPAddress": {
+                        "value": "[parameters('sqlServerConfig').sqlLBIPAddress]"
+                    },
+                    "staticSubnetRef": {
+                        "value": "[variables('sqlSubnetRef')]"
+                    },
+                    "sqlLBBE": {
+                        "value": "[variables('lbSettings').sqlLBBE]"
+                    },
+                    "sqlLBBEID": {
+                        "value": "[variables('derivedIds').sqlBEAddressPoolID]"
+                    },
+                    "sqllbFEConfigID": {
+                        "value": "[variables('derivedIds').sqllbFEConfigID]"
+                    },
+                    "sqllbProbeID": {
+                        "value": "[variables('derivedIds').sqllbProbeID]"
+                    },
+                    "SQLAOProbe": {
+                        "value": "[variables('SQLAOProbe')]"
+                    },
+                    "tagValues":{
+                         "value": "[parameters('tagValues')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "CreatingNetworkInterfaces",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "comments": "Create Nics for SqlServer-0 and SqlServer-1 and fsw",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/LoadBalancers"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configuration').creatingNicsUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "sqlVMName": {
+                        "value": "[parameters('sqlServerConfig').vmName]"
+                    },
+                    "sqlSubnetRef": {
+                        "value": "[variables('sqlSubnetRef')]"
+                    },
+                    "sqlBEAddressPoolID": {
+                        "value": "[variables('derivedIds').sqlBEAddressPoolID]"
+                    },
+                    "sqlwNicName": {
+                        "value": "[variables('sqlwNicName')]"
+                    },
+                    "tagValues":{
+                         "value": "[parameters('tagValues')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "ProvisioningVMs",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/CreatingNetworkInterfaces"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configuration').provisioningVMs]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "sqlAvailabilitySetName": {
+                        "value": "[variables('vmSettings').availabilitySets.sqlAvailabilitySetName]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "adminUsername": {
+                        "value": "[parameters('adminUsername')]"
+                    },
+                    "adminPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[variables('derivedIds').keyVaultId]"
+                            },
+                            "secretName": "server2016DefaultPassword"
+                        }
+                    },
+                    "sqlServerConfig": {
+                        "value": "[parameters('sqlServerConfig')]"
+                    },
+                    "witnessServerConfig": {
+                        "value": "[parameters('witnessServerConfig')]"
+                    },
+                    "tagValues":{
+                         "value": "[parameters('tagValues')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "UpdatingSQLWNic",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [        
+                "Microsoft.Resources/deployments/ProvisioningVMs"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configuration').nicTemplateURL]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "nicName": {
+                        "value": "[variables('sqlwNicName')]"
+                    },
+                    "ipConfigurations": {
+                        "value": [
+                            {
+                                "name": "ipconfig1",
+                                "properties": {
+                                    "privateIPAllocationMethod": "Dynamic",
+                                    "subnet": {
+                                        "id": "[variables('sqlSubnetRef')]"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "tagValues":{
+                         "value": "[parameters('tagValues')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "UpdatingSQL0Nic",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/UpdatingSQLWNic"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configuration').nicTemplateURL]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "nicName": {
+                        "value": "[concat(parameters('sqlServerConfig').vmName, '0-NIC')]"
+                    },
+                    "ipConfigurations": {
+                        "value": [
+                            {
+                                "name": "ipconfig1",
+                                "properties": {
+                                    "privateIPAllocationMethod": "Dynamic",
+                                    "subnet": {
+                                        "id": "[variables('sqlSubnetRef')]"
+                                    },
+                                    "loadBalancerBackendAddressPools": [
+                                        {
+                                            "id": "[variables('derivedIds').sqlBEAddressPoolID]"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "tagValues":{
+                         "value": "[parameters('tagValues')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "UpdatingSQL1Nic",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/UpdatingSQL0Nic"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configuration').nicTemplateURL]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "nicName": {
+                        "value": "[concat(parameters('sqlServerConfig').vmName, '1-NIC')]"
+                    },
+                    "ipConfigurations": {
+                        "value": [
+                            {
+                                "name": "ipconfig1",
+                                "properties": {
+                                    "privateIPAllocationMethod": "Dynamic",
+                                    "subnet": {
+                                        "id": "[variables('sqlSubnetRef')]"
+                                    },
+                                    "loadBalancerBackendAddressPools": [
+                                        {
+                                            "id": "[variables('derivedIds').sqlBEAddressPoolID]"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "tagValues":{
+                         "value": "[parameters('tagValues')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "PreparingAlwaysOnSqlServer",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/UpdatingSQL0Nic"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configuration').preparingAlwaysOnSqlServer]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "sqlVMName": {
+                        "value": "[parameters('sqlServerConfig').vmName]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "adminUsername": {
+                        "value": "[parameters('adminUsername')]"
+                    },
+                    "adminPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[variables('derivedIds').keyVaultId]"
+                            },
+                            "secretName": "server2016DefaultPassword"
+                        }
+                    },
+                    "domainName": {
+                        "value": "[parameters('adConfig').domainName]"
+                    },
+                    "serverOUPath":{
+                        "value": "[parameters('adConfig').serverOUPath]"
+                    },
+                    "accountOUPath":{
+                        "value": "[parameters('adConfig').accountOUPath]"
+                    },
+                    "sqlAOPrepareModulesURL": {
+                        "value": "[variables('configuration').sqlAOPrepareModulesURL]"
+                    },
+                    "sqlAOPrepareConfigurationFunction": {
+                        "value": "[variables('configuration').sqlAOPrepareConfigurationFunction]"
+                    },
+                    "sqlAOEPName": {
+                        "value": "[variables('sqlAOEPName')]"
+                    },
+                    "sqlServerServiceAccountUserName": {
+                        "value": "[parameters('sqlServerConfig').sqlServerServiceAccountUserName]"
+                    },
+                    "sqlServerServiceAccountPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[variables('derivedIds').keyVaultId]"
+                            },
+                            "secretName": "sqlServerServiceAccountPassword"
+                        }
+                    },
+                    "sharePath": {
+                        "value": "[variables('sharePath')]"
+                    },
+                    "sqlwVMName": {
+                        "value": "[parameters('witnessServerConfig').vmName]"
+                    },
+                    "fswModulesURL": {
+                        "value": "[variables('configuration').fswModulesURL]"
+                    },
+                    "fswConfigurationFunction": {
+                        "value": "[variables('configuration').fswConfigurationFunction]"
+                    },
+                    "autoPatchingDay": {
+                        "value": "[parameters('sqlServerConfig').patchingConfig.autoPatchingDay]"
+                    },
+                    "autoPatchingStartHour": {
+                        "value": "[parameters('sqlServerConfig').patchingConfig.autoPatchingStartHour]"
+                    },
+                    "autoPatchingEnable": {
+                        "value": "[parameters('sqlServerConfig').patchingConfig.autoPatchingEnabled]"
+                    },
+                    "numberOfDisks": {
+                        "value": "[parameters('sqlServerConfig').dataDisks.numberOfSqlVMDisks]"
+                    },
+                    "workloadType": {
+                        "value": "[parameters('sqlServerConfig').workloadType]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "ConfiguringAlwaysOn",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/PreparingAlwaysOnSqlServer"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configuration').configuringAlwaysOn]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "sqlVMName": {
+                        "value": "[parameters('sqlServerConfig').vmName]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "adminUsername": {
+                        "value": "[parameters('adminUsername')]"
+                    },
+                    "adminPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[variables('derivedIds').keyVaultId]"
+                            },
+                            "secretName": "server2016DefaultPassword"
+                        }
+                    },
+                    "domainName": {
+                        "value": "[parameters('adConfig').domainName]"
+                    },
+                    "serverOUPath":{
+                        "value": "[parameters('adConfig').serverOUPath]"
+                    },
+                    "accountOUPath":{
+                        "value": "[parameters('adConfig').accountOUPath]"
+                    },
+                    "sqlAOEPName": {
+                        "value": "[variables('sqlAOEPName')]"
+                    },
+                    "sqlServerServiceAccountUserName": {
+                        "value": "[parameters('sqlServerConfig').sqlServerServiceAccountUserName]"
+                    },
+                    "sqlServerServiceAccountPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[variables('derivedIds').keyVaultId]"
+                            },
+                            "secretName": "sqlServerServiceAccountPassword"
+                        }
+                    },
+                    "createClusterModulesURL": {
+                        "value": "[variables('configuration').createClusterModulesURL]"
+                    },
+                    "createClusterConfigurationFunction": {
+                        "value": "[variables('configuration').createClusterConfigurationFunction]"
+                    },
+                    "clusterName": {
+                        "value": "[variables('clusterName')]"
+                    },
+                    "sharePath": {
+                        "value": "[variables('sharePath')]"
+                    },
+                    "sqlAOAGName": {
+                        "value": "[variables('sqlAOAGName')]"
+                    },
+                    "sqlAOListenerName": {
+                        "value": "[variables('sqlAOListenerName')]"
+                    },
+                    "sqlAOListenerPort": {
+                        "value": "[parameters('sqlServerConfig').sqlAOListenerPort]"
+                    },
+                    "sqlLBName": {
+                        "value": "[variables('lbSettings').sqlLBName]"
+                    },
+                    "sqlLBIPAddress": {
+                        "value": "[parameters('sqlServerConfig').sqlLBIPAddress]"
+                    },
+                    "dnsServerName": {
+                        "value": "[parameters('dnsServerName')]"
+                    },
+                    "sqlwVMName": {
+                        "value": "[parameters('witnessServerConfig').vmName]"
+                    },
+                    "numberOfDisks": {
+                        "value": "[parameters('sqlServerConfig').dataDisks.numberOfSqlVMDisks]"
+                    },
+                    "workloadType": {
+                        "value": "[parameters('sqlServerConfig').workloadType]"
+                    },
+                    "sqlDatabases": {
+                        "value": "[parameters('sqlServerConfig').sqlDatabases]"
+                    }
+                }
+            }
+        },
+        {
+           "name": "[concat('PostUpdateVM-SQLServer-', copyIndex())]",
+            "apiVersion": "2018-05-01",
+            "type": "Microsoft.Resources/deployments",
+            "copy": {
+                "name": "sqlvirtualMachineLoop",
+                "count": 2
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configuration').postUpdateVms]"
+                },
+                "parameters": {
+                    "vmName": {
+                        "value": "[concat(parameters('sqlServerConfig').vmName, copyindex())]"
+                    },
+                    "backupConfig": {
+                        "value": "[parameters('backupconfig')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "Microsoft.Resources/deployments/ConfiguringAlwaysOn"
+            ]
+        },
+        {
+            "name": "PostUpdateVM-SQLWitness",
+             "apiVersion": "2018-05-01",
+             "type": "Microsoft.Resources/deployments",
+             "properties": {
+                 "mode": "Incremental",
+                 "templateLink": {
+                     "uri": "[variables('configuration').postUpdateVms]"
+                 },
+                 "parameters": {
+                     "vmName": {
+                         "value": "[parameters('witnessServerConfig').vmName]"
+                     },
+                     "backupConfig": {
+                         "value": "[parameters('backupconfig')]"
+                     }
+                 }
+             },
+             "dependsOn": [
+                 "Microsoft.Resources/deployments/ConfiguringAlwaysOn"
+             ]
+         }
+    ],
+    "outputs": {}
+}

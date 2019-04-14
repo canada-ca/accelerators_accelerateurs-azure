@@ -1,0 +1,44 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmObject": {
+      "type": "object",
+      "metadata": {
+        "description": "Object of MS firewall objects."
+      }
+    },
+    "adPassword": {
+      "type": "securestring",
+      "metadata": {
+          "description": "Password for the account to join the domain."
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmObject').vm.computerName,'/joinWindowsDomain')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "JsonADDomainExtension",
+        "typeHandlerVersion": "1.3",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "Name": "[parameters('vmObject').domainObject.domainToJoin]",
+          "OUPath": "[parameters('vmObject').domainObject.ouPath]",
+          "User": "[concat(parameters('vmObject').domainObject.domainToJoin, '\\', parameters('vmObject').domainObject.domainUsername)]",
+          "Restart": "true",
+          "Options": "[parameters('vmObject').domainObject.domainJoinOptions]"
+        },
+        "protectedSettings": {
+          "Password": "[parameters('adPassword')]"
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

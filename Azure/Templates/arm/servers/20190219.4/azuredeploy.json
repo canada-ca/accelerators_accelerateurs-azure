@@ -1,0 +1,68 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string"
+        },
+        "vmArray": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of VM objects."
+            }
+        }
+    },
+    "variables": {
+        "baseVMUrl": "[concat(uri(deployment().properties.templateLink.uri, 'servers.json'), parameters('containerSasToken'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat('vmGroupdeploy', parameters('vmArray')[copyIndex()].vm.computerName)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "resourceGroup": "[parameters('vmArray')[copyIndex()].resourceGroup]",
+            "dependsOn": [],
+            "copy": {
+                    "name": "vmObj",
+                    "count": "[length(parameters('vmArray'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "adminPasswordWin": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultResourceGroupName, '/providers/Microsoft.KeyVault/vaults/', parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultName)]"
+                            },
+                            "secretName": "server2016DefaultPassword"
+                        }
+                    },
+                    "adminPasswordLin": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultResourceGroupName, '/providers/Microsoft.KeyVault/vaults/', parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultName)]"
+                            },
+                            "secretName": "linuxDefaultPassword"
+                        }
+                    }, 
+                    "adPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultResourceGroupName, '/providers/Microsoft.KeyVault/vaults/', parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultName)]"
+                            },
+                            "secretName": "adDefaultPassword"
+                        }
+                    },
+                    "vmObject": { "value": "[parameters('vmArray')[copyIndex()]]" },
+                    "containerSaSToken": {"value": "[parameters('containerSasToken')]"},
+                    "keyVaultId": {"value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultResourceGroupName, '/providers/Microsoft.KeyVault/vaults/', parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultName)]"}
+                },
+                "templateLink": {
+                    "uri": "[variables('baseVMUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }  
+        }
+    ],
+    "outputs": {}
+}

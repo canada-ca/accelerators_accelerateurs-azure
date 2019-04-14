@@ -1,0 +1,25 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deploymentSubArray": {
+            "value": [
+                {
+                    "name": "storage-vmdiag-mgmt-rds",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/storage/20190311.1/azuredeploysub.json",
+                    "parametersFile": "deploy-55-storage-mgmt-rds.parameters.json"
+                },
+                {
+                    "name": "dockerdemo-Shared-Sandbox",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/servers/20190326.1/azuredeploysub.json",
+                    "parametersFile": "deploy-60-servers.parameters.json",
+                    "dependsOn": [
+                        "storage-vmdiag-mgmt-rds"
+                    ]
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,1 @@
+To encode the firewall license and configuration to deploy on the firewall edit the azureinit.conf file and base64 encode the content. Use this base64 encoded version as the "FirewallConfig": "base64 encoded string goes here" content in parameters\deploy-50-fortigate-core.parameters.json 

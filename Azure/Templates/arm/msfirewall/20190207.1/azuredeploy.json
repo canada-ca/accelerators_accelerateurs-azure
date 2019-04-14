@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string"
+        },
+        "msFirewallArray": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of firewall objects."
+            }
+        }
+    },
+    "variables": {
+        "baseVMUrl": "[concat(uri(deployment().properties.templateLink.uri, 'msfirewall.json'), parameters('containerSasToken'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat('msfirewall-Deploy-', parameters('msFirewallArray')[copyIndex()].vnet)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "resourceGroup": "[parameters('msFirewallArray')[copyIndex()].resourceGroup]",
+            "dependsOn": [],
+            "copy": {
+                    "name": "obj",
+                    "count": "[length(parameters('msFirewallArray'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "msfirewallObj": {
+                        "value": "[parameters('msFirewallArray')[copyIndex()]]"
+                    }
+                },
+                "templateLink": {
+                    "uri": "[variables('baseVMUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }  
+        }
+    ],
+    "outputs": {}
+}

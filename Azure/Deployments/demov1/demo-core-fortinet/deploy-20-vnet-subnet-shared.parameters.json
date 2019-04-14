@@ -1,0 +1,107 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetArray": {
+            "value": [
+                {
+                    "name": "Demo-Infra-NetShared-VNET",
+                    "addressPrefixes": [
+                        "10.25.16.0/20"
+                    ],
+                    "subnets": [
+                        {
+                            "name": "PAZ-Interconnect",
+                            "properties": {
+                                "addressPrefix": "10.25.16.16/28"
+                            }
+                        },
+                        {
+                            "name": "APP-Interconnect",
+                            "properties": {
+                                "addressPrefix": "10.25.16.32/28"
+                            }
+                        },
+                        {
+                            "name": "DB-Interconnect",
+                            "properties": {
+                                "addressPrefix": "10.25.16.48/28"
+                            }
+                        },
+                        {
+                            "name": "PAZ-CRM",
+                            "properties": {
+                                "addressPrefix": "10.25.21.0/26",
+                                "routeTableName": "Demo-Infra-NetShared-PAZ-CRM-RT"
+                            }
+                        },
+                        {
+                            "name": "APP-CRM",
+                            "properties": {
+                                "addressPrefix": "10.25.25.0/26",
+                                "routeTableName": "Demo-Infra-NetShared-APP-CRM-RT"
+                            }
+                        },
+                        {
+                            "name": "DB-CRM",
+                            "properties": {
+                                "addressPrefix": "10.25.29.0/26",
+                                "routeTableName": "Demo-Infra-NetShared-DB-CRM-RT"
+                            }
+                        },
+                        {
+                            "name": "PAZ-Sandbox",
+                            "properties": {
+                                "addressPrefix": "10.25.21.64/26",
+                                "routeTableName": "Demo-Infra-NetShared-PAZ-Sandbox-RT"
+                            }
+                        },
+                        {
+                            "name": "APP-Sandbox",
+                            "properties": {
+                                "addressPrefix": "10.25.25.64/26",
+                                "routeTableName": "Demo-Infra-NetShared-APP-Sandbox-RT"
+                            }
+                        },
+                        {
+                            "name": "DB-Sandbox",
+                            "properties": {
+                                "addressPrefix": "10.25.29.64/26",
+                                "routeTableName": "Demo-Infra-NetShared-DB-Sandbox-RT"
+                            }
+                        },
+                        {
+                            "name": "APP-RDS",
+                            "properties": {
+                                "addressPrefix": "10.25.24.0/28",
+                                "routeTableName": "Demo-Infra-NetShared-APP-RDS-RT"
+                            }
+                        },
+                        {
+                            "name": "APP-AD",
+                            "properties": {
+                                "addressPrefix": "10.25.24.16/28",
+                                "routeTableName": "Demo-Infra-NetShared-APP-AD-RT"
+                            }
+                        },
+                        {
+                            "name": "SharedToCore",
+                            "properties": {
+                                "addressPrefix": "10.25.16.0/28",
+                                "routeTableName": "Demo-Infra-NetShared-SharedToCore-RT"
+                            }
+                        }
+                    ],
+                    "tagValues": {
+                        "Owner": "cloudteam@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Sandbox",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2019-01-30-01"
+                    }
+                }
+            ]
+        }
+    }
+}

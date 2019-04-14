@@ -1,0 +1,82 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": { "value": "[SasToken]" },
+        "routeTables": {
+            "value" : [
+                {
+                    "resourceGroup": "rgCore", "name": "routeTable-corenet",
+                    "properties": {
+                            "disableBgpRoutePropagation": false,
+                            "routes": [
+                                { "name": "management", "properties": { "addressPrefix": "10.250.0.0/20", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.250.3.4" }},
+                                { "name": "default", "properties": { "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.96.96.4" }}
+                            ]
+                    },
+                    "tagValues": { "businessOwner": "PSPC-CCC", "costCenter": "PSPC-EA", "deploymentStage": "Sandbox", "dataProfile": "Unclassified", "version": "0.1" }
+                },
+                {
+                    "resourceGroup": "rgCore", "name": "routeTable-vpn",
+                    "properties": {
+                            "disableBgpRoutePropagation": false,
+                            "routes": [
+                                { "name": "management", "properties": { "addressPrefix": "10.250.0.0/20", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.96.96.132" }}
+                            ]
+                    },
+                    "tagValues": { "businessOwner": "PSPC-CCC", "costCenter": "PSPC-EA", "deploymentStage": "Sandbox", "dataProfile": "Unclassified", "version": "0.1" }
+                },
+                {
+                    "resourceGroup": "rgManagement", "name": "routeTable-management-paz",
+                    "properties": {
+                            "disableBgpRoutePropagation": false,
+                            "routes": [
+                                { "name": "management-app", "properties": { "addressPrefix": "10.250.1.0/24", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.250.0.4" }},
+                                { "name": "management-db", "properties": { "addressPrefix": "10.250.2.0/24", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.250.0.4" }},
+                                { "name": "core-vpn", "properties": { "addressPrefix": "10.96.96.128/28", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.250.0.4" }},
+                                { "name": "Default", "properties": { "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.250.0.4" }}
+                            ]
+                    },
+                    "tagValues": { "businessOwner": "PSPC-CCC", "costCenter": "PSPC-EA", "deploymentStage": "Sandbox", "dataProfile": "Unclassified", "version": "0.1" }
+                },
+                {
+                    "resourceGroup": "rgManagement", "name": "routeTable-management-app",
+                    "properties": {
+                            "disableBgpRoutePropagation": false,
+                            "routes": [
+                                { "name": "management-paz", "properties": { "addressPrefix": "10.250.0.0/24", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.250.1.4" }},
+                                { "name": "management-db", "properties": { "addressPrefix": "10.250.2.0/24", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.250.1.4" }},
+                                { "name": "core-vpn", "properties": { "addressPrefix": "10.96.96.128/28", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.250.1.4" }},
+                                { "name": "Default", "properties": { "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.250.1.4" }}
+                            ]
+                    },
+                    "tagValues": { "businessOwner": "PSPC-CCC", "costCenter": "PSPC-EA", "deploymentStage": "Sandbox", "dataProfile": "Unclassified", "version": "0.1" }
+                },
+                {
+                    "resourceGroup": "rgManagement", "name": "routeTable-management-db",
+                    "properties": {
+                            "disableBgpRoutePropagation": false,
+                            "routes": [
+                                { "name": "management-app", "properties": { "addressPrefix": "10.250.1.0/24", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.250.2.4" }},
+                                { "name": "management-paz", "properties": { "addressPrefix": "10.250.0.0/24", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.250.2.4" }},
+                                { "name": "core-vpn", "properties": { "addressPrefix": "10.96.96.128/28", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.250.2.4" }},
+                                { "name": "Default", "properties": { "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.250.2.4" }}
+                            ]
+                    },
+                    "tagValues": { "businessOwner": "PSPC-CCC", "costCenter": "PSPC-EA", "deploymentStage": "Sandbox", "dataProfile": "Unclassified", "version": "0.1" }
+                },
+                {
+                    "resourceGroup": "rgManagement", "name": "routeTable-management-to-core",
+                    "properties": {
+                            "disableBgpRoutePropagation": false,
+                            "routes": [
+                                { "name": "core-vpn", "properties": { "addressPrefix": "10.96.96.128/28", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.96.96.4" }},
+                                { "name": "Default", "properties": { "addressPrefix": "0.0.0.0/0", "nextHopType": "VirtualAppliance", "nextHopIpAddress": "10.96.96.4" }}
+                            ]
+                    },
+                    "tagValues": { "businessOwner": "PSPC-CCC", "costCenter": "PSPC-EA", "deploymentStage": "Sandbox", "dataProfile": "Unclassified", "version": "0.1" }
+                }
+             ]
+        }
+    }
+}

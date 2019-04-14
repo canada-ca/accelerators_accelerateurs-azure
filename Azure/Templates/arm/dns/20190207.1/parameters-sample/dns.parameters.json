@@ -1,0 +1,25 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "DNSRecords": {
+            "value": [
+                {
+                    "resourceGroup": "rgDNS", "dnsZoneName": "pspc.ducourier.com",
+                    "ARecords": [
+                        {"name": "mgmt", "properties": { "TTL": 60, "ARecords": [ { "ipv4Address": "13.88.227.200" } ], "targetResource": {}}},
+                        {"name": "mgmtin", "properties": {"TTL": 120, "ARecords": [ { "ipv4Address": "10.250.3.4" } ], "targetResource": {}}},
+                        {"name": "core", "properties": {"TTL": 60, "ARecords": [ { "ipv4Address": "13.71.165.7" } ], "targetResource": {}}},
+                        {"name": "corein", "properties": {"TTL": 120, "ARecords": [ { "ipv4Address": "10.96.96.4" } ], "targetResource": {}}}
+                    ],
+                    "CNAMERecords": [
+                        {"name": "mgmtC", "properties": {"TTL": 60, "CNAMERecord": { "cname": "mgmt.pspc.ducourier.com" }, "targetResource": {}}},
+                        {"name": "mgmtinc", "properties": {"TTL": 120, "CNAMERecord": { "cname": "mgmtin.pspc.ducourier.com" }, "targetResource": {}}},
+                        {"name": "corec", "properties": {"TTL": 60, "CNAMERecord": { "cname": "core.pspc.ducourier.com" }, "targetResource": {}}},
+                        {"name": "coreinc", "properties": {"TTL": 120, "CNAMERecord": { "cname": "corein.pspc.ducourier.com" }, "targetResource": {}}}
+                    ]
+                }
+            ]
+        }
+    }
+}

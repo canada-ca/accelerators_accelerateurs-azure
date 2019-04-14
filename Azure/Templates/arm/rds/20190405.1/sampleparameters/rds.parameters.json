@@ -1,0 +1,36 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "value": "azureadmin"
+        },
+        "adminPassword": {
+            "value": "P@ssw0rd1234"
+        },
+        "adDomainName": {
+            "value": "mgmt.demo.gc.ca.local"
+        },
+        "dnsServerPrivateIp": {
+            "value": "10.25.8.20"
+        },
+        "adVnetRG": {
+            "value": "Demo-Infra-NetMGMT-RG"
+        },
+        "adVnetName": {
+            "value": "Demo-Infra-NetMGMT-VNET"
+        },
+        "adSubnetName": {
+            "value": "APP-AD"
+        },
+        "numberOfRdshInstances": {
+            "value": 1
+        },
+        "imageSKU": {
+            "value": "2016-Datacenter"
+        },
+        "rdshVmSize": {
+            "value": "Standard_A4_v2"
+        }
+    }
+}

@@ -1,0 +1,99 @@
+{  
+    "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion":"1.0.0.0",
+    "parameters":{  
+       "location":{  
+          "type":"string",
+          "defaultValue": "[resourceGroup().location]"
+       },
+      "sqlVMName":{  
+          "type":"string"
+       },
+       "sqlSubnetRef":{  
+          "type":"string"
+       },
+       "sqlBEAddressPoolID":{  
+          "type":"string"
+       },
+       "sqlwNicName":{  
+          "type":"string"
+       },
+       "tagValues": {
+           "type": "object"
+       }
+
+    },
+    "resources":[  
+       {  
+          "name":"[concat(parameters('sqlVMName'),'1-NIC')]",
+          "type":"Microsoft.Network/networkInterfaces",
+          "location":"[parameters('location')]",
+          "tags": "[parameters('tagValues')]",
+          "apiVersion":"2018-10-01",
+          "properties":{  
+             "ipConfigurations":[  
+                {  
+                   "name":"ipconfig1",
+                   "properties":{  
+                      "privateIPAllocationMethod":"Dynamic",
+                      "subnet":{  
+                         "id":"[parameters('sqlSubnetRef')]"
+                      },
+                      "loadBalancerBackendAddressPools":[  
+                         {  
+                            "id":"[parameters('sqlBEAddressPoolID')]"
+                         }
+                      ]
+                   }
+                }
+             ],
+             "enableAcceleratedNetworking": true
+          }
+       },
+       {  
+          "name":"[concat(parameters('sqlVMName'),'0-NIC')]",
+          "type":"Microsoft.Network/networkInterfaces",
+          "location":"[parameters('location')]",
+          "tags": "[parameters('tagValues')]",
+          "apiVersion":"2018-04-01",
+          "properties":{  
+             "ipConfigurations":[  
+                {  
+                   "name":"ipconfig1",
+                   "properties":{  
+                      "privateIPAllocationMethod":"Dynamic",
+                      "subnet":{  
+                         "id":"[parameters('sqlSubnetRef')]"
+                      },
+                      "loadBalancerBackendAddressPools":[  
+                         {  
+                            "id":"[parameters('sqlBEAddressPoolID')]"
+                         }
+                      ]
+                   }
+                }
+             ]
+          }
+       },
+       {  
+          "name":"[parameters('sqlwNicName')]",
+          "type":"Microsoft.Network/networkInterfaces",
+          "location":"[parameters('location')]",
+          "tags": "[parameters('tagValues')]",
+          "apiVersion":"2018-04-01",
+          "properties":{  
+             "ipConfigurations":[  
+                {  
+                   "name":"ipconfig1",
+                   "properties":{  
+                      "privateIPAllocationMethod":"Dynamic",
+                      "subnet":{  
+                         "id":"[parameters('sqlSubnetRef')]"
+                      }
+                   }
+                }
+             ]
+          }
+       }
+    ]
+ }

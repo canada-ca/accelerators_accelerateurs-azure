@@ -1,0 +1,55 @@
+enable
+
+
+config terminal
+
+
+logging enable
+logging asdm Informational
+!
+interface GigabitEthernet0/0
+ nameif PAZ-Interconnect
+ security-level 50
+ ip address dhcp
+ no shutdown
+!
+interface GigabitEthernet0/1
+ nameif APP-Interconnect
+ security-level 60
+ ip address dhcp
+ no shutdown
+!
+interface GigabitEthernet0/2
+ nameif DB-Interconnect
+ security-level 70
+ ip address dhcp
+ no shutdown
+!
+dhcp-client client-id interface PAZ-Interconnect
+!
+interface Management0/0
+ nameif MgmtToCore
+!
+same-security-traffic permit intra-interface
+!
+access-list MgmtToCore_access_in line 1 extended permit ip any any 
+access-group MgmtToCore_access_in in interface MgmtToCore
+!
+http server enable
+http 0.0.0.0 0.0.0.0 MgmtToCore
+http 0.0.0.0 0.0.0.0 PAZ-Interconnect
+http 0.0.0.0 0.0.0.0 APP-Interconnect
+http 0.0.0.0 0.0.0.0 DB-Interconnect
+ssh 0.0.0.0 0.0.0.0 PAZ-Interconnect
+ssh 0.0.0.0 0.0.0.0 APP-Interconnect
+ssh 0.0.0.0 0.0.0.0 DB-Interconnect
+!
+route MgmtToCore 10.25.16.0 255.255.240.0 10.25.0.1 1
+route DB-Interconnect 10.25.12.0 255.255.252.0 10.25.0.49 1
+route PAZ-Interconnect 10.25.4.0 255.255.252.0 10.25.0.17 1
+route APP-Interconnect 10.25.8.0 255.255.252.0 10.25.0.33 1
+!
+end 
+wr mem 
+exit
+

@@ -1,0 +1,60 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "FortiGateName": {
+            "value": "AzPwS01FWCore01"
+        },
+        "adminUsername": {
+            "value": "fwadmin"
+        },
+        "adminPassword": {
+            "value": "FwAdm1n123456"
+        },
+        "FortiGateImageSKU": {
+            "value": "fortinet_fg-vm"
+        },
+        "FortiGateImageVersion": {
+            "value": "6.0.3"
+        },
+        "instanceType": {
+            "value": "Standard_F4s"
+        },
+        "publicIPAddressName": {
+            "value": "RDSPubIP1"
+        },
+        "publicIPAddressType": {
+            "value": "Static"
+        },
+        "publicIPNewOrExistingOrNone": {
+            "value": "existing"
+        },
+        "publicIPResourceGroup": {
+            "value": "AzPwS01-Infra-Temp-RG"
+        },
+        "location": {
+            "value": "canadacentral"
+        },
+        "vnetNewOrExisting": {
+            "value": "existing"
+        },
+        "vnetName": {
+            "value": "AzPwS01-Infra-NetCore-VNET"
+        },
+        "vnetResourceGroup": {
+            "value": "AzPwS01-Infra-NetCore-RG"
+        },
+        "Subnet1Name": {
+            "value": "Outside"
+        },
+        "Subnet1Prefix": {
+            "value": "100.96.96.128/26"
+        },
+        "Subnet2Name": {
+            "value": "CoreToSpokes"
+        },
+        "Subnet2Prefix": {
+            "value": "100.96.96.0/25"
+        }
+    }
+}

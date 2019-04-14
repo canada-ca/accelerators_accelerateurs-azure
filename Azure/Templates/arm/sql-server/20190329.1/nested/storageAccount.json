@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+        "type": "string"
+      },
+    "sqlStorageAccountName": {
+      "type": "string"
+    },
+    "SqlStorageAccountType": {
+      "type": "string",
+      "defaultValue":"Standard_LRS"
+    },
+    "tagValues": {
+        "type": "object"
+    }
+  },
+  "resources": [
+     {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[concat('sqldiag',uniquestring(parameters('sqlStorageAccountName')))]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tagValues')]",
+      "properties": {
+        "accountType": "[parameters('SqlStorageAccountType')]"
+      }
+    }
+  ],
+  "outputs": {}
+}

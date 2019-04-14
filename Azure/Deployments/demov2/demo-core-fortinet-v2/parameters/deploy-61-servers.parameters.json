@@ -1,0 +1,74 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmArray": {
+            "value": [
+                {
+                    "comment": "Test Linux vm used to present a demo landing web page",
+                    "resourceGroup": "Demo-Shared-Sandbox-RG",
+                    "vmKeyVault": {
+                        "keyVaultResourceGroupName": "Demo-Infra-Keyvault-RG",
+                        "keyVaultName": "Demo-Infra-KV-[unique]"
+                    },
+                    "vm": {
+                        "computerName": "DockerDemo",
+                        "adminUsername": "azureadmin",
+                        "adminPassword": "ubuntuDefaultPassword",
+                        "shutdownConfig": {
+                            "autoShutdownStatus": "Enabled",
+                            "autoShutdownTime": "17:00",
+                            "autoShutdownTimeZone": "Eastern Standard Time",
+                            "autoShutdownNotificationStatus": "Disabled"
+                        },
+                        "linuxScript": {
+                            "comment": "The code in script is coded with cat script.sh | base64 -w0",
+                            "protectedSettings": {
+                                "script": "H4sIAFdzgFwCA02QwWrDMAyG73mKf83ZSQalZD3sPthxsLNiq403Rza2yqDs4eduLuwmpP/7hNQ/jIuXsaxd3/V4i2Cx0TF0ZZx8YOSLHGFJUWz2SYey4hvnq08wT7VaqPBhD/OFCc/3zHLYX6uP7Rqxe5GiFIKXM1y0n5wxDMOuKxcXUYQS/F+gTRv1Tl5vyOOEwjaKKzjFfDdoRZWyNlVgTjXZ0NdI7oZWSslLjact5g+S0fEW2+YmqtfBOJiEeZqn4zzBGKGNYa01geRXlKh+g7Ib/zWPgZSLdt0PYKOTOEEBAAA="
+                            }
+                        },
+                        "vmSize": "Standard_B1s",
+                        "bootDiagnostic": true,
+                        "storageProfile": {
+                            "osDisk": {
+                                "createOption": "fromImage",
+                                "managedDisk": {
+                                    "storageAccountType": "StandardSSD_LRS"
+                                }
+                            },
+                            "dataDisks": [
+                            ],
+                            "imageReference": {
+                                "publisher": "Canonical",
+                                "offer": "UbuntuServer",
+                                "sku": "18.04-LTS",
+                                "version": "latest"
+                            }
+                        }
+                    },
+                    "networkSecurityGroups": {
+                        "name": "nsg",
+                        "properties": {
+                            "securityRules": []
+                        }
+                    },
+                    "networkInterfaces": {
+                        "name": "NIC1",
+                        "acceleratedNetworking": false,
+                        "vnetResourceGroupName": "Demo-Infra-NetShared-RG",
+                        "vnetName": "Demo-Infra-NetShared-VNET",
+                        "subnetName": "PAZ-Sandbox"
+                    },
+                    "tagValues": {
+                        "Owner": "bernard.maltais@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Validate",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2019-01-11-01"
+                    }
+                }
+            ]
+        }
+    }
+}

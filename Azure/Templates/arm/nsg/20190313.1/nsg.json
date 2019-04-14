@@ -1,0 +1,52 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "NSGObj": {
+            "type": "object",
+            "metadata": {
+                "description": "Object containing NSG security rules parameters"
+            }
+        }
+    },
+    "functions": [
+        {
+            "namespace": "pspc",
+            "members": {
+                "getExpandedSecurityRule": {
+                    "parameters": [
+                        {
+                            "name": "rule",
+                            "type": "Object"
+                        }
+                    ],
+                    "output": {
+                        "type": "Object",
+                        "value": "[parameters('rule')]"
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "apiVersion": "2017-09-01",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('NSGObj').networkSecurityGroupName]",
+            "location": "[resourceGroup().location]",
+            "tags": "[parameters('NSGObj').tagValues]",
+            "properties": {
+                "copy": [
+                    {
+                        "name": "securityRules",
+                        "count": "[length(parameters('NSGObj').securityRules)]",
+                        "input": {
+                            "name": "[parameters('NSGObj').securityRules[copyIndex('securityRules')].name]",
+                            "properties": "[pspc.getExpandedSecurityRule(parameters('NSGObj').securityRules[copyIndex('securityRules')].properties)]"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

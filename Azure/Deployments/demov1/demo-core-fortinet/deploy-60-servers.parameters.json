@@ -1,0 +1,61 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmArray": {
+            "value": [
+                {
+                    "comment": "This Windows vm is the RDS Jumpbox to manage the environmnet without the RDS Environment",
+                    "resourceGroup": "Demo-MGMT-RDS-RG",
+                    "vmKeyVault": {
+                        "keyVaultResourceGroupName": "Demo-Infra-Keyvault-RG",
+                        "keyVaultName": "Demo-Infra-KV-[unique]"
+                    },
+                    "vm": {
+                        "computerName": "DemoJump01",
+                        "adminUsername": "azureadmin",
+                        "licenseType": "Windows_Server",
+                        "vmSize": "Standard_B2S",
+                        "bootDiagnostic": true,
+                        "storageProfile": {
+                            "imageReference": {
+                                "publisher": "MicrosoftWindowsServer",
+                                "offer": "WindowsServer",
+                                "sku": "2016-Datacenter",
+                                "version": "latest"
+                            },
+                            "dataDisks": [],
+                            "osDisk": {
+                                "createOption": "fromImage",
+                                "managedDisk": {
+                                    "storageAccountType": "StandardSSD_LRS"
+                                }
+                            }
+                        }
+                    },
+                    "networkSecurityGroups": {
+                        "name": "nsg",
+                        "properties": {
+                            "securityRules": []
+                        }
+                    },
+                    "networkInterfaces": {
+                        "name": "NIC1",
+                        "acceleratedNetworking": false,
+                        "vnetResourceGroupName": "Demo-Infra-NetCore-RG",
+                        "vnetName": "Demo-Infra-NetCore-VNET",
+                        "subnetName": "CoreToSpokes"
+                    },
+                    "tagValues": {
+                        "Owner": "yann.gagnon@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Sandbox",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2019-01-11-01"
+                    }
+                }
+            ]
+        }
+    }
+}

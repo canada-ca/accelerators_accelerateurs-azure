@@ -1,0 +1,56 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URI where artifacts required by this template are located including a trailing '/'"
+            },
+            "defaultValue": "[deployment().properties.templateLink.uri]"
+        },
+        "_debugLevel": {
+            "type": "string",
+            "defaultValue": "none"
+        },
+        "ASArray": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of Availability Set objects."
+            }
+        }
+    },
+    "variables": {
+        "baseVMUrl": "[concat(uri(parameters('_artifactsLocation'), 'availabilityset.json'), parameters('containerSasToken'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat('Availabilityset-Deploy', parameters('ASArray')[copyIndex()].name)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "copy": {
+                    "name": "obj",
+                    "count": "[length(parameters('ASArray'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "ASObj": {
+                        "value": "[parameters('ASArray')[copyIndex()]]"
+                    }
+                },
+                "templateLink": {
+                    "uri": "[variables('baseVMUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "debugSetting": {
+                    "detailLevel": "[parameters('_debugLevel')]"
+                }
+            }  
+        }
+    ]
+}

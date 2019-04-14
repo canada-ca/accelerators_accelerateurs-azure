@@ -1,0 +1,71 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSaSToken":{
+            "type": "string"
+        },
+        "computerName":{
+            "type": "string"
+        },
+        "scriptsBaseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "DSC Scripts base url"
+            },
+            "defaultValue": "[concat(uri(deployment().properties.templateLink.uri, 'DSC'))]"
+        },
+        "sqlLb":{
+            "type": "string"
+        },
+        "adminUsername":{
+            "type": "string"
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "password passed in by keyvault"
+            }
+        },
+        "tagValues":{
+            "type": "object"
+        }
+    },
+    "variables": {
+        "sqlModuleUrl": "[concat(parameters('scriptsBaseUrl'),'/PrepareSqlServer.ps1.zip', parameters('containerSasToken'))]",
+        "rsConfigurationConfigurationFunction": "PrepareRsServer.ps1\\PrepareSSRSServer"
+    },
+    
+    "resources": [
+        {
+            "apiVersion": "2018-06-01",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('computerName'), '/configureSSRS')]",
+            "location": "[resourceGroup().location]",
+            "tags": "[parameters('tagValues')]",
+            "properties": {
+              "publisher": "Microsoft.Powershell",
+              "type": "DSC",
+              "typeHandlerVersion": "2.19",
+              "autoUpgradeMinorVersion": true,
+              "settings": {
+                "modulesUrl": "[variables('sqlModuleUrl')]",
+                "configurationFunction": "[variables('rsConfigurationConfigurationFunction')]",
+                "properties": {
+                  "SQLSAAdminAuthCreds": {
+                    "userName": "[parameters('adminUserName')]",
+                    "Password": "privateSettingsRef:SAPassword"
+                  },
+                  "CatalogMachine": "[parameters('sqlLb')]"
+                }
+              },
+              "protectedSettings": {
+                "Items": {
+                  "SAPassword": "[parameters('adminPassword')]"
+                }
+              }
+            }
+          }
+    ],
+    "outputs": {}
+}

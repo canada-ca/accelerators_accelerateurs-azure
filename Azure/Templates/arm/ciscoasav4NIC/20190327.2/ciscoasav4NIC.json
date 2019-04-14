@@ -1,0 +1,262 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "fwObject": {
+            "type": "object"
+        },
+        "containerSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URI where artifacts required by this template are located including a trailing '/'"
+            },
+            "defaultValue": "[deployment().properties.templateLink.uri]"
+        }
+    },
+    "variables": {
+        "firewallURI": "[concat(uri(parameters('_artifactsLocation'), 'nested/firewall.json'), parameters('containerSasToken'))]",
+        "vnetID": "[resourceId(parameters('fwObject').virtualNetworkRG,'Microsoft.Network/virtualNetworks', parameters('fwObject').virtualNetworkName)]",
+        "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', parameters('fwObject').Subnet1Name)]",
+        "subnet2Ref": "[concat(variables('vnetID'),'/subnets/', parameters('fwObject').Subnet2Name)]",
+        "subnet3Ref": "[concat(variables('vnetID'),'/subnets/', parameters('fwObject').Subnet3Name)]",
+        "subnet4Ref": "[concat(variables('vnetID'),'/subnets/', parameters('fwObject').Subnet4Name)]",
+        "storageAccountName": "[concat(pspc.storageName(parameters('fwObject').storageAccountName), uniquestring(resourceGroup().id))]",
+        "publicIPDnsLabel": "[concat(parameters('fwObject').publicIPDnsLabel, uniquestring(resourceGroup().id))]"
+    },
+    "functions": [
+        {
+            "namespace": "pspc",
+            "members": {
+                "objPublicIPAddressConfig": {
+                    "parameters": [
+                        {
+                            "name": "publicIPRG",
+                            "type": "string"
+                        },
+                        {
+                            "name": "publicIPAddressName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "object",
+                        "value": {
+                            "id": "[resourceId(parameters('publicIPRG'),'Microsoft.Network/publicIPAddresses',parameters('publicIPAddressName'))]"
+                        }
+                    }
+                },
+                "storageName": {
+                    "parameters": [
+                        {
+                            "name": "name",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[toLower(if(greater(length(parameters('name')),11), concat(substring(parameters('name'), 0, 11)), parameters('name')))]"
+                    }
+                },
+                "getResourceGroupID": {
+                    "parameters": [
+                        {
+                            "name": "resourceGroupName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[uniqueString(concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroupName')))]"
+                    }
+                },
+                "getUniqueKeyvaultName": {
+                    "parameters": [
+                        {
+                            "name": "keyVaultName",
+                            "type": "string"
+                        },
+                        {
+                            "name": "resourceGroupID",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(contains(parameters('keyvaultName'), '[unique]'), replace(parameters('keyvaultName'), '[unique]', parameters('resourceGroupID')), parameters('keyvaultName'))]"
+                    }
+                },
+                "getValidKeyvaultName": {
+                    "parameters": [
+                        {
+                            "name": "keyvaultName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(greater(length(parameters('keyvaultName')),24), concat(substring(parameters('keyvaultName'), 0, 24)), parameters('keyvaultName'))]"
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "name": "[variables('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2018-02-01",
+            "condition": "[equals(parameters('fwObject').storageAccountNewOrExisting,'new')]",
+            "sku": {
+                "name": "[parameters('fwObject').storageAccountType]"
+            },
+            "kind": "Storage",
+            "location": "[parameters('fwObject').location]",
+            "properties": {}
+        },
+        {
+            "name": "[parameters('fwObject').publicIPAddressName]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2017-10-01",
+            "condition": "[equals(parameters('fwObject').publicIPNewOrExisting,'new')]",
+            "location": "[parameters('fwObject').location]",
+            "sku": {
+                "name": "[parameters('fwObject').publicIPsku]"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "[parameters('fwObject').publicIPAllocationMethod]",
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('publicIPDnsLabel')]"
+                },
+                "idleTimeoutInMinutes": 30
+            }
+        },
+        {
+            "name": "[concat(parameters('fwObject').vmName,'-Nic0')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-11-01",
+            "location": "[parameters('fwObject').location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', parameters('fwObject').publicIPAddressName)]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[parameters('fwObject').subnet1StartAddress]",
+                            "subnet": {
+                                "id": "[variables('subnet1Ref')]"
+                            },
+                            "publicIPAddress": "[if(not(contains(parameters('fwObject').publicIPNewOrExisting,'none')), pspc.objPublicIPAddressConfig(parameters('fwObject').publicIPRG, parameters('fwObject').publicIPAddressName), json('null'))]"
+                        }
+                    }
+                ],
+                "enableIPForwarding": true
+            }
+        },
+        {
+            "name": "[concat(parameters('fwObject').vmName,'-Nic1')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-11-01",
+            "location": "[parameters('fwObject').location]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[parameters('fwObject').subnet2StartAddress]",
+                            "subnet": {
+                                "id": "[variables('subnet2Ref')]"
+                            }
+                        }
+                    }
+                ],
+                "enableIPForwarding": true
+            }
+        },
+        {
+            "name": "[concat(parameters('fwObject').vmName,'-Nic2')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-11-01",
+            "location": "[parameters('fwObject').location]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[parameters('fwObject').subnet3StartAddress]",
+                            "subnet": {
+                                "id": "[variables('subnet3Ref')]"
+                            }
+                        }
+                    }
+                ],
+                "enableIPForwarding": true
+            }
+        },
+        {
+            "name": "[concat(parameters('fwObject').vmName,'-Nic3')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-11-01",
+            "location": "[parameters('fwObject').location]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[parameters('fwObject').subnet4StartAddress]",
+                            "subnet": {
+                                "id": "[variables('subnet4Ref')]"
+                            }
+                        }
+                    }
+                ],
+                "enableIPForwarding": true
+            }
+        },
+        {
+            "name": "[concat('DeployFW-', parameters('fwObject').vmName)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+                "[concat('Microsoft.Network/networkInterfaces/',parameters('fwObject').vmName,'-Nic0')]",
+                "[concat('Microsoft.Network/networkInterfaces/',parameters('fwObject').vmName,'-Nic1')]",
+                "[concat('Microsoft.Network/networkInterfaces/',parameters('fwObject').vmName,'-Nic2')]",
+                "[concat('Microsoft.Network/networkInterfaces/',parameters('fwObject').vmName,'-Nic3')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('firewallURI')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "adminPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('fwObject').vmKeyVault.keyVaultResourceGroupName, '/providers/Microsoft.KeyVault/vaults/', pspc.getValidKeyvaultName(pspc.getUniqueKeyvaultName(parameters('fwObject').vmKeyVault.keyVaultName, pspc.getResourceGroupID(parameters('fwObject').vmKeyVault.keyVaultResourceGroupName))))]"
+                            },
+                            "secretName": "[parameters('fwObject').adminSecret]"
+                        }
+                    },
+                    "fwObject": { "value": "[parameters('fwObject')]" }
+                }
+            }  
+        }
+    ],
+    "outputs": {
+        "publicIP": {
+            "type": "string",
+            "value": "[if(equals(parameters('fwObject').publicIPNewOrExisting,'new'), reference(resourceId('Microsoft.Network/publicIPAddresses',parameters('fwObject').publicIPAddressName)).ipAddress, 'dynamic')]"
+        }
+    }
+}

@@ -1,0 +1,77 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "keyVaultResourceGroupName": {
+      "value": "AzPwS-Keyvault-RG"
+    },
+    "keyVaultName": {
+       "value": "AzPwS-Keyvault-MGMT"
+    },
+    "DomainName": {
+      "value": "pspc.gc.ca.local"
+    },
+    "createChildDomain": {
+      "value": false
+    },
+    "ChildDomainName": {
+      "value": "mgmt"
+    },
+    "VMSize": {
+      "value": "Standard_B2ms"
+    },
+    "vnetRG": {
+      "value": "AzPwS-NetMGMT-RG"
+    },
+    "vnetName": {
+      "value": "AzPwS-NetMGMT-VNET"
+    },
+    "vnetAddressRange": {
+      "value": "10.250.0.0/20"
+    },
+    "adSubnetName": {
+      "value": "APP"
+    },
+    "adSubnet": {
+      "value": "10.250.1.0/24"
+    },
+    "RootDC1Name": {
+      "value": "AzPwS-RootDC01"
+    },
+    "RootDC1IPAddress": {
+      "value": "10.250.1.8"
+    },
+    "RootDC2Name": {
+      "value": "AzPwS-RootDC01"
+    },
+    "RootDC2IPAddress": {
+      "value": "10.250.1.9"
+    },
+    "ChildDC3Name": {
+      "value": "AzPwS-MgmtDC01"
+    },
+    "ChildDC3IPAddress": {
+      "value": "10.250.1.10"
+    },
+    "ChildDC4Name": {
+      "value": "AzPwS-MgmtDC02"
+    },
+    "ChildDC4IPAddress": {
+      "value": "10.250.1.11"
+    },
+    "tagValues": {
+      "value": {
+          "workload": "Domain Controller",
+          "owner": "pierre.ouimet@tpsgc-pwgsc.gc.ca",
+          "businessUnit": "PSPC-CCC",
+          "costCenterOwner": "PSPC-EA",
+          "environment": "Sandbox",
+          "classification": "Unclassified",
+          "version": "0.4"
+      },
+      "ReverseZoneObject": {
+        "value":["2.250.10", "1.250.10"]
+      }
+    }
+  }
+}

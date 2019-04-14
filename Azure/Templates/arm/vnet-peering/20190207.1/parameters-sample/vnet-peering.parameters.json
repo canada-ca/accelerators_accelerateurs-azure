@@ -1,0 +1,37 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": { "value": "[SasToken]" },
+        "peerArray": {
+            "value" : [ 
+                {
+                    "resourceGroup": "rgTestCentral", "vnet": "vnet-core",
+                    "peer":  [
+                        { "vnetName": "vnet-crm-dev", "rgName": "rgTestCentral", "allowVirtualNetworkAccess": true, "allowForwardedTraffic": false, "allowGatewayTransit": true, "useRemoteGateways": false },
+                        { "vnetName": "vnet-management", "rgName": "rgTestCentral", "allowVirtualNetworkAccess": true, "allowForwardedTraffic": false, "allowGatewayTransit": true, "useRemoteGateways": false },
+                        { "vnetName": "vnet-sharepoint-dev", "rgName": "rgTestCentral", "allowVirtualNetworkAccess": true, "allowForwardedTraffic": false, "allowGatewayTransit": true, "useRemoteGateways": false }
+                    ]
+                },
+                {
+                    "resourceGroup": "rgTestCentral", "vnet": "vnet-crm-dev",
+                    "peer": [
+                        { "vnetName": "vnet-core", "rgName": "rgTestCentral", "allowVirtualNetworkAccess": true, "allowForwardedTraffic": false, "allowGatewayTransit": false, "useRemoteGateways": true } 
+                    ]
+                },
+                {
+                    "resourceGroup": "rgTestCentral", "vnet": "vnet-management",
+                    "peer": [
+                        { "vnetName": "vnet-core", "rgName": "rgTestCentral", "allowVirtualNetworkAccess": true, "allowForwardedTraffic": false, "allowGatewayTransit": false, "useRemoteGateways": true } 
+                    ]
+                },
+                {
+                    "resourceGroup": "rgTestCentral", "vnet": "vnet-sharepoint-dev",
+                    "peer": [
+                        { "vnetName": "vnet-core", "rgName": "rgTestCentral", "allowVirtualNetworkAccess": true, "allowForwardedTraffic": false, "allowGatewayTransit": false, "useRemoteGateways": true } 
+                    ]
+                }
+            ]
+        }
+    }
+}

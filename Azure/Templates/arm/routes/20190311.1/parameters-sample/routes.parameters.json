@@ -1,0 +1,98 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "routeTables": {
+            "value": [
+                {
+                    "name": "test1-RT",
+                    "properties": {
+                        "disableBgpRoutePropagation": false,
+                        "routes": [
+                            {
+                                "name": "mgmt",
+                                "properties": {
+                                    "addressPrefix": "10.250.0.0/20",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "100.96.96.132"
+                                }
+                            },
+                            {
+                                "name": "Shared",
+                                "properties": {
+                                    "addressPrefix": "10.250.16.0/20",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "100.96.96.132"
+                                }
+                            },
+                            {
+                                "name": "CoreToSpokes",
+                                "properties": {
+                                    "addressPrefix": "100.96.96.0/25",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "100.96.96.132"
+                                }
+                            }
+                        ]
+                    },
+                    "tagValues": {
+                        "Owner": "build.pipeline@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Sandbox",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2019-01-09-05"
+                    }
+                },
+                {
+                    "name": "test2-RT",
+                    "properties": {
+                        "disableBgpRoutePropagation": false,
+                        "routes": [
+                            {
+                                "name": "mgmtVnet",
+                                "properties": {
+                                    "addressPrefix": "10.250.0.0/20",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "10.250.0.4"
+                                }
+                            },
+                            {
+                                "name": "SharedVnet",
+                                "properties": {
+                                    "addressPrefix": "10.250.16.0/20",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "10.250.16.4"
+                                }
+                            },
+                            {
+                                "name": "Outside",
+                                "properties": {
+                                    "addressPrefix": "100.96.96.128/26",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "100.96.96.4"
+                                }
+                            },
+                            {
+                                "name": "default",
+                                "properties": {
+                                    "addressPrefix": "0.0.0.0/0",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "100.96.96.4"
+                                }
+                            }
+                        ]
+                    },
+                    "tagValues": {
+                        "Owner": "build.pipeline@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Validate",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2019-01-09-04"
+                    }
+                }
+            ]
+        }
+    }
+}

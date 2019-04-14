@@ -1,0 +1,13 @@
+enable
+
+
+config terminal
+
+
+
+license smart deregister
+
+end 
+wr mem 
+exit
+

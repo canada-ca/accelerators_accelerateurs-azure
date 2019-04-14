@@ -1,0 +1,50 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string"
+        },
+        "lbArray": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of LB objects."
+            }
+        }
+    },
+    "variables": {
+        "baseVMUrl": "[concat(uri(deployment().properties.templateLink.uri, 'loadbalancer.json'), parameters('containerSasToken'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat('loadbalancer-Deploy-', parameters('lbArray')[copyIndex()].name)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "resourceGroup": "[parameters('lbArray')[copyIndex()].resourceGroup]",
+            "dependsOn": [],
+            "copy": {
+                    "name": "obj",
+                    "count": "[length(parameters('lbArray'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "name": {
+                        "value": "[parameters('lbArray')[copyIndex()].name]"
+                    },
+                    "sku": {
+                        "value": "[parameters('lbArray')[copyIndex()].sku]"
+                    },
+                    "publicIPAddressName": {
+                        "value": "[parameters('lbArray')[copyIndex()].publicIPAddressName]"
+                    }
+                },
+                "templateLink": {
+                    "uri": "[variables('baseVMUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }  
+        }
+    ],
+    "outputs": {}
+}

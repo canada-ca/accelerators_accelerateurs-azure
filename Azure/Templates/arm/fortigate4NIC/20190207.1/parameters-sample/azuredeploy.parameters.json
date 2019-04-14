@@ -1,0 +1,63 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "FortiGateName": {
+            "value": "DemoFWMGMT01"
+        },
+        "adminUsername": {
+            "value": "fwadmin"
+        },
+        "adminPassword": {
+            "value": "FwAdm1n123456"
+        },
+        "FortiGateImageSKU": {
+            "value": "fortinet_fg-vm"
+        },
+        "FortiGateImageVersion": {
+            "value": "6.0.3"
+        },
+        "instanceType": {
+            "value": "Standard_F4s"
+        },
+        "publicIPAddressType": {
+            "value": "Static"
+        },
+        "publicIPNewOrExistingOrNone": {
+            "value": "none"
+        },
+        "publicIPResourceGroup": {
+            "value": "Demo-Infra-Temp-RG"
+        },
+        "location": {
+            "value": "canadacentral"
+        },
+        "vnetNewOrExisting": {
+            "value": "existing"
+        },
+        "vnetName": {
+            "value": "Demo-Infra-NetMGMT-VNET"
+        },
+        "vnetResourceGroup": {
+            "value": "Demo-Infra-NetMGMT-RG"
+        },
+        "Subnet1Name": {
+            "value": "MgmtToCore"
+        },
+        "Subnet1Prefix": {
+            "value": "10.250.3.0/24"
+        },
+        "Subnet2Name": {
+            "value": "PAZ-Interconnect"
+        },
+        "Subnet2Prefix": {
+            "value": "10.250.0.0/24"
+        },
+        "Subnet3Name": {
+            "value": "APP-Interconnect"
+        },
+        "Subnet4Name": {
+            "value": "DB-Interconnect"
+        }
+    }
+}

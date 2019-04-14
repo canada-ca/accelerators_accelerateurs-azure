@@ -1,0 +1,121 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URI where artifacts required by this template are located including a trailing '/'"
+            },
+            "defaultValue": "[deployment().properties.templateLink.uri]"
+        },
+        "_debugLevel": {
+            "type": "string",
+            "defaultValue": "none"
+        },
+        "vmArray": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of VM objects."
+            }
+        }
+    },
+    "variables": {
+        "baseVMUrl": "[concat(uri(parameters('_artifactsLocation'), 'servers.json'), parameters('containerSasToken'))]"
+    },
+    "functions": [
+        {
+            "namespace": "pspc",
+            "members": {
+                "getResourceGroupID": {
+                    "parameters": [
+                        {
+                            "name": "resourceGroupName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[uniqueString(concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroupName')))]"
+                    }
+                },
+                "getUniqueKeyvaultName": {
+                    "parameters": [
+                        {
+                            "name": "keyVaultName",
+                            "type": "string"
+                        },
+                        {
+                            "name": "resourceGroupID",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(contains(parameters('keyvaultName'), '[unique]'), replace(parameters('keyvaultName'), '[unique]', parameters('resourceGroupID')), parameters('keyvaultName'))]"
+                    }
+                },
+                "getValidKeyvaultName": {
+                    "parameters": [
+                        {
+                            "name": "keyvaultName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(greater(length(parameters('keyvaultName')),24), concat(substring(parameters('keyvaultName'), 0, 24)), parameters('keyvaultName'))]"
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "name": "[concat('vmGroupdeploy', parameters('vmArray')[copyIndex()].vm.computerName)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "copy": {
+                    "name": "vmObj",
+                    "count": "[length(parameters('vmArray'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "adminPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultResourceGroupName, '/providers/Microsoft.KeyVault/vaults/', pspc.getValidKeyvaultName(pspc.getUniqueKeyvaultName(parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultName, pspc.getResourceGroupID(parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultResourceGroupName))))]"
+                            },
+                            "secretName": "[parameters('vmArray')[copyIndex()].vm.adminPassword]"
+                        }
+                    },
+                    "adPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultResourceGroupName, '/providers/Microsoft.KeyVault/vaults/', pspc.getValidKeyvaultName(pspc.getUniqueKeyvaultName(parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultName, pspc.getResourceGroupID(parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultResourceGroupName))))]"
+                            },
+                            "secretName": "adDefaultPassword"
+                        }
+                    },
+                    "vmObject": { "value": "[parameters('vmArray')[copyIndex()]]" },
+                    "containerSaSToken": {"value": "[parameters('containerSasToken')]"},
+                    "keyVaultId": {"value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultResourceGroupName, '/providers/Microsoft.KeyVault/vaults/', parameters('vmArray')[copyIndex()].vmKeyVault.keyVaultName)]"},
+                    "_artifactsLocation": {"value": "[parameters('_artifactsLocation')]"}
+                },
+                "templateLink": {
+                    "uri": "[variables('baseVMUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "debugSetting": {
+                    "detailLevel": "[parameters('_debugLevel')]"
+                }
+            }  
+        }
+    ],
+    "outputs": {}
+}

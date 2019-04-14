@@ -1,0 +1,542 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminPasswordLin": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Password for the Virtual Machine."
+            }
+        },
+        "adminPasswordWin": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Password for the Virtual Machine."
+            }
+        },
+        "adPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Password for the account to join the domain."
+            }
+        },
+        "vmObject": {
+            "type": "object",
+            "metadata": {
+                "description": "Object of MS firewall objects."
+            }
+        },
+        "containerSasToken": {
+            "type": "string"
+        },
+        "keyVaultId":{
+            "type": "string"
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URI where artifacts required by this template are located including a trailing '/'"
+            },
+            "defaultValue": "[deployment().properties.templateLink.uri]"
+        }
+    },
+    "variables": {
+        "storageAccountName": "[concat('vmdiag', uniquestring(resourceGroup().id))]",
+        "backupItemName": "[concat('vm;iaasvmcontainerv2;', resourceGroup().name,';',parameters('vmObject').vm.computerName)]",
+        "linuxScript": "[concat(uri(parameters('_artifactsLocation'),'scripts/linux-script.sh'), parameters('containerSasToken'))]",
+        "empty": [],
+        "winRm": { 
+            "listeners": [
+                {
+                    "protocol": "Http"
+                },
+                {
+                    "protocol": "Https",
+                    "certificateUrl": "[if(contains(parameters('vmObject').vm, 'winRmCertUrl'), parameters('vmObject').vm.winRmCertUrl, 'nothing')]"
+                }
+            ]
+        },
+        "secrets": [
+            {
+            "sourceVault": {
+              "id": "[parameters('keyVaultId')]"
+            },
+            "vaultCertificates": "[if(contains(parameters('vmObject').vmKeyVault,'vaultCertificates'), parameters('vmObject').vmKeyVault.vaultCertificates, variables('empty'))]"
+          }
+        ],
+        "iisExtensionName": "iisExtension",
+        "iisConfigurationFunction": "PrepareWebServer.ps1\\PrepareWebServer",
+        "iisConfigurationScript": "PrepareWebServer.ps1.zip",
+        "iisForceUpdateTag": "1.0",
+        "iisModuleUrl": "[concat(uri(parameters('_artifactsLocation'), concat('DSC','/', variables('iisConfigurationScript'))), parameters('containerSasToken'))]"
+    },
+    "functions": [
+        {
+            "namespace": "pspc",
+            "members": {
+                "objAvailabilitySetConfig": {
+                    "parameters": [
+                        {
+                            "name": "strAvailabilitySetName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "object",
+                        "value": {
+                            "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('strAvailabilitySetName'))]"
+                        }
+                    }
+                },
+                "arrayASGConfig": {
+                    "parameters": [
+                        {
+                            "name": "ASGArray",
+                            "type": "array"
+                        }
+                    ],
+                    "output": {
+                        "type": "array",
+                        "value": "[parameters('ASGArray')]"
+                    }
+                },
+                "objOsProfileWindows": {
+                    "parameters": [
+                        {
+                            "name": "properties",
+                            "type": "object"
+                        },
+                        {
+                            "name": "adminPasswordWin",
+                            "type": "securestring"
+                        },
+                        {
+                            "name": "secrets",
+                            "type": "array"
+                        },
+                        {
+                            "name": "empty",
+                            "type": "array"
+                        },
+                        {
+                            "name": "winRmListners",
+                            "type": "array"
+                        }
+                        
+                    ],
+                    "output": {
+                        "type": "object",
+                        "value": {
+                            "computerName": "[parameters('properties').vm.computerName]",
+                            "adminUsername": "[parameters('properties').vm.adminUsername]",
+                            "adminPassword": "[parameters('adminPasswordWin')]",
+                            "secrets": "[if(contains(parameters('properties').vmKeyVault, 'vaultCertificates'), parameters('secrets'), parameters('empty'))]",
+                            "windowsConfiguration": {
+                                "provisionVMAgent": true,
+                                "timeZone": "Eastern Standard Time",
+                                "winRM": {
+                                    "listeners": "[if(contains(parameters('properties').vm, 'winRmCertUrl'), parameters('winRmListners'), parameters('empty'))]"}
+                            }
+                        }
+                    }
+                },
+                "objOsProfileLinux": {
+                    "parameters": [
+                        {
+                            "name": "properties",
+                            "type": "object"
+                        },
+                        {
+                            "name": "adminPasswordLin",
+                            "type": "securestring"
+                        }
+                    ],
+                    "output": {
+                        "type": "object",
+                        "value": {
+                            "computerName": "[parameters('properties').vm.computerName]",
+                            "adminUsername": "[parameters('properties').vm.adminUsername]",
+                            "adminPassword": "[parameters('adminPasswordLin')]"
+                        }
+                    }
+                },
+                "diskName": {
+                    "parameters": [
+                        {
+                            "name": "inputNameDisk",
+                            "type": "string"
+                        },
+                        {
+                            "name": "indexdisk",
+                            "type": "int"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[concat(toLower(parameters('inputNameDisk')), '-osdisk', padLeft(parameters('indexdisk'),3,'0'))]"
+                    }
+                },
+                "getUniqueKeyvaultName": {
+                    "parameters": [
+                        {
+                            "name": "keyvaultName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(contains(parameters('keyvaultName'), '[unique]'), replace(parameters('keyvaultName'), '[unique]', uniqueString(resourceGroup().id)), parameters('keyvaultName'))]"
+                    }
+                },
+                "getValidKeyvaultName": {
+                    "parameters": [
+                        {
+                            "name": "keyvaultName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(greater(length(parameters('keyvaultName')),24), concat(substring(parameters('keyvaultName'), 0, 24)), parameters('keyvaultName'))]"
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "name": "[parameters('vmObject').vm.computerName]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2018-04-01",
+            "tags": "[parameters('vmObject').tagValues]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('vmObject').vm.computerName, '-', parameters('vmObject').networkInterfaces.name)]",
+                "[concat(parameters('vmObject').vm.computerName, '-', parameters('vmObject').networkInterfaces.name, '-makeIPStatic')]"
+            ],
+            "properties": {
+                "osProfile": "[if(contains(parameters('vmObject').vm, 'licenseType'), pspc.objOsProfileWindows(parameters('vmObject'), parameters('adminPasswordWin'), variables('secrets'), variables('empty'), variables('winRm').listeners), pspc.objOsProfileLinux(parameters('vmObject'), parameters('adminPasswordLin')))]",
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmObject').vm.vmSize]"
+                },
+                "storageProfile": {
+                    "imageReference": "[parameters('vmObject').vm.storageProfile.imageReference]",
+                    "osDisk": {
+                        "name": "[pspc.diskName(parameters('vmObject').vm.computerName,1)]",
+                        "createOption": "[parameters('vmObject').vm.storageProfile.osDisk.createOption]",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('vmObject').vm.storageProfile.osDisk.managedDisk.storageAccountType]"
+                        }
+                    },
+                    "dataDisks": "[parameters('vmObject').vm.storageProfile.dataDisks]"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vmObject').vm.computerName, '-', parameters('vmObject').networkInterfaces.name))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": "[parameters('vmObject').vm.bootDiagnostic]",
+                        "storageUri": "[concat('https://', variables('storageAccountName'), '.blob.core.windows.net/')]"
+                    }
+                },
+                "availabilitySet": "[if(contains(parameters('vmObject').vm, 'availabilitySetName'), pspc.objAvailabilitySetConfig(parameters('vmObject').vm.availabilitySetName), json('null'))]"
+            },
+            "plan": "[if(contains(parameters('vmObject'), 'plan'), parameters('vmObject').plan, json('null'))]"
+        },
+        {
+            "condition": "[contains(parameters('vmObject').vm,'shutdownConfig')]",
+            "name": "[concat('shutdown-computevm-', parameters('vmObject').vm.computerName)]",
+            "type": "Microsoft.DevTestLab/schedules",
+            "apiVersion": "2017-04-26-preview",
+            "tags": "[parameters('vmObject').tagValues]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmObject').vm.computerName)]"
+            ],
+            "properties": {
+                "status": "[parameters('vmObject').vm.shutdownConfig.autoShutdownStatus]",
+                "taskType": "ComputeVmShutdownTask",
+                "dailyRecurrence": {
+                    "time": "[parameters('vmObject').vm.shutdownConfig.autoShutdownTime]"
+                },
+                "timeZoneId": "[parameters('vmObject').vm.shutdownConfig.autoShutdownTimeZone]",
+                "targetResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmObject').vm.computerName)]",
+                "notificationSettings": {
+                    "status": "[parameters('vmObject').vm.shutdownConfig.autoShutdownNotificationStatus]",
+                    "timeInMinutes": "30"
+                }
+            }
+        },
+        {
+            "name": "[concat(parameters('vmObject').vm.computerName, '-', parameters('vmObject').networkInterfaces.name)]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-08-01",
+            "tags": "[parameters('vmObject').tagValues]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('vmObject').vm.computerName, '-', parameters('vmObject').networkSecurityGroups.name)]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[concat(subscription().id, '/resourceGroups/', parameters('vmObject').networkInterfaces.vnetResourceGroupName, '/providers/Microsoft.Network/virtualNetworks/', parameters('vmObject').networkInterfaces.vnetName, '/subnets/', parameters('vmObject').networkInterfaces.subnetName)]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic"
+                        }
+                    }
+                ],
+                "enableAcceleratedNetworking": "[parameters('vmObject').networkInterfaces.acceleratedNetworking]",
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('vmObject').vm.computerName, '-', parameters('vmObject').networkSecurityGroups.name))]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "[concat(parameters('vmObject').vm.computerName, '-', parameters('vmObject').networkInterfaces.name, '-makeIPStatic')]",
+            "apiVersion": "2017-08-01",
+            "dependsOn": [
+                "[concat(parameters('vmObject').vm.computerName, '-', parameters('vmObject').networkInterfaces.name)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/networkInterfaces",
+                            "name": "[concat(parameters('vmObject').vm.computerName, '-', parameters('vmObject').networkInterfaces.name)]",
+                            "apiVersion": "2018-03-01",
+                            "location": "[resourceGroup().location]",
+                            "properties": {
+                                "ipConfigurations": [
+                                    {
+                                        "name": "ipconfig1",
+                                        "properties": {
+                                            "privateIPAllocationMethod": "Static",
+                                            "privateIPAddress": "[reference(concat('Microsoft.Network/networkInterfaces/', concat(parameters('vmObject').vm.computerName, '-', parameters('vmObject').networkInterfaces.name))).ipConfigurations[0].properties.privateIPAddress]",
+                                            "subnet": {
+                                                "id": "[concat(subscription().id, '/resourceGroups/', parameters('vmObject').networkInterfaces.vnetResourceGroupName, '/providers/Microsoft.Network/virtualNetworks/', parameters('vmObject').networkInterfaces.vnetName, '/subnets/', parameters('vmObject').networkInterfaces.subnetName)]"
+                                            },
+                                            "applicationSecurityGroups": "[if(contains(parameters('vmObject').vm, 'applicationSecurityGroups'), pspc.arrayASGConfig(parameters('vmObject').vm.applicationSecurityGroups), json('null'))]",
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "[concat(parameters('vmObject').vm.computerName, '-', parameters('vmObject').networkSecurityGroups.name)]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2018-01-01",
+            "tags": "[parameters('vmObject').tagValues]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "securityRules": []
+            }
+        },
+        {
+            "condition": "[contains(parameters('vmObject').vm,'backupConfig')]",
+            "apiVersion": "2017-05-10",
+            "name": "[concat(parameters('vmObject').vm.computerName, '-' , 'BackupIntent')]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[if(contains(parameters('vmObject').vm,'backupConfig'), parameters('vmObject').vm.backupConfig.existingBackupVaultRG, 'nothing')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "name": "[concat(parameters('vmObject').vm.backupConfig.existingBackupVaultName, '/','Azure', '/', variables('backupItemName'))]",
+                            "apiVersion": "2017-07-01",
+                            "type": "Microsoft.RecoveryServices/vaults/backupFabrics/backupProtectionIntent",
+                            "properties": {
+                                "friendlyName": "[concat(parameters('vmObject').vm.computerName, 'BackupIntent')]",
+                                "protectionIntentItemType": "AzureResourceItem",
+                                "policyId": "[resourceId(parameters('vmObject').vm.backupConfig.existingBackupVaultRG, 'Microsoft.RecoveryServices/vaults/backupPolicies', parameters('vmObject').vm.backupConfig.existingBackupVaultName, parameters('vmObject').vm.backupConfig.existingBackupPolicy)]",
+                                "sourceResourceId": "[resourceId(resourceGroup().name, 'Microsoft.Compute/virtualMachines', concat(parameters('vmObject').vm.computerName))]"
+                            }
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId(resourceGroup().name, 'Microsoft.Compute/virtualMachines', parameters('vmObject').vm.computerName)]"
+            ]
+        },
+        {
+            "condition": "[contains(parameters('vmObject').vm,'antimalwareInfo')]",
+            "name": "[concat('microsoft.antimalware-windows-20180924102643', parameters('vmObject').vm.computerName)]",
+            "apiVersion": "2015-01-01",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://gallery.azure.com/artifact/20161101/microsoft.antimalware-windows-arm.1.0.2/Artifacts/MainTemplate.json"
+                },
+                "parameters": {
+                    "vmName": {
+                        "value": "[parameters('vmObject').vm.computerName]"
+                    },
+                    "location": {
+                        "value": "[resourceGroup().location]"
+                    },
+                    "ExclusionsPaths": {
+                        "value": "[parameters('vmObject').vm.antimalwareInfo.exclusionPaths]"
+                    },
+                    "ExclusionsExtensions": {
+                        "value": "[parameters('vmObject').vm.antimalwareInfo.exclusionExtensions]"
+                    },
+                    "ExclusionsProcesses": {
+                        "value": "[parameters('vmObject').vm.antimalwareInfo.exclusionProcesses]"
+                    },
+                    "RealtimeProtectionEnabled": {
+                        "value": "[parameters('vmObject').vm.antimalwareInfo.realtimeProtectionEnabled]"
+                    },
+                    "ScheduledScanSettingsIsEnabled": {
+                        "value": "[parameters('vmObject').vm.antimalwareInfo.scheduledScanSettingsEnabled]"
+                    },
+                    "ScheduledScanSettingsScanType": {
+                        "value": "[parameters('vmObject').vm.antimalwareInfo.scheduledScanSettingsType]"
+                    },
+                    "ScheduledScanSettingsDay": {
+                        "value": "[parameters('vmObject').vm.antimalwareInfo.scheduledScanSettingsDay]"
+                    },
+                    "ScheduledScanSettingsTime": {
+                        "value": "[parameters('vmObject').vm.antimalwareInfo.scheduledScanSettingsTime]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmObject').vm.computerName)]"
+            ]
+        },
+        {
+            "condition": "[contains(parameters('vmObject'),'domainObject')]",
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmObject').vm.computerName,'/joinWindowsDomain')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmObject').vm.computerName)]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "JsonADDomainExtension",
+                "typeHandlerVersion": "1.3",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "Name": "[parameters('vmObject').domainObject.domainToJoin]",
+                    "OUPath": "[parameters('vmObject').domainObject.ouPath]",
+                    "User": "[concat(parameters('vmObject').domainObject.domainToJoin, '\\', parameters('vmObject').domainObject.domainUsername)]",
+                    "Restart": "true",
+                    "Options": "[parameters('vmObject').domainObject.domainJoinOptions]"
+                },
+                "protectedSettings": {
+                    "Password": "[parameters('adPassword')]"
+                }
+            }
+        },
+        {
+            "condition": "[contains(parameters('vmObject').vm,'linuxScript')]",
+            "name": "[concat(parameters('vmObject').vm.computerName,'/LinuxCustomScript')]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmObject').vm.computerName)]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.0",
+                "autoUpgradeMinorVersion": true,
+                "settings": {},
+                "protectedSettings": "[parameters('vmObject').vm.linuxScript.protectedSettings]"
+            }
+        },
+        {
+            "condition": "[contains(parameters('vmObject').vm,'encryptDisks')]",
+            "name": "[concat(parameters('vmObject').vm.computerName,'/AzureDiskEncryption')]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "location": "[resourceGroup().location]", 
+            "apiVersion": "2017-03-30",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmObject').vm.computerName)]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.Security",
+                "type": "AzureDiskEncryption",
+                "typeHandlerVersion": "2.2",
+                "autoUpgradeMinorVersion": true,
+                "forceUpdateTag": "1.0",
+                "settings": {
+                    "EncryptionOperation": "EnableEncryption",
+                    "KeyVaultURL": "[if(contains(parameters('vmObject').vm,'encryptDisks'), reference(resourceId(parameters('vmObject').vm.encryptDisks.keyVaultResourceGroup, 'Microsoft.KeyVault/vaults/', pspc.getValidKeyvaultName(pspc.getUniqueKeyvaultName(parameters('vmObject').vm.encryptDisks.keyVaultName))),'2016-10-01').vaultUri, 'null')]",
+                    "KeyVaultResourceId": "[if(contains(parameters('vmObject').vm,'encryptDisks'), resourceId(parameters('vmObject').vm.encryptDisks.keyVaultResourceGroup, 'Microsoft.KeyVault/vaults/', pspc.getValidKeyvaultName(pspc.getUniqueKeyvaultName(parameters('vmObject').vm.encryptDisks.keyVaultName))), 'null')]",
+                    "KeyEncryptionAlgorithm": "RSA-OAEP",
+                    "VolumeType": "All",
+                    "ResizeOSDisk": false
+                }
+            }
+        },
+        {
+            "condition": "[contains(parameters('vmObject').vm,'WebServerSettings')]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmObject').vm.computerName,'/', variables('iisExtensionName'))]",
+            "apiVersion": "2015-05-01-preview",
+            "location": "[resourceGroup().location]", 
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmObject').vm.computerName)]"
+            ],
+            "properties": {
+              "publisher": "Microsoft.Powershell",
+              "type": "DSC",
+              "typeHandlerVersion": "2.19",
+              "autoUpgradeMinorVersion": true,
+              "forceUpdateTag": "[variables('iisForceUpdateTag')]",
+            "settings": {
+                "modulesUrl": "[variables('iisModuleUrl')]",
+                "configurationFunction": "[variables('iisConfigurationFunction')]",
+              "properties": {
+                "nodeName": "[parameters('vmObject').vm.computerName]",
+                "webDeployPackage": "[parameters('vmObject').vm.WebServerSettings.webDeployPackage]",
+                "certStoreName": "[parameters('vmObject').vm.WebServerSettings.certificateStoreName]",
+                "certDomain": "[parameters('vmObject').vm.WebServerSettings.certificateDomain]"
+              }
+            },
+            "protectedSettings": {
+              
+            }
+          }
+        }
+    ],
+    "outputs": {
+        "nic": {
+            "type": "object",
+            "value": "[reference(concat(parameters('vmObject').vm.computerName, '-', parameters('vmObject').networkInterfaces.name))]"
+        },
+        "WebServerSet":{
+            "type": "bool",
+            "value": "[contains(parameters('vmObject').vm,'WebServerSettings')]"
+        },
+        "iisUrl":{
+            "type": "string",
+            "value": "[variables('iisModuleUrl')]"
+        }
+    }
+}

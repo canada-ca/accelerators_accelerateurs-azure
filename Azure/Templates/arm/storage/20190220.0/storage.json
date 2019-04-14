@@ -1,0 +1,61 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageObject": {
+            "type": "object",
+            "metadata": {
+                "description": "Object of storage parameters."
+            }
+        }
+    },
+    "variables": { 
+        "storageAccountName": "[concat(pspc.storageName(parameters('storageObject').storageAccountPrefix), uniquestring(resourceGroup().id))]"
+    },
+    "functions": [
+        {
+            "namespace": "pspc",
+            "members": {
+                "storageName": {
+                    "parameters": [
+                        {
+                            "name": "name",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(greater(length(parameters('name')),11), concat(substring(parameters('name'), 0, 11)), parameters('name'))]"
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "name": "[variables('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2018-02-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "supportsHttpsTrafficOnly": "[parameters('storageObject').supportsHttpsTrafficOnly]"
+            },
+            "sku": {
+                "name": "[parameters('storageObject').accountType]"
+            },
+            "kind": "[parameters('storageObject').kind]",
+            "resources": [
+                {
+                    "condition": "[not(contains(parameters('storageObject'), 'containerName'))]",
+                    "name": "[concat('default/',parameters('storageObject').containerName)]",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-03-01-preview",
+                    "dependsOn": [
+                        "[variables('storageAccountName')]"
+                    ]
+                }
+            ]
+        }
+    ],
+    "outputs": {}
+}

@@ -1,0 +1,81 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URI where artifacts required by this template are located including a trailing '/'"
+            },
+            "defaultValue": "[deployment().properties.templateLink.uri]"
+        },
+        "_debugLevel": {
+            "type": "string",
+            "defaultValue": "none"
+        },
+        "storageArray": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of storage objects."
+            }
+        }
+    },
+    "variables": {
+        "baseVMUrl": "[concat(uri(parameters('_artifactsLocation'), 'storage.json'), parameters('containerSasToken'))]"
+    },
+    "functions": [
+        {
+            "namespace": "pspc",
+            "members": {
+                "storageName": {
+                    "parameters": [
+                        {
+                            "name": "name",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(greater(length(parameters('name')),11), concat(substring(parameters('name')), 0, 11), parameters('name'))]"
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "name": "[concat('storageAccount.', parameters('storageArray')[copyIndex()].storageAccountPrefix)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "resourceGroup": "[parameters('storageArray')[copyIndex()].resourceGroup]",
+            "dependsOn": [],
+            "copy": {
+                "name": "storageObj",
+                "count": "[length(parameters('storageArray'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "storageObject": {
+                        "value": "[parameters('storageArray')[copyIndex()]]"
+                    },
+                    "containerSaSToken": {
+                        "value": "[parameters('containerSaSToken')]"
+                    }
+                },
+                "templateLink": {
+                    "uri": "[variables('baseVMUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "debugSetting": {
+                    "detailLevel": "[parameters('_debugLevel')]"
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

@@ -1,0 +1,89 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "value": "demo-asav-core"
+        },
+        "softwareVersion": {
+            "value": "910.1.0"
+        },
+        "adminUsername": {
+            "value": "azureadmin"
+        },
+        "adminPassword": {
+            "value": "Canada123456"
+        },
+        "authenticationType": {
+            "value": "password"
+        },
+        "vmSize": {
+            "value": "Standard_D3_v2"
+        },
+        "location": {
+            "value": "canadacentral"
+        },
+        "storageAccountName": {
+            "value": "demoasavcore"
+        },
+        "storageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "storageAccountNewOrExisting": {
+            "value": "new"
+        },
+        "storageAccountRG": {
+            "value": "Demo-Infra-FWCore-RG"
+        },
+        "publicIPAddressName": {
+            "value": "demo-asav-core-pubip"
+        },
+        "publicIPDnsLabel": {
+            "value": "demo-asav-core"
+        },
+        "publicIPNewOrExisting": {
+            "value": "new"
+        },
+        "publicIPRG": {
+            "value": "Demo-Infra-FWCore-RG"
+        },
+        "publicIPAllocationMethod": {
+            "value": "Dynamic"
+        },
+        "publicIPsku": {
+            "value": "Basic"
+        },
+        "virtualNetworkName": {
+            "value": "Demo-Infra-NetCore-VNET"
+        },
+        "virtualNetworkAddressPrefixes": {
+            "value": [
+                "10.10.10.0/23"
+            ]
+        },
+        "virtualNetworkNewOrExisting": {
+            "value": "existing"
+        },
+        "virtualNetworkRG": {
+            "value": "Demo-Infra-NetCore-RG"
+        },
+        "Subnet1Name": {
+            "value": "Outside"
+        },
+        "Subnet1Prefix": {
+            "value": "10.10.10.128/26"
+        },
+        "Subnet2Name": {
+            "value": "CoreToSpokes"
+        },
+        "Subnet2Prefix": {
+            "value": "10.10.10.0/27"
+        },
+        "subnet1StartAddress": {
+            "value": "10.10.10.132"
+        },
+        "subnet2StartAddress": {
+            "value": "10.10.10.4"
+        }
+    }
+}

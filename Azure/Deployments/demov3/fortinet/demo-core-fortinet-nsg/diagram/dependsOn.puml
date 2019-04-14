@@ -1,0 +1,46 @@
+@startuml
+
+artifact resourcegroups
+artifact keyvaultinfra
+artifact routescore
+artifact routesmgmt
+artifact routesshared
+artifact nsgshared
+artifact vnetsubnetcore
+artifact vnetsubnetmgmt
+artifact vnetsubnetshared
+artifact vnetpeeringcore
+artifact vnetpeeringmgmt
+artifact vnetpeeringshared
+artifact storagevmdiagMGMTRDS
+artifact storagevmdiagSharedSandbox
+artifact coreciscoasav
+artifact jumpbox01MGMTRDS
+artifact dockerDemoSharedSandbox
+
+resourcegroups --> keyvaultinfra
+resourcegroups --> routescore
+resourcegroups --> routesmgmt
+resourcegroups --> routesshared
+resourcegroups --> nsgshared
+resourcegroups --> storagevmdiagMGMTRDS
+resourcegroups --> storagevmdiagSharedSandbox
+routescore --> vnetsubnetcore
+routesmgmt --> vnetsubnetmgmt
+routesshared --> vnetsubnetshared
+nsgshared --> vnetsubnetshared
+vnetsubnetcore --> coreciscoasav
+vnetpeeringcore --> dockerDemoSharedSandbox
+vnetpeeringcore --> vnetpeeringmgmt
+vnetpeeringcore --> vnetpeeringshared
+vnetsubnetcore --> vnetpeeringcore
+vnetsubnetmgmt --> vnetpeeringcore
+vnetsubnetshared --> vnetpeeringcore
+storagevmdiagMGMTRDS --> jumpbox01MGMTRDS
+coreciscoasav --> jumpbox01MGMTRDS
+storagevmdiagSharedSandbox --> dockerDemoSharedSandbox
+coreciscoasav --> dockerDemoSharedSandbox
+keyvaultinfra --> jumpbox01MGMTRDS
+keyvaultinfra --> dockerDemoSharedSandbox
+
+@enduml

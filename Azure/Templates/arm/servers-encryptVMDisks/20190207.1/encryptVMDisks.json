@@ -1,0 +1,38 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmObject": {
+            "type": "object",
+            "metadata": {
+                "description": "Object of MS firewall objects."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmObject').vmName,'/AzureDiskEncryption')]",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2017-03-30",
+            "properties": {
+                "publisher": "Microsoft.Azure.Security",
+                "type": "AzureDiskEncryption",
+                "typeHandlerVersion": "2.2",
+                "autoUpgradeMinorVersion": true,
+                "forceUpdateTag": "1.0",
+                "settings": {
+                    "EncryptionOperation": "EnableEncryption",
+                    "KeyVaultURL": "[reference(resourceId(parameters('vmObject').keyVaultResourceGroup, 'Microsoft.KeyVault/vaults/', parameters('vmObject').keyVaultName),'2016-10-01').vaultUri]",
+                    "KeyVaultResourceId": "[resourceId(parameters('vmObject').keyVaultResourceGroup, 'Microsoft.KeyVault/vaults/', parameters('vmObject').keyVaultName)]",
+                    "KeyEncryptionAlgorithm": "RSA-OAEP",
+                    "VolumeType": "All",
+                    "ResizeOSDisk": false
+                }
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

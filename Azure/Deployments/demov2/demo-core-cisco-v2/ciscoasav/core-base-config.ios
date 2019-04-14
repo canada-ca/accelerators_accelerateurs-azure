@@ -1,0 +1,92 @@
+enable
+
+
+config terminal
+
+
+interface GigabitEthernet0/0
+ nameif CoreToSpokes
+ security-level 99
+ ip address dhcp
+ no shutdown
+!
+dhcp-client client-id interface CoreToSpokes
+!
+interface Management0/0
+ nameif outside
+!
+route CoreToSpokes 10.25.0.0 255.255.240.0 10.10.10.1 1
+route CoreToSpokes 10.25.16.0 255.255.240.0 10.10.10.1 1
+!
+same-security-traffic permit intra-interface
+object network jumpbox01
+ host 10.10.10.5
+object service RDP
+ service tcp destination eq 3389 
+object network demo-asav-mgmt
+ host 10.25.0.4
+object network demo-asav-shared
+ host 10.25.16.4
+object service SSH-mgmt
+ service tcp destination eq 10022 
+object service SSH-shared
+ service tcp destination eq 10023 
+object service ASDM-mgmt
+ service tcp destination eq 10443 
+object service ASDM-shared
+ service tcp destination eq 10444 
+object service SSH
+ service tcp destination eq ssh 
+object service ASDM
+ service tcp destination eq https 
+object network demodocker
+ host 10.25.21.68
+object service SSH-docker
+ service tcp destination eq 10024 
+object service tcp80
+ service tcp destination eq www 
+object service tcp8080
+ service tcp destination eq 8080 
+object-group network DM_INLINE_NETWORK_2
+ network-object object demo-asav-mgmt
+ network-object object demo-asav-shared
+object-group service DM_INLINE_TCP_1 tcp
+ port-object eq ssh
+ port-object eq 8080
+access-list CoreToSpokes_access_in extended permit ip any any 
+access-list outside_access_in extended permit tcp any object jumpbox01 eq 3389 
+access-list outside_access_in extended permit tcp any object demodocker object-group DM_INLINE_TCP_1 
+access-list outside_access_in extended permit tcp any object-group DM_INLINE_NETWORK_2 eq ssh 
+access-list outside_access_in extended permit tcp any object-group DM_INLINE_NETWORK_2 eq https 
+pager lines 23
+logging enable
+logging asdm informational
+mtu outside 1500
+mtu CoreToSpokes 1500
+no failover
+icmp unreachable rate-limit 1 burst-size 1
+no asdm history enable
+arp timeout 14400
+no arp permit-nonconnected
+arp rate-limit 16384
+nat (outside,CoreToSpokes) source static any any destination static interface jumpbox01 service RDP RDP unidirectional no-proxy-arp
+nat (outside,CoreToSpokes) source static any any destination static interface demo-asav-mgmt service SSH-mgmt SSH unidirectional no-proxy-arp
+nat (outside,CoreToSpokes) source static any any destination static interface demo-asav-shared service SSH-shared SSH unidirectional no-proxy-arp
+nat (outside,CoreToSpokes) source static any any destination static interface demodocker service SSH-docker SSH unidirectional no-proxy-arp
+nat (outside,CoreToSpokes) source static any any destination static interface demodocker service tcp80 tcp8080 unidirectional no-proxy-arp
+nat (outside,CoreToSpokes) source static any any destination static interface demo-asav-mgmt service ASDM-mgmt ASDM unidirectional no-proxy-arp
+nat (outside,CoreToSpokes) source static any any destination static interface demo-asav-shared service ASDM-shared ASDM unidirectional no-proxy-arp
+nat (CoreToSpokes,outside) source dynamic any interface
+!
+access-group outside_access_in in interface outside
+access-group CoreToSpokes_access_in in interface CoreToSpokes
+!
+http server enable
+http 0.0.0.0 0.0.0.0 outside
+http 0.0.0.0 0.0.0.0 CoreToSpokes
+ssh 0.0.0.0 0.0.0.0 CoreToSpokes
+!
+end 
+wr mem 
+exit
+

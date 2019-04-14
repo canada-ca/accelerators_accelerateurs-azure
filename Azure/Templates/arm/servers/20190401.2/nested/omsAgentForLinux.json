@@ -1,0 +1,34 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "vmObject": {
+        "type": "object",
+        "metadata": {
+          "description": "Object of MS firewall objects."
+        }
+      }
+    },
+    "variables": {},
+    "resources": [
+      {
+        "apiVersion": "2018-06-01",
+        "type": "Microsoft.Compute/virtualMachines/extensions",
+        "name": "[concat(parameters('vmObject').vm.computerName,'/OmsAgentForLinux')]",
+        "location": "[resourceGroup().location]",
+        "properties": {
+          "autoUpgradeMinorVersion": true,
+          "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+          "type": "OmsAgentForLinux",
+          "typeHandlerVersion": "1.7",
+          "settings": {
+            "workspaceId": "[parameters('vmObject').vm.omsAgentForLinux.workspaceId]"
+          },
+          "protectedSettings": {
+            "workspaceKey": "[parameters('vmObject').vm.omsAgentForLinux.workspaceKey]"
+          }
+        }
+      }
+    ],
+    "outputs": {}
+  }

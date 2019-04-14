@@ -1,0 +1,105 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "value": "[SasToken]"
+        },
+        "vnetArray": {
+            "value": [
+                {
+                    "resourceGroup": "rgCore",
+                    "name": "vnet-core",
+                    "addressPrefixes": [
+                        "10.96.96.0/23"
+                    ],
+                    "dhcpOptions": {
+                        "dnsServers": [
+                            "10.250.6.5",
+                            "10.250.6.6"
+                        ]
+                    },
+                    "subnets": [
+                        {
+                            "name": "CoreNet",
+                            "properties": {
+                                "addressPrefix": "10.96.96.0/25",
+                                "routeTableName": "routeTable-core-to-spokes"
+                            }
+                        },
+                        {
+                            "name": "VPN",
+                            "properties": {
+                                "addressPrefix": "10.96.96.128/28",
+                                "routeTableName": "routeTable-coreVPN"
+                            }
+                        },
+                        {
+                            "name": "Outside",
+                            "properties": {
+                                "addressPrefix": "10.96.96.144/28"
+                            }
+                        }
+                    ],
+                    "tagValues": {
+                        "businessOwner": "PSPC-CCC",
+                        "costCenter": "PSPC-EA",
+                        "deploymentStage": "Sandbox",
+                        "dataProfile": "Unclassified",
+                        "version": "0.1"
+                    }
+                },
+                {
+                    "resourceGroup": "rgManagement",
+                    "name": "vnet-management",
+                    "addressPrefixes": [
+                        "10.250.0.0/20"
+                    ],
+                    "subnets": [
+                        {
+                            "name": "PAZ",
+                            "properties": {
+                                "addressPrefix": "10.250.0.0/24",
+                                "routeTableName": "routeTable-management-paz"
+                            }
+                        },
+                        {
+                            "name": "APP",
+                            "properties": {
+                                "addressPrefix": "10.250.1.0/24",
+                                "routeTableName": "routeTable-management-app"
+                            }
+                        },
+                        {
+                            "name": "DB",
+                            "properties": {
+                                "addressPrefix": "10.250.2.0/24",
+                                "routeTableName": "routeTable-management-db"
+                            }
+                        },
+                        {
+                            "name": "MgmtToCore",
+                            "properties": {
+                                "addressPrefix": "10.250.3.0/24",
+                                "routeTableName": "routeTable-management-to-core"
+                            }
+                        },
+                        {
+                            "name": "Outside",
+                            "properties": {
+                                "addressPrefix": "10.250.15.0/24"
+                            }
+                        }
+                    ],
+                    "tagValues": {
+                        "businessOwner": "PSPC-CCC",
+                        "costCenter": "PSPC-EA",
+                        "deploymentStage": "Sandbox",
+                        "dataProfile": "Unclassified",
+                        "version": "0.1"
+                    }
+                }
+            ]
+        }
+    }
+}

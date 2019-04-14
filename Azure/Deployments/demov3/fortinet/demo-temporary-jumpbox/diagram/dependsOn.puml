@@ -1,0 +1,46 @@
+@startuml
+
+artifact resourcegroups
+artifact keyvault_infra
+artifact routes_core
+artifact routes_mgmt
+artifact routes_shared
+artifact nsg_shared
+artifact vnet_subnet_core
+artifact vnet_subnet_mgmt
+artifact vnet_subnet_shared
+artifact vnet_peering_core
+artifact vnet_peering_mgmt
+artifact vnet_peering_shared
+artifact storage_vmdiag_MGMT_RDS
+artifact storage_vmdiag_Shared_Sandbox
+artifact Core_Azure_Firewall
+artifact Docker_Demo_prep
+artifact Docker_Demo
+
+keyvault_infra --> resourcegroups
+routes_core --> resourcegroups
+routes_mgmt --> resourcegroups
+routes_shared --> resourcegroups
+nsg_shared --> resourcegroups
+vnet_subnet_core --> routes_core
+vnet_subnet_mgmt --> routes_mgmt
+vnet_subnet_shared --> routes_shared
+vnet_subnet_shared --> nsg_shared
+vnet_peering_core --> vnet_subnet_core
+vnet_peering_core --> vnet_subnet_mgmt
+vnet_peering_core --> vnet_subnet_shared
+vnet_peering_mgmt --> vnet_peering_core
+vnet_peering_shared --> vnet_peering_core
+storage_vmdiag_MGMT_RDS --> resourcegroups
+storage_vmdiag_Shared_Sandbox --> resourcegroups
+Core_Azure_Firewall --> vnet_peering_core
+Core_Azure_Firewall --> vnet_peering_shared
+Core_Azure_Firewall --> vnet_peering_mgmt
+Docker_Demo_prep --> keyvault_infra
+Docker_Demo_prep --> storage_vmdiag_Shared_Sandbox
+Docker_Demo_prep --> vnet_peering_shared
+Docker_Demo --> Core_Azure_Firewall
+Docker_Demo --> Docker_Demo_prep
+
+@enduml

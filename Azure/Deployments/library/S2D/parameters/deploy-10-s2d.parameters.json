@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "namePrefix": {
+      "value": "DEMOS2D"
+    },
+    "storageAccountType": {
+      "value": "Premium_LRS"
+    },
+    "vmSize": {
+      "value": "Standard_DS2_v2"
+    },
+    "vmCount": {
+      "value": 2
+    },
+    "vmDiskSize": {
+      "value": 256
+    },
+    "vmDiskCount": {
+      "value": 2
+    },
+    "existingDomainName": {
+      "value": "mgmt.demo.pspc-spac.ca"
+    },
+    "keyVaultResourceGroupName": {
+      "value": "Demo-Infra-Keyvault-RG"
+    },
+    "keyVaultName": {
+      "value": "Demo-Infra-KV-[unique]"
+    },
+    "adminUsername": {
+      "value": "azureadmin"
+    },
+    "adminPasswordSecret": {
+        "value": "server2016DefaultPassword"
+    },
+    "existingVirtualNetworkRGName": {
+      "value": "Demo-Infra-NetMGMT-RG"
+    },
+    "existingVirtualNetworkName": {
+      "value": "Demo-Infra-NetMGMT-VNET"
+    },
+    "existingSubnetName": {
+      "value": "Demo-MGMT-APP-RDS"
+    },
+    "sofsName": {
+      "value": "fs01"
+    },
+    "shareName": {
+      "value": "data"
+    },
+    "tagValues": {
+        "value": {
+            "Owner": "yann.gagnon@tpsgc-pwgsc.gc.ca",
+            "CostCenter": "PSPC-EA",
+            "Enviroment": "Sandbox",
+            "Classification": "Unclassified",
+            "Organizations": "PSPC-CCC-E&O"
+        }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+enable
+
+
+config terminal
+
+
+
+license smart
+ feature tier standard
+ throughput level 1G
+!
+license smart register idtoken [idtoken]
+!
+end 
+wr mem 
+exit
+

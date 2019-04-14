@@ -1,0 +1,116 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminPassword": {
+            "defaultValue": "",
+            "type": "securestring",
+            "metadata": {
+                "description": "Password for the Virtual Machine."
+            }
+        },
+        "fwObject": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "imagePublisher": "cisco",
+        "imageOffer": "cisco-asav",
+        "imageSKU": "asav-azure-byol",
+        "softwareVersion": "[parameters('fwObject').softwareVersion]",
+        "OSDiskName": "[concat(parameters('fwObject').vmName,'-disk')]",
+        "sshKeyPath": "[concat('/home/',parameters('fwObject').adminUsername,'/.ssh/authorized_keys')]",
+        "osProfilesshPublicKey": {
+            "computername": "[parameters('fwObject').vmName]",
+            "adminUsername": "[parameters('fwObject').adminUsername]",
+            "linuxConfiguration": {
+                "disablePasswordAuthentication": "true",
+                "ssh": {
+                    "publicKeys": [
+                        {
+                            "path": "[variables('sshKeyPath')]",
+                            "keyData": "[parameters('fwObject').sshPublicKey]"
+                        }
+                    ]
+                }
+            }
+        },
+        "osProfilepassword": {
+            "computername": "[parameters('fwObject').vmName]",
+            "adminUsername": "[parameters('fwObject').adminUsername]",
+            "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageAccountName": "[concat(parameters('fwObject').storageAccountName, uniquestring(resourceGroup().id))]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('fwObject').vmName]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2018-06-01",
+            "location": "[parameters('fwObject').location]",
+            "plan": {
+                "name": "asav-azure-byol",
+                "publisher": "cisco",
+                "product": "cisco-asav"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('fwObject').vmSize]"
+                },
+                "osProfile": "[if(equals(parameters('fwObject').authenticationType,'password'), variables('osProfilepassword'), variables('osProfilesshPublicKey'))]",
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisher')]",
+                        "offer": "[variables('imageOffer')]",
+                        "sku": "[variables('imageSKU')]",
+                        "version": "[variables('softwareVersion')]"
+                    },
+                    "osDisk": {
+                        "name": "[variables('OSDiskName')]",
+                        "vhd": {
+                            "uri": "[concat(reference(resourceId(parameters('fwObject').storageAccountRG,'Microsoft.Storage/storageAccounts/', variables('storageAccountName')), '2018-02-01').primaryEndpoints.blob,'vhds/', variables('OSDiskName'), '.vhd')]"
+                        },
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "diskSizeGB": 9
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "properties": {
+                                "primary": true
+                            },
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('fwObject').vmName,'-Nic0'))]"
+                        },
+                        {
+                            "properties": {
+                                "primary": false
+                            },
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('fwObject').vmName,'-Nic1'))]"
+                        },
+                        {
+                            "properties": {
+                                "primary": false
+                            },
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('fwObject').vmName,'-Nic2'))]"
+                        },
+                        {
+                            "properties": {
+                                "primary": false
+                            },
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('fwObject').vmName,'-Nic3'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageuri": "[reference(resourceId(parameters('fwObject').storageAccountRG, 'Microsoft.Storage/storageAccounts/', variables('storageAccountName')), '2018-02-01').primaryEndpoints.blob]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

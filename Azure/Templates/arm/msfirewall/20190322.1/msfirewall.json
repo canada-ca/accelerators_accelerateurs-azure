@@ -1,0 +1,58 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "msFirewallObj": {
+            "type": "object",
+            "metadata": {
+                "description": "Object of MS firewall objects."
+            }
+        }
+    },
+    "variables": {
+        "fwName": "[concat(parameters('msFirewallObj').vnet, '-msfirewall')]",
+        "fwPubIpName": "[concat(variables('fwName'), '-pubip')]"
+    },
+    "resources": [
+        {
+            "name": "[variables('fwPubIpName')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static",
+                "publicIPAddressVersion": "IPv4"
+            }
+        },
+        {
+            "apiVersion": "2018-11-01",
+            "type": "Microsoft.Network/azureFirewalls",
+            "name": "[variables('fwName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', variables('fwPubIpName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "IpConf",
+                        "properties": {
+                            "subnet": {
+                                "id": "[concat(resourceGroup().id, '/providers/Microsoft.Network/virtualNetworks/', parameters('msFirewallObj').vnet, '/subnets/', 'AzureFirewallSubnet')]"
+                            },
+                            "InternalPublicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('fwPubIpName'))]"
+                            }
+                        }
+                    }
+                ],
+                "applicationRuleCollections": "[parameters('msFirewallObj').applicationRuleCollections]",
+                "networkRuleCollections": "[parameters('msFirewallObj').networkRuleCollections]"
+            }
+        }
+    ],
+    "outputs": {}
+}

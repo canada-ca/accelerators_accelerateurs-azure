@@ -1,0 +1,266 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string",
+            "metadata": {
+                "description": "SaS token value for the blob storage."
+            }
+        },
+        "keyVaultResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource Group for the keyVault."
+            }
+        },
+        "keyVaultName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the keyVault to use for the username and password"
+            }
+        },
+        "DomainName": {
+            "type": "string",
+            "defaultValue": "none",
+            "metadata": {
+                "description": "Full FQDN name for the forest root domain."
+            },
+            "minlength": 4
+        },
+        "createChildDomain": {
+            "type": "bool",
+            "metadata": {
+              "description": "Do you want a child domain? If false, the parameters for the child domain are ignored. "
+            }
+          },
+        "ChildDomainName": {
+            "type": "string",
+            "defaultValue": "none",
+            "metadata": {
+                "description": "SHORT name for the child domain. New AD trees are not allowed."
+            },
+            "minlength": 2
+        },
+        "VMSize": {
+            "type": "string",
+            "allowedValues": [
+                "Basic_A2",
+                "Basic_A3",
+                "Standard_A2_v2",
+                "Standard_A3",
+                "Standard_B2s",
+                "Standard_B2ms",
+                "Standard_B4ms",
+                "Standard_D2_v2",
+                "Standard_D3_v2",
+                "Standard_DS2_v2",
+                "Standard_DS3_v2",
+                "Standard_D2_v3",
+                "Standard_D3_v3"
+            ],
+            "metadata": {
+                "description": "The size and type of the VM. *_DS* or *s types support Premium Disks."
+            }
+        },
+        "vnetRG":{
+            "type": "string",
+            "metadata": {
+                "description": "The resource group of where the vnet for the active directory"
+            }
+        },
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the new VNET for the DC(s)."
+            },
+            "minlength": 2
+        },
+        "vnetAddressRange": {
+            "type": "string",
+            "metadata": {
+              "description": "The address range of the new VNET in CIDR format."
+            }
+        },
+        "adSubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the VM subnet created in the new VNET."
+            },
+            "defaultValue": "adSubnet",
+            "minlength": 2
+        },
+        "adSubnet":{
+            "type": "string",
+            "metadata": {
+                "description": "The ad subnet CIDR."
+            }
+        },
+        "RootDC1Name": {
+            "type": "string",
+            "metadata": {
+              "description": "The computer name of the first DC of the root domain."
+            },
+            "minlength": 2
+          },
+          "RootDC1IPAddress": {
+            "type": "string",
+            "metadata": {
+              "description": "The IP address of the first DC of the root domain."
+            }
+          },
+          "RootDC2Name": {
+            "type": "string",
+            "metadata": {
+              "description": "The computer name of the second DC of the root domain."
+            },
+            "minlength": 2
+          },
+          "RootDC2IPAddress": {
+            "type": "string",
+            "metadata": {
+              "description": "The IP address of the second DC of the root domain."
+            }
+          },
+          "ChildDC3Name": {
+            "type": "string",
+            "defaultValue": "none",
+            "metadata": {
+              "description": "The computer name of the first DC of the CHILD domain."
+            },
+            "minlength": 2
+          },
+          "ChildDC3IPAddress": {
+            "type": "string",
+            "defaultValue": "none",
+            "metadata": {
+              "description": "The IP address of the first DC of the CHILD domain."
+            }
+          },
+          "ChildDC4Name": {
+            "type": "string",
+            "defaultValue": "none",
+            "metadata": {
+              "description": "The computer name of the second DC of the CHILD domain."
+            },
+          "minlength": 2
+          },
+          "ChildDC4IPAddress": {
+            "type": "string",
+            "defaultValue": "none",
+            "metadata": {
+              "description": "The IP address of the second DC of the CHILD domain."
+            }
+          },
+        "tagValues": {
+            "type": "object"
+        },
+        "ReverseZoneObject":{
+            "type": "array"
+         }
+    },
+    "variables": {
+        "baseUrl": "[concat(uri(deployment().properties.templateLink.uri, 'domain-controllers.json'), parameters('containerSasToken'))]",
+        "keyVaultId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('keyVaultResourceGroupName'), '/providers/Microsoft.KeyVault/vaults/', concat(parameters('keyVaultName')))]"
+    },
+    "resources": [
+        {
+            "name": "deploy-domain-controller",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "createChildDomain": {
+                        "value": "[parameters('createChildDomain')]"
+                    },
+                    "DomainName": {
+                        "value": "[parameters('DomainName')]"
+                    },
+                    "ChildDomainName": {
+                        "value": "[parameters('ChildDomainName')]"
+                    },
+                    "adminUsername": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[variables('keyVaultId')]"
+                            },
+                            "secretName": "defaultAdminUsername"
+                        }
+                    },
+                    "adminPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[variables('keyVaultId')]"
+                            },
+                            "secretName": "server2016DefaultPassword"
+                        }
+                    },
+                    "VMsize": {
+                        "value": "[parameters('VMSize')]"
+                    },
+                    "virtualNetworkRG":{
+                        "value": "[parameters('vnetRG')]"
+                    },
+                    "virtualNetworkName":{
+                        "value": "[parameters('vnetName')]"
+                    },
+                    "virtualNetworkAddressRange": {
+                        "value": "[parameters('vnetAddressRange')]"
+                    },
+                    "adSubnetName":{
+                        "value": "[parameters('adSubnetName')]"
+                    },
+                    "adSubnet":{
+                        "value": "[parameters('adSubnet')]"
+                    },
+                    "RootDC1Name": {
+                        "value": "[parameters('RootDC1Name')]"
+                    },
+                    "RootDC1IPAddress": {
+                        "value": "[parameters('RootDC1IPAddress')]"
+                    },
+                    "RootDC2Name": {
+                        "value": "[parameters('RootDC2Name')]"
+                    },
+                    "RootDC2IPAddress": {
+                        "value": "[parameters('RootDC2IPAddress')]"
+                    },
+                    "ChildDC3Name": {
+                        "value": "[parameters('ChildDC3Name')]"
+                    },
+                    "ChildDC3IPAddress": {
+                        "value": "[parameters('ChildDC3IPAddress')]"
+                    },
+                    "ChildDC4Name": {
+                        "value": "[parameters('ChildDC4Name')]"
+                    },
+                    "ChildDC4IPAddress": {
+                        "value": "[parameters('ChildDC4IPAddress')]"
+                    },
+                    "containerSasToken": {
+                        "value": "[parameters('containerSasToken')]"
+                    },
+                    "tagValues": {
+                        "value": "[parameters('tagValues')]"
+                    },
+                    "ReverseZoneObject":{
+                        "value": "[parameters('ReverseZoneObject')]"
+                     }
+                     
+                },
+                "templateLink": {
+                    "uri": "[variables('baseUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "subscriptionOutput": {
+            "value": "[deployment()]",
+            "type" : "object"
+        }
+    }
+}

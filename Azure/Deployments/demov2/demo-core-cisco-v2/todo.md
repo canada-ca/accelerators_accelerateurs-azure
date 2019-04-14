@@ -1,0 +1,2 @@
+1. Update cisco asav base config to fix issue with flows required to deploy demo-mgmt-ADDS and demo-shared-ADDS
+2. Add support to specify static private IP to the server template. This will allow for quicked deployment of the component in parallel with the firewalls. At the moment we need to wait for the core firewall to be deployed before deploying the demo jumpbox01 so that the expected static firewall IP is no assigned to jumpbox01.
