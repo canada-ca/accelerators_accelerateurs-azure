@@ -1,4 +1,4 @@
-([Français](#gabarit-accelerateurs-du-gouvernement-du-canada))
+([Français](#GC Accelerateurs (Azure))
 
 # GC Accelerators (Azure)
 
