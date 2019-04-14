@@ -59,6 +59,7 @@ Stop-Process -Name Explorer
 $WshShell = New-Object -comObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("c:\Users\Public\Desktop\Visual Studio Code.lnk")
 $Shortcut.TargetPath = "C:\Program Files\Microsoft VS Code\Code.exe"
+$Shortcut.Arguments = '"C:\Azure\accelerators_accelerateurs-azure"'
 $Shortcut.Save()
 #adding Azure Deployment Library shortcut on the desktop
 
