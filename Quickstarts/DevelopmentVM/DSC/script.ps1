@@ -74,8 +74,8 @@ $temptime = get-date -f yyyy-MM-dd--HH:mm:ss
 # Clone Azure Accelerators repo
 New-Item -ItemType directory -Path "C:\Azure"
 Set-Location -Path "C:\Azure"
-git clone https://github.com/canada-ca/accelerators_accelerateurs-azure
-
+. "C:\Program Files\Git\bin\git.exe" clone https://github.com/canada-ca/accelerators_accelerateurs-azure
+Set-Location -Path $scriptPath
 "Ending deployment script - $temptime" | out-file $deploylogfile -Append
 }
 
