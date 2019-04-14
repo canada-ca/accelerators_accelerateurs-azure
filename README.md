@@ -1,4 +1,4 @@
-([Français](#GC Accelerateurs (Azure))
+([Français](#gc-accelerateurs))
 
 # GC Accelerators (Azure)
 
