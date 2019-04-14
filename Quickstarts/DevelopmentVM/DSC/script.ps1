@@ -63,13 +63,19 @@ $Shortcut.Save()
 #adding Azure Deployment Library shortcut on the desktop
 
 $WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("c:\Users\Public\Desktop\Azure Deployment Librairies.lnk")
-$Shortcut.TargetPath = "https://dev.azure.com/GC-Quickstarts/_git/Azure-Deployments"
+$Shortcut = $WshShell.CreateShortcut("c:\Users\Public\Desktop\Azure Accelerators.lnk")
+$Shortcut.TargetPath = "https://github.com/canada-ca/accelerators_accelerateurs-azure"
 $Shortcut.IconLocation="$scriptPath\ADLicon.ico"
 $Shortcut.Save()
 #disable server manager at login time
 Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose 
 $temptime = get-date -f yyyy-MM-dd--HH:mm:ss
+
+# Clone Azure Accelerators repo
+New-Item -ItemType directory -Path "C:\Azure"
+Set-Location -Path "C:\Azure"
+git clone https://github.com/canada-ca/accelerators_accelerateurs-azure
+
 "Ending deployment script - $temptime" | out-file $deploylogfile -Append
 }
 
