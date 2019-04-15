@@ -80,13 +80,15 @@ Process {
 
     #disable server manager at login time
     Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose 
-    $temptime = Get-Date -f yyyy-MM-dd--HH:mm:ss
+  
 
     # Clone Azure Accelerators repo
     New-Item -ItemType directory -Path "C:\Azure"
     Set-Location -Path "C:\Azure"
-    . git.exe clone https://github.com/canada-ca/accelerators_accelerateurs-azure
+    . "C:\Program Files\Git\bin\git.exe" clone https://github.com/canada-ca/accelerators_accelerateurs-azure
     Set-Location -Path $scriptPath
+
+    $temptime = Get-Date -f yyyy-MM-dd--HH:mm:ss
     "Ending deployment script - $temptime" | Out-File $deploylogfile -Append
 }
 
