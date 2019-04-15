@@ -85,7 +85,7 @@ Process {
     # Clone Azure Accelerators repo
     New-Item -ItemType directory -Path "C:\Azure"
     Set-Location -Path "C:\Azure"
-    . git.exe clone https://github.com/canada-ca/accelerators_accelerateurs-azure
+    . git clone https://github.com/canada-ca/accelerators_accelerateurs-azure
     Set-Location -Path $scriptPath
     "Ending deployment script - $temptime" | Out-File $deploylogfile -Append
 }
