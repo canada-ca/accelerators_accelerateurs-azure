@@ -194,17 +194,13 @@
                         "autoUpgradeMinorVersion": true,
                         "settings": {
                             "fileUris": [
-                                "[concat(uri(variables('_artifactsLocation'), 'DSC/script.ps1'))]",
-                                "[concat(uri(variables('_artifactsLocation'), 'Files/VSCodeSetup-x64-1.32.3.exe'))]",
+                                "[concat(uri(variables('_artifactsLocation'), 'DSC/buildvm.ps1'))]",
                                 "[concat(uri(variables('_artifactsLocation'), 'Files/InstallVSCExtensions.bat'))]",
                                 "[concat(uri(variables('_artifactsLocation'), 'Files/UninstallVSCExtensions.bat'))]",
-                                "[concat(uri(variables('_artifactsLocation'), 'Files/ChromeStandaloneSetup64.exe'))]",
-                                "[concat(uri(variables('_artifactsLocation'), 'Files/MicrosoftAzureStorageAzCopy_netcore_x64.msi'))]",
-                                "[concat(uri(variables('_artifactsLocation'), 'Files/ADLicon.ico'))]",
-                                "[concat(uri(variables('_artifactsLocation'), 'Files/Git-2.21.0-64-bit.exe'))]"
+                                "[concat(uri(variables('_artifactsLocation'), 'Files/ADLicon.ico'))]"
                             ],
                             
-                            "commandToExecute": "[concat('powershell -ExecutionPolicy bypass -File ', 'script.ps1', ' -rdpPort ', parameters('rdpPort'))]"
+                            "commandToExecute": "[concat('powershell -ExecutionPolicy bypass -File ', 'buildvm.ps1', ' -rdpPort ', parameters('rdpPort'))]"
                         }
                     }
                 }
