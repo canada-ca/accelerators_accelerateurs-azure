@@ -98,8 +98,8 @@
                     ],
                     "tagValues": {
                         "compositeApp": "NA",
-                        "businessOwner": "PSPC-CCC",
-                        "costCenter": "PSPC-EA",
+                        "businessOwner": "Demo-CCC",
+                        "costCenter": "Demo-EA",
                         "deploymentStage": "Sandbox",
                         "vmWorkload": "Test",
                         "vmRole": "Testing",
@@ -184,8 +184,8 @@
                     ],
                     "tagValues": {
                         "compositeApp": "NA",
-                        "businessOwner": "PSPC-CCC",
-                        "costCenter": "PSPC-EA",
+                        "businessOwner": "Demo-CCC",
+                        "costCenter": "Demo-EA",
                         "deploymentStage": "Sandbox",
                         "vmWorkload": "Test",
                         "vmRole": "Testing",
@@ -270,8 +270,8 @@
                     ],
                     "tagValues": {
                         "compositeApp": "NA",
-                        "businessOwner": "PSPC-CCC",
-                        "costCenter": "PSPC-EA",
+                        "businessOwner": "Demo-CCC",
+                        "costCenter": "Demo-EA",
                         "deploymentStage": "Sandbox",
                         "vmWorkload": "Test",
                         "vmRole": "Testing",

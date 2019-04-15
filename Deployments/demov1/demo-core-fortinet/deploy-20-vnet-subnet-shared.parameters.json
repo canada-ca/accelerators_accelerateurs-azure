@@ -94,10 +94,10 @@
                     ],
                     "tagValues": {
                         "Owner": "cloudteam@tpsgc-pwgsc.gc.ca",
-                        "CostCenter": "PSPC-EA",
+                        "CostCenter": "Demo-EA",
                         "Enviroment": "Sandbox",
                         "Classification": "Unclassified",
-                        "Organizations": "PSPC-CCC-E&O",
+                        "Organizations": "Demo-CCC-E&O",
                         "DeploymentVersion": "2019-01-30-01"
                     }
                 }

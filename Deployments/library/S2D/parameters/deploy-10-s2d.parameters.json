@@ -21,7 +21,7 @@
       "value": 2
     },
     "existingDomainName": {
-      "value": "mgmt.demo.pspc-spac.ca"
+      "value": "mgmt.demo.ca"
     },
     "keyVaultResourceGroupName": {
       "value": "Demo-Infra-Keyvault-RG"
@@ -52,11 +52,11 @@
     },
     "tagValues": {
         "value": {
-            "Owner": "yann.gagnon@tpsgc-pwgsc.gc.ca",
-            "CostCenter": "PSPC-EA",
+            "Owner": "cloudteam@tpsgc-pwgsc.gc.ca",
+            "CostCenter": "Demo-EA",
             "Enviroment": "Sandbox",
             "Classification": "Unclassified",
-            "Organizations": "PSPC-CCC-E&O"
+            "Organizations": "Demo-CCC-E&O"
         }
     }
   }
