@@ -10,7 +10,7 @@ This template allows you to deploy an Azure Development Windows VM using the lat
 
 A video tutorial on how to deploy the VM on Azure and use the VM to build your 1st Azure infrastructure can be found here: 
 
-[![HOWTO deploy the GC Accelerator VM and use it](resources/youtube-screen.png)](https://www.youtube.com/watch?v=Mm_bBRf73Lo "HOWTO deploy the GC Accelerator VM and use it")
+[![HOWTO deploy the GC Accelerator VM and use it](resources/youtube-screen.png)](https://youtu.be/8ZJhvo-eTCY "HOWTO deploy the GC Accelerator VM and use it")
 
 
 ## Demo Infrastructure deployment
