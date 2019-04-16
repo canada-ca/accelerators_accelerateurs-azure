@@ -23,7 +23,7 @@ You will also need to update the dhcp options in the management vnet to allow se
     },
 ```
 
-There is already a modified parameters file in the infra-fortinet-nsg parameters folder called deploy-20-vnet-subnet-mgmt-postadds.parameters.json... so no need to edit any file to complete the next step.
+There is already a modified parameters file in the demo-core-msfw-nsg\parameters folder called deploy-20-vnet-subnet-mgmt-postadds.parameters.json... so no need to edit any file unless you insist on doing so ;-)
 
 You then need to re-deploy the management vnet using the modified parameter file with:
 
