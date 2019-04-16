@@ -4,7 +4,7 @@ This HOWTO will guide you to deploy a DEMO Infrastructure comprised of multiple 
 
 ## Prerequisite
 
-You need to have deployed a functional Development VM as per the [Deploy Development VM](../DeployDevelopmantVM) HOWTO.
+You need to have deployed a functional Development VM as per the [Deploy Development VM](../DeployDevelopmentVM) HOWTO.
 
 ## Demo Infrastructure Deployment
 ### 1. Core Infrastructure
