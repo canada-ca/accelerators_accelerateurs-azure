@@ -1,6 +1,8 @@
 # GC Cloud Accelerator Demo Infrastructure Deployment
 
-This HOWTO will guide you to deploy a DEMO Infrastructure comprised of multiple modules.
+This HOWTO will guide you to deploy a DEMO Infrastructure comprised of multiple modules. The following core infrastructure will be built though the deployment of this Demo:
+
+![Diagram](resources/core-msfw-nsg-infra-v3.1.png)
 
 ## Prerequisite
 
