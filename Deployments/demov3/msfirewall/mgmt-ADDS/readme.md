@@ -28,6 +28,6 @@ There is already a modified parameters file in the infra-fortinet-nsg parameters
 You then need to re-deploy the management vnet using the modified parameter file with:
 
 ```
-    cd <folder where the infra-fortinet-nsg is located>
-    .\scripts\deploysub.ps1 -parameterFile .\parameters\deploy-20-vnet-subnet-mgmt-postadds.parameters.json
+    cd ..\demo-core-msfw-nsg
+    .\masterdeploy-post-adds.ps1
 ```
