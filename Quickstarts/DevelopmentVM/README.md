@@ -130,6 +130,26 @@ Username: mgmt\azureadmin
 Password: Canada123!
 ```
 
+You will also need to update the dhcp options in the management vnet to allow servers in that vnet to use the ADDS servers for name resolution. This is required to be able to join the domain in the vnet later on. This can ve accomplished by editing subnet-vnet parameters file of the mamagement vnet to add the following dhcp option to and redeploy it to Azure:
+
+```
+    "dhcpOptions":  {
+        "dnsServers": [
+            "10.25.8.20",
+            "10.25.8.21"
+        ]
+    },
+```
+
+An already a modified parameters file in the demo-core-msfw-nsg\parameters folder called deploy-20-vnet-subnet-mgmt-postadds.parameters.json is provided as part of this demo... so no need to edit any file unless you insist on doing so ;-)
+
+At this point you need to re-deploy the management vnet using the modified parameter file with:
+
+```
+    cd ..\demo-core-msfw-nsg
+    .\masterdeploy-post-adds.ps1
+```
+
 ### 5. Management Remote Desktop Services
 
 Let's deploy our demo RDS servers that will allow easy user access over https to the servers in the infrastructure. This is also a one script deploy. Go in the demov3\msfirewall\mgmt-RDS and deploy it with:
@@ -162,7 +182,7 @@ Password: Canada123!
 
 Once connected to it use the Server Manager applications that will open on the desktop to manage the gateway server. Here is a short HOWTO Video that will explain what to do to configure a temporary self-signed certificate on the server:
 
-**This is not working yet. Need to figure out issue with FQDN used to authenticate.**
+**This is not working yet. Need to figure out issue with FQDN used to authenticate. Will probably require some rewrite of this deployment as a fix**
 
 * Click Remote Desktop Services
 
