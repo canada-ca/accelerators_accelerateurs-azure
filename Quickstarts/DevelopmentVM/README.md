@@ -8,11 +8,9 @@ This template allows you to deploy a 1st Azure Development Windows VM using the 
 
 ## HOWTO Video Tutorial
 
-A video tutorial on how to deploy the VM on Azure and use the VM to build your 1st Azure infrastructure can be found here: 
-
-[![HOWTO deploy the GC Accelerator VM and use it](resources/youtube-screen.png)](https://www.youtube.com/watch?v=Mm_bBRf73Lo "HOWTO deploy the GC Accelerator VM and use it")
+You will find a HOWTO Video Tutorial on how to deploy this Quickstart [at this location.](../../HOWTOs/DeployDevelopmentVM)
 
 
 ## Demo Infrastructure Deployment
 
-Instructions on how do deploy the demo infrastructure has [moved here.](../../HOWTOs/DeployDemoInfrastructure)
+Instructions on how do deploy the demo infrastructure using this Quickstart has [moved here.](../../HOWTOs/DeployDemoInfrastructure)
