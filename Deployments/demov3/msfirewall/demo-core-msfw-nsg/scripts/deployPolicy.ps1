@@ -3,10 +3,8 @@
 # https://portal.azure.com/#blade/Microsoft_Azure_PIM/CrossProviderActivationMenuBlade/azureResourceRoles/isAADGroupVisible//isAADRbacVisible/
 
 Param(
-    [string]$storageRG = "Demo-Infra-Storage-RG",
     [string]$subscriptionId = "",
-    [string]$storageAccountName = "deployments",
-    [string]$containerName = "demo-core-azfw-nsg",
+    [string]$resourceGroup = "Demo-Infra-LoggingSec-RG",
     [string]$workspaceName = "",
     [string]$location = "canadacentral"
 )
@@ -40,10 +38,18 @@ if (![string]::IsNullOrEmpty($subscriptionId)) {
     $subscriptionId = (Get-AzureRmContext).Subscription.Id
 }
 
-# Replace default value with provided workspaceName
-((Get-Content -path (Resolve-Path "$PSScriptRoot\..\policy\gcpolicy.json") -raw) -replace 'Demo-Workspace-\[unique\]-LA', $workspaceName) | Set-Content -Path $tempDirName\gcpolicy.json
+if ([string]::IsNullOrEmpty($workspaceName)) {
+    $workspaceName = (Get-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroup -Name "Workspace-Deploy-Demo-Workspace-unique-LA").Outputs.workspaceName.value
+}
 
-# Get-Content -Path $tempDirName\gcpolicy.json
+# Replace default value with provided workspaceName
+#((Get-Content -path (Resolve-Path "$PSScriptRoot\..\policy\gcpolicy.json") -raw) -replace 'Demo-Workspace-\[unique\]-LA', $workspaceName) | Set-Content -Path $tempDirName\gcpolicy.json
+
+(Get-Content -Path (Resolve-Path "$PSScriptRoot\..\policy\gcpolicy.json")) | ForEach-Object {
+    $_.replace('[subscriptionId]', $subscriptionId.ToLower()).replace('[resourceGroup]', $resourceGroup.ToLower()).replace('[workspaceName]', $workspaceName.ToLower())
+ } | Set-Content -Path $tempDirName\gcpolicy.json
+
+#Get-Content -Path $tempDirName\gcpolicy.json
 
 # Set policy
 

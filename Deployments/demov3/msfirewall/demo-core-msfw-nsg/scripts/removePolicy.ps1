@@ -32,12 +32,12 @@ if (![string]::IsNullOrEmpty($subscriptionId)) {
 
 # Set policy
 
-#$gcPolicySet = New-AzPolicySetDefinition -Name 'GC PBMM Policy Set' -PolicyDefinition (Resolve-Path "$PSScriptRoot\..\policy\gcpolicy.json")
+#$gcPolicySet = New-AzureRMPolicySetDefinition -Name 'GC PBMM Policy Set' -PolicyDefinition (Resolve-Path "$PSScriptRoot\..\policy\gcpolicy.json")
 
-#$isoPolicySet = Get-AzPolicySetDefinition -Id '/providers/Microsoft.Authorization/policySetDefinitions/89c6cddc-1c73-4ac1-b19c-54d1a15a42f2'
+#$isoPolicySet = Get-AzureRMPolicySetDefinition -Id '/providers/Microsoft.Authorization/policySetDefinitions/89c6cddc-1c73-4ac1-b19c-54d1a15a42f2'
 
 
-#New-AzPolicyAssignment -Name 'GC Audit ISO 27001:2013' -PolicySetDefinition $isoPolicySet -Scope "/subscriptions/$subscriptionId" -AssignIdentity -Location $location -Verbose
-Remove-AzPolicyAssignment -Name 'GC Audit ISO 27001:2013' -Scope "/subscriptions/$subscriptionId"
-Remove-AzPolicyAssignment -Name 'GC PBMM Policy Audit' -Scope "/subscriptions/$subscriptionId"
-Remove-AzPolicySetDefinition -Name 'GC PBMM Policy Set' -Force
+#New-AzureRMPolicyAssignment -Name 'GC Audit ISO 27001:2013' -PolicySetDefinition $isoPolicySet -Scope "/subscriptions/$subscriptionId" -AssignIdentity -Location $location -Verbose
+Remove-AzureRMPolicyAssignment -Name 'GC Audit ISO 27001:2013' -Scope "/subscriptions/$subscriptionId"
+Remove-AzureRMPolicyAssignment -Name 'GC PBMM Policy Audit' -Scope "/subscriptions/$subscriptionId"
+Remove-AzureRMPolicySetDefinition -Name 'GC PBMM Policy Set' -Force
