@@ -7,8 +7,7 @@ Param(
     [string]$subscriptionId = "",
     [string]$storageAccountName = "deployments",
     [string]$containerName = "demo-core-azfw-nsg",
-    [string]$location = "canadacentral",
-    [string]$configFilePath = "$PSScriptRoot\settings.xml"
+    [string]$location = "canadacentral"
 )
 
 function Cleanup {
@@ -17,8 +16,6 @@ function Cleanup {
 }
 
 $ErrorActionPreference = "Stop"
-
-$configFilePath = Resolve-Path $configFilePath
 
 # sign in
 #Write-Host "Logging in...";
@@ -54,6 +51,12 @@ if ($provisionningState -eq "Failed") {
     Cleanup
 }
 
-$corePUBLICip = (Get-AzureRmResourceGroupDeployment -ResourceGroupName Demo-Infra-NetCore-RG -Name "msfirewall-Deploy-Demo-Infra-NetCore-VNET").Outputs.publicIP.value
+#$corePUBLICip = (Get-AzureRmResourceGroupDeployment -ResourceGroupName Demo-Infra-NetCore-RG -Name "msfirewall-Deploy-Demo-Infra-NetCore-VNET").Outputs.publicIP.value
+
+# Apply policy
+Write-Host "Applying Azure Policy on subscription..."
+$workspaceName = (Get-AzureRmResourceGroupDeployment -ResourceGroupName Demo-Infra-LoggingSec-RG -Name "Workspace-Deploy-Demo-Workspace-unique-LA").Outputs.workspaceName.value
+
+. (Resolve-Path "$PSScriptRoot\scripts\deployPolicy.ps1") -workspaceName $workspaceName
 
 Write-Host "There was no deployment errors detected. All look good."
