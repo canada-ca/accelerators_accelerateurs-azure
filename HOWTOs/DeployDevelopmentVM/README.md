@@ -1,4 +1,4 @@
-# HOWTO deploy a GC Cloud Accelerators Azure Development VM
+# HOWTO Deploy a GC Cloud Accelerators Azure Development VM
 
 A video tutorial on how to deploy the VM on Azure and use the VM to build your 1st Azure infrastructure can be found here: 
 
