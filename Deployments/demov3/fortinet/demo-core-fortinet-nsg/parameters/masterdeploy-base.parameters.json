@@ -11,6 +11,15 @@
                     "parametersFile": "deploy-10-resourcegroups-canadacentral.parameters.json"
                 },
                 {
+                    "name": "workspace-LogAnalytics",
+                    "location": "canadacentral",
+                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/loganalytics/20190417.2/azuredeploysub.json",
+                    "parametersFile": "deploy-15-logAnalyticsWorkspace.parameters.json",
+                    "dependsOn": [
+                        "resourcegroups"
+                    ]
+                },
+                {
                     "name": "keyvault-infra",
                     "location": "canadacentral",
                     "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/keyvaults/20190311.1/azuredeploysub.json",

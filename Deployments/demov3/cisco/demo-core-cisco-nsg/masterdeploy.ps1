@@ -32,11 +32,9 @@ $tempDirName = $tempDirName.ToString()
 # Insert cisco smartlicense token to obtain license during deployment
 $confirmation = Read-Host "Do you want to license the cisco asav firewall during deployment (y/n)"
 if ($confirmation -eq 'y') {
-    $idtoken = Read-Host "Type in the smartlicense to use. Need to be good for 3 licenses"
+    $idtoken = Read-Host "Type in the smartlicense to use. Need to be good for 1 licenses"
 }
-else {
-    Write-Host "Since you opted not to license the ASAv I will not deploy the demo web server due to lack of throughput on the ASAv that would result if a deployment failure..."
-}
+
 ((Get-Content -path $PSScriptRoot\ciscoasav\register.ios.template -raw) -replace '\[idtoken\]', $idtoken) | Set-Content -Path $tempDirName\register.ios
 
 # sign in
@@ -90,6 +88,12 @@ Start-Sleep -Seconds 5
 
 $fwURL = "$coreASAPIBLICip" + ":10443"
 
+# Apply policy
+Write-Host "Applying Azure Policy on subscription..."
+$workspaceName = (Get-AzureRmResourceGroupDeployment -ResourceGroupName Demo-Infra-LoggingSec-RG -Name "Workspace-Deploy-Demo-Workspace-unique-LA").Outputs.workspaceName.value
+
+. (Resolve-Path "$PSScriptRoot\scripts\deployPolicy.ps1") -workspaceName $workspaceName
+
 Write-Host "There was no deployment errors detected. All look good."
 Write-Host
-Write-Host "Connect to the Core firewall using ASDM to $fwURL"
+Write-Host "You can connect to the Core firewall using ASDM to $fwURL"
