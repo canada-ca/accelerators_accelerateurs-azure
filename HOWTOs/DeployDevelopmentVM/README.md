@@ -4,6 +4,8 @@ A short video tutorial on how to deploy the VM on Azure and use the VM to build 
 
 [![HOWTO deploy the GC Accelerator VM and use it](resources/youtube-screen.png)](https://youtu.be/JmrBD6rDy20 "HOWTO deploy the GC Accelerator VM in Azure")
 
-If you would rather look at a longer tutorial with voice explaination you can alsao view this version https://youtu.be/8ZJhvo-eTCY
+If you would rather look at a longer tutorial with voice explaination you can alsao view this version:
+
+[![HOWTO deploy the GC Accelerator VM and use it](resources/youtube-screen-long-version.png)](https://youtu.be/8ZJhvo-eTCY "HOWTO deploy the GC Accelerator VM in Azure")
 
 You will find the Quickstart Template used in the HOWTO video above [at this location.](../../Quickstarts/DevelopmentVM)
