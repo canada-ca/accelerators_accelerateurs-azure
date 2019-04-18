@@ -1,5 +1,15 @@
 # Create an Active Directory forest with 1 or 2 domains, each with 1 or 2 DCs
 
+Click the button below to deploy a forest to Azure. 
+
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2F301-create-ad-forest-with-subdomain%2Fazuredeploy.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
+
+Warning: this template will **create running VMs**. 
+Be sure to deallocate them when you no longer need them
+to avoid incurring costs.
+
 This template creates an Active Directory forest for you. The configuration
 is flexible. 
 
@@ -153,13 +163,13 @@ PSPC Modified Features:
 	* Changed container sasToken parameter
 	* Set artifact location default as: deployment().properties.templateLink.uri
 	* Combined firstVMTemplateUri and nextVMTemplateUri as they call the same file
-	* Push vnet RG through
-	* Added new DS_v3 sizes and removed lower one core ones.
-	* Added "Microsoft.Resources/deployments/CreateForest" dependency to Childdomain as it would sometimes fail
-	* Removed updateDNS for now as it needs to be modified 
-	* Added in common tag structure
-	* Added timezone
-	* Added Forward Zones
+	*  Push vnet RG through
+	*  Added new DS_v3 sizes and removed lower one core ones.
+	*  Added "Microsoft.Resources/deployments/CreateForest" dependency to Childdomain as it would sometimes fail
+	*  Removed updateDNS for now as it needs to be modified 
+	*  Added in common tag structure
+	*  Added timezone
+	*  Added Forward Zones
 
 PSPC TODO (future):
 	* Alternate DNS not set through script.  Call original vnet scripts and pass DNS

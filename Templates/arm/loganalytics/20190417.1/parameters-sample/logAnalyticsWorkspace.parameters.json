@@ -1,0 +1,18 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceGroup": {
+            "value": "someRG"
+        },
+        "workspaceName": {
+            "value": "workspace-[unique]"
+        },
+        "data-retention": {
+            "value": 180
+        },
+        "sku": {
+            "value": "PerGB2018"
+        }
+    }
+}

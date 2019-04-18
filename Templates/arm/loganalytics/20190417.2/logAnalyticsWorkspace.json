@@ -1,0 +1,88 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the name of the workspace."
+            }
+        },
+        "data-retention": {
+            "type": "int",
+            "defaultValue": 365,
+            "minValue": 0,
+            "maxValue": 365,
+            "metadata": {
+                "displayName": "Log retention in days",
+                "description": "Number of days data will be retained for"
+            }
+        },
+        "sku": {
+            "type": "string",
+            "allowedValues": [
+                "Standalone",
+                "PerNode",
+                "PerGB2018"
+            ],
+            "defaultValue": "PerGB2018",
+            "metadata": {
+                "description": "Specifies the service tier of the workspace: Standalone, PerNode, Per-GB"
+            }
+        }
+    },
+    "variables": {
+        "workspaceName": "[pspc.getValidname(pspc.getUniqueName(parameters('workspaceName')))]"
+    },
+    "functions": [
+        {
+            "namespace": "pspc",
+            "members": {
+                "getUniqueName": {
+                    "parameters": [
+                        {
+                            "name": "name",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(contains(parameters('name'), '[unique]'), replace(parameters('name'), '[unique]', uniqueString(resourceGroup().id)), parameters('name'))]"
+                    }
+                },
+                "getValidname": {
+                    "parameters": [
+                        {
+                            "name": "name",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(greater(length(parameters('name')),40), concat(substring(parameters('name'), 0, 40)), parameters('name'))]"
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "name": "[variables('workspaceName')]",
+            "apiVersion": "2015-11-01-preview",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "sku": {
+                    "name": "[parameters('sku')]"
+                },
+                "retention": "[parameters('data-retention')]"
+            }
+        }
+    ],
+    "outputs": {
+        "workspaceName": {
+            "type": "string",
+            "value": "[variables('workspaceName')]"
+        }
+    }
+}

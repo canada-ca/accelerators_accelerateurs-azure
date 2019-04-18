@@ -66,6 +66,12 @@ $fwURL = "https://$corePUBLICip" + ":8443"
 #$JBAddress = $corePUBLICip + ":33890"
 #$RDSddress = $corePUBLICip + ":33891"
 
+# Apply policy
+Write-Host "Applying Azure Policy on subscription..."
+$workspaceName = (Get-AzureRmResourceGroupDeployment -ResourceGroupName Demo-Infra-LoggingSec-RG -Name "Workspace-Deploy-Demo-Workspace-unique-LA").Outputs.workspaceName.value
+
+. (Resolve-Path "$PSScriptRoot\scripts\deployPolicy.ps1") -workspaceName $workspaceName
+
 Write-Host "There was no deployment errors detected. All look good."
 Write-Host "Connect to the Core firewall using a web browser and connect to $fwURL"
 #Write-Host "Connect to the Jumpbox01 using RDP to $JBAddress"
