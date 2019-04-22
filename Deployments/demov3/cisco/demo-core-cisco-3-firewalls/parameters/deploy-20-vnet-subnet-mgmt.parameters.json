@@ -12,21 +12,21 @@
                     ],
                     "subnets": [
                         {
-                            "name": "APP-AD",
+                            "name": "Demo-MGMT-APP-AD",
                             "properties": {
                                 "addressPrefix": "10.25.8.16/28",
                                 "routeTableName": "Demo-Infra-NetMGMT-APP-AD-RT"
                             }
                         },
                         {
-                            "name": "PAZ-RDS",
+                            "name": "Demo-MGMT-PAZ-RDS",
                             "properties": {
                                 "addressPrefix": "10.25.4.0/28",
                                 "routeTableName": "Demo-Infra-NetMGMT-PAZ-RDS-RT"
                             }
                         },
                         {
-                            "name": "APP-RDS",
+                            "name": "Demo-MGMT-APP-RDS",
                             "properties": {
                                 "addressPrefix": "10.25.8.0/28",
                                 "routeTableName": "Demo-Infra-NetMGMT-APP-RDS-RT"
@@ -34,21 +34,21 @@
                             
                         },
                         {
-                            "name": "DB-RDS",
+                            "name": "Demo-MGMT-DB-RDS",
                             "properties": {
                                 "addressPrefix": "10.25.12.0/28",
                                 "routeTableName": "Demo-Infra-NetMGMT-DB-RDS-RT"
                             }
                         },
                         {
-                            "name": "PAZ-Test",
+                            "name": "Demo-MGMT-PAZ-Test",
                             "properties": {
                                 "addressPrefix": "10.25.4.32/27",
                                 "routeTableName": "Demo-Infra-NetMGMT-PAZ-Test-RT"
                             }
                         },
                         {
-                            "name": "APP-Test",
+                            "name": "Demo-MGMT-APP-Test",
                             "properties": {
                                 "addressPrefix": "10.25.8.32/27",
                                 "routeTableName": "Demo-Infra-NetMGMT-APP-Test-RT"
@@ -56,14 +56,14 @@
                             
                         },
                         {
-                            "name": "DB-Test",
+                            "name": "Demo-MGMT-DB-Test",
                             "properties": {
                                 "addressPrefix": "10.25.12.32/27",
                                 "routeTableName": "Demo-Infra-NetMGMT-DB-Test-RT"
                             }
                         },
                         {
-                            "name": "MgmtToCore",
+                            "name": "Demo-MGMT-MgmtToCore",
                             "properties": {
                                 "addressPrefix": "10.25.0.0/28",
                                 "routeTableName": "Demo-Infra-NetMGMT-MgmtToCore-RT"
@@ -71,19 +71,19 @@
                             
                         },
                         {
-                            "name": "PAZ-Interconnect",
+                            "name": "Demo-MGMT-PAZ-Interconnect",
                             "properties": {
                                 "addressPrefix": "10.25.0.16/28"
                            }
                         },
                         {
-                            "name": "APP-Interconnect",
+                            "name": "Demo-MGMT-APP-Interconnect",
                             "properties": {
                                 "addressPrefix": "10.25.0.32/28"
                            }
                         },
                         {
-                            "name": "DB-Interconnect",
+                            "name": "Demo-MGMT-DB-Interconnect",
                             "properties": {
                                 "addressPrefix": "10.25.0.48/28"
                            }

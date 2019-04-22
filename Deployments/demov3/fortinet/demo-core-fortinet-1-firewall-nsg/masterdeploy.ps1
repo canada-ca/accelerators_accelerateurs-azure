@@ -63,8 +63,6 @@ New-AzureRmDeployment -Location $Location -Name "Deploy-Infrastructure" -Templat
 $corePUBLICip = (Get-AzureRmResourceGroupDeployment -ResourceGroupName Demo-Infra-FWCore-RG -Name "Fortigate2NIC-deploy-DemoFWCore01").Outputs.publicIP.value
 
 $fwURL = "https://$corePUBLICip" + ":8443"
-#$JBAddress = $corePUBLICip + ":33890"
-#$RDSddress = $corePUBLICip + ":33891"
 
 # Apply policy
 Write-Host "Applying Azure Policy on subscription..."
@@ -74,5 +72,3 @@ $workspaceName = (Get-AzureRmResourceGroupDeployment -ResourceGroupName Demo-Inf
 
 Write-Host "There was no deployment errors detected. All look good."
 Write-Host "Connect to the Core firewall using a web browser and connect to $fwURL"
-#Write-Host "Connect to the Jumpbox01 using RDP to $JBAddress"
-#Write-Host "Connect to the RDS using RDP to $RDSAddress"

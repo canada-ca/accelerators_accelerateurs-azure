@@ -8,7 +8,7 @@
                     "keyVaultResourceGroupName": "Demo-Infra-Keyvault-RG",
                     "keyVaultName": "Demo-Infra-KV-[unique]"
                 },
-                "vmName": "demo-asav-core",
+                "vmName": "demo-asav-mgmt",
                 "softwareVersion": "910.1.0",
                 "adminUsername": "azureadmin",
                 "adminSecret": "fwpassword",
@@ -19,19 +19,23 @@
                 "storageAccountName": "demoasav",
                 "storageAccountType": "Standard_LRS",
                 "storageAccountNewOrExisting": "new",
-                "storageAccountRG": "Demo-Infra-FWCore-RG",
-                "publicIPAddressName": "demo-asav-core-pubip",
-                "publicIPDnsLabel": "demo-asav-core",
-                "publicIPNewOrExisting": "new",
-                "publicIPRG": "Demo-Infra-FWCore-RG",
+                "storageAccountRG": "Demo-Infra-FWMGMT-RG",
+                "publicIPAddressName": "demo-asav-mgmt-pubip",
+                "publicIPDnsLabel": "demo-asav-mgmt",
+                "publicIPNewOrExisting": "none",
+                "publicIPRG": "Demo-Infra-FWMGMT-RG",
                 "publicIPAllocationMethod": "Static",
                 "publicIPsku": "Basic",
-                "virtualNetworkName": "Demo-Infra-NetCore-VNET",
-                "virtualNetworkRG": "Demo-Infra-NetCore-RG",
-                "Subnet1Name": "Outside",
-                "subnet1StartAddress": "10.10.10.132",
-                "Subnet2Name": "CoreToSpokes",
-                "subnet2StartAddress": "10.10.10.4"
+                "virtualNetworkName": "Demo-Infra-NetMGMT-VNET",
+                "virtualNetworkRG": "Demo-Infra-NetMGMT-RG",
+                "Subnet1Name": "Demo-MGMT-MgmtToCore",
+                "subnet1StartAddress": "10.25.0.4",
+                "Subnet2Name": "Demo-MGMT-PAZ-Interconnect",
+                "subnet2StartAddress": "10.25.0.20",
+                "Subnet3Name": "Demo-MGMT-APP-Interconnect",
+                "subnet3StartAddress": "10.25.0.36",
+                "Subnet4Name": "Demo-MGMT-DB-Interconnect",
+                "subnet4StartAddress": "10.25.0.52"
             }
         }
     }

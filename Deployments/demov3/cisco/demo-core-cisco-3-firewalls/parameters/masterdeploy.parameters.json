@@ -5,109 +5,64 @@
         "deploymentSubArray": {
             "value": [
                 {
-                    "name": "resourcegroups",
-                    "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/resourcegroups/20190207.2/azuredeploysub.json",
-                    "parametersFile": "deploy-10-resourcegroups-canadacentral.parameters.json"
-                },
-                {
-                    "name": "keyvault-infra",
-                    "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/keyvaults/20190311.1/azuredeploysub.json",
-                    "parametersFile": "deploy-40-keyvaults.parameters.json",
-                    "dependsOn": [
-                        "resourcegroups"
-                    ]
-                },
-                {
                     "name": "routes-core",
                     "location": "canadacentral",
                     "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
-                    "parametersFile": "deploy-15-routes-core.parameters.json",
-                    "dependsOn": [
-                        "resourcegroups"
-                    ]
+                    "parametersFile": "deploy-15-routes-core.parameters.json"
                 },
                 {
                     "name": "routes-mgmt-ad",
                     "location": "canadacentral",
                     "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
-                    "parametersFile": "deploy-15-routes-mgmt-ad.parameters.json",
-                    "dependsOn": [
-                        "resourcegroups"
-                    ]
+                    "parametersFile": "deploy-15-routes-mgmt-ad.parameters.json"
                 },
                 {
                     "name": "routes-mgmt-mgmttocore",
                     "location": "canadacentral",
                     "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
-                    "parametersFile": "deploy-15-routes-mgmt-mgmttocore.parameters.json",
-                    "dependsOn": [
-                        "resourcegroups"
-                    ]
+                    "parametersFile": "deploy-15-routes-mgmt-mgmttocore.parameters.json"
                 },
                 {
                     "name": "routes-mgmt-rds",
                     "location": "canadacentral",
                     "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
-                    "parametersFile": "deploy-15-routes-mgmt-rds.parameters.json",
-                    "dependsOn": [
-                        "resourcegroups"
-                    ]
+                    "parametersFile": "deploy-15-routes-mgmt-rds.parameters.json"
                 },
                 {
                     "name": "routes-mgmt-test",
                     "location": "canadacentral",
                     "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
-                    "parametersFile": "deploy-15-routes-mgmt-test.parameters.json",
-                    "dependsOn": [
-                        "resourcegroups"
-                    ]
+                    "parametersFile": "deploy-15-routes-mgmt-test.parameters.json"
                 },
                 {
                     "name": "routes-shared-ad",
                     "location": "canadacentral",
                     "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
-                    "parametersFile": "deploy-15-routes-shared-ad.parameters.json",
-                    "dependsOn": [
-                        "resourcegroups"
-                    ]
+                    "parametersFile": "deploy-15-routes-shared-ad.parameters.json"
                 },
                 {
                     "name": "routes-shared-crm",
                     "location": "canadacentral",
                     "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
-                    "parametersFile": "deploy-15-routes-shared-crm.parameters.json",
-                    "dependsOn": [
-                        "resourcegroups"
-                    ]
+                    "parametersFile": "deploy-15-routes-shared-crm.parameters.json"
                 },
                 {
                     "name": "routes-shared-rds",
                     "location": "canadacentral",
                     "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
-                    "parametersFile": "deploy-15-routes-shared-rds.parameters.json",
-                    "dependsOn": [
-                        "resourcegroups"
-                    ]
+                    "parametersFile": "deploy-15-routes-shared-rds.parameters.json"
                 },
                 {
                     "name": "routes-shared-sandbox",
                     "location": "canadacentral",
                     "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
-                    "parametersFile": "deploy-15-routes-shared-sandbox.parameters.json",
-                    "dependsOn": [
-                        "resourcegroups"
-                    ]
+                    "parametersFile": "deploy-15-routes-shared-sandbox.parameters.json"
                 },
                 {
                     "name": "routes-shared-sharedtocore",
                     "location": "canadacentral",
                     "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
-                    "parametersFile": "deploy-15-routes-shared-sharedtocore.parameters.json",
-                    "dependsOn": [
-                        "resourcegroups"
-                    ]
+                    "parametersFile": "deploy-15-routes-shared-sharedtocore.parameters.json"
                 },
                 {
                     "name": "vnet-subnet-core",
@@ -170,24 +125,6 @@
                     "parametersFile": "deploy-30-vnet-peering-shared.parameters.json",
                     "dependsOn": [
                         "vnet-peering-core"
-                    ]
-                },
-                {
-                    "name": "storage-vmdiag-MGMT-RDS",
-                    "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/storage/20190311.1/azuredeploysub.json",
-                    "parametersFile": "deploy-55-storage-mgmt-rds.parameters.json",
-                    "dependsOn": [
-                        "resourcegroups"
-                    ]
-                },
-                {
-                    "name": "storage-vmdiag-Shared-Sandbox",
-                    "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/storage/20190311.1/azuredeploysub.json",
-                    "parametersFile": "deploy-55-storage-shared-sandbox.parameters.json",
-                    "dependsOn": [
-                        "resourcegroups"
                     ]
                 }
             ]

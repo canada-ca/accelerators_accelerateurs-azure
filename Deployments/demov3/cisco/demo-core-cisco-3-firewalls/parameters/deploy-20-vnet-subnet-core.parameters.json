@@ -12,14 +12,14 @@
                     ],
                     "subnets": [
                         {
-                            "name": "CoreToSpokes",
+                            "name": "Demo-Core-CoreToSpokes",
                             "properties": {
                                 "addressPrefix": "10.10.10.0/27",
                                 "routeTableName": "Demo-Infra-NetCore-CoreToSpokes-RT"
                             }
                         },
                         {
-                            "name": "Outside",
+                            "name": "Demo-Core-Outside",
                             "properties": {
                                 "addressPrefix": "10.10.10.128/26",
                                 "routeTableName": "Demo-Infra-NetCore-Outside-RT"

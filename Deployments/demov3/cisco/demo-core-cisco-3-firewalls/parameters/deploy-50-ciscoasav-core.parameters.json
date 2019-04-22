@@ -8,7 +8,7 @@
                     "keyVaultResourceGroupName": "Demo-Infra-Keyvault-RG",
                     "keyVaultName": "Demo-Infra-KV-[unique]"
                 },
-                "vmName": "demo-asav-shared",
+                "vmName": "demo-asav-core",
                 "softwareVersion": "910.1.0",
                 "adminUsername": "azureadmin",
                 "adminSecret": "fwpassword",
@@ -19,23 +19,19 @@
                 "storageAccountName": "demoasav",
                 "storageAccountType": "Standard_LRS",
                 "storageAccountNewOrExisting": "new",
-                "storageAccountRG": "Demo-Infra-FWShared-RG",
-                "publicIPAddressName": "demo-asav-shared-pubip",
-                "publicIPDnsLabel": "demo-asav-shared",
-                "publicIPNewOrExisting": "none",
-                "publicIPRG": "Demo-Infra-FWShared-RG",
+                "storageAccountRG": "Demo-Infra-FWCore-RG",
+                "publicIPAddressName": "demo-asav-core-pubip",
+                "publicIPDnsLabel": "demo-asav-core",
+                "publicIPNewOrExisting": "new",
+                "publicIPRG": "Demo-Infra-FWCore-RG",
                 "publicIPAllocationMethod": "Static",
                 "publicIPsku": "Basic",
-                "virtualNetworkName": "Demo-Infra-NetShared-VNET",
-                "virtualNetworkRG": "Demo-Infra-NetShared-RG",
-                "Subnet1Name": "SharedToCore",
-                "subnet1StartAddress": "10.25.16.4",
-                "Subnet2Name": "PAZ-Interconnect",
-                "subnet2StartAddress": "10.25.16.20",
-                "Subnet3Name": "APP-Interconnect",
-                "subnet3StartAddress": "10.25.16.36",
-                "Subnet4Name": "DB-Interconnect",
-                "subnet4StartAddress": "10.25.16.52"
+                "virtualNetworkName": "Demo-Infra-NetCore-VNET",
+                "virtualNetworkRG": "Demo-Infra-NetCore-RG",
+                "Subnet1Name": "Demo-Core-Outside",
+                "subnet1StartAddress": "10.10.10.132",
+                "Subnet2Name": "Demo-Core-CoreToSpokes",
+                "subnet2StartAddress": "10.10.10.4"
             }
         }
     }

@@ -58,14 +58,6 @@ $token = New-AzureStorageContainerSASToken -Name $containerName -Permission r -E
 # Deploy base infrastructure
 New-AzureRmDeployment -Location $Location -Name Base-Infrastructure -TemplateUri "https://azpwsdeployment.blob.core.windows.net/library/arm/masterdeploy/20190319.1/masterdeploysubrg.json" -TemplateParameterFile (Resolve-Path -Path "$PSScriptRoot\parameters\masterdeploysubrg.parameters.json") -baseParametersURL "https://$deploymentStorageAccountName.blob.core.windows.net/deployments/" -parametersSasToken $token -Verbose;
 
-Write-Host "Deploying Servers..."
-
-# Deploy Server in infrastructure
-if ($confirmation -eq 'y') {
-    Read-Host "Please apply all firewall licenses before continuing..."
-    New-AzureRmDeployment -Location $Location -Name Jumpbox01-and-DockerDemo -TemplateUri "https://azpwsdeployment.blob.core.windows.net/library/arm/masterdeploy/20190319.1/masterdeployrg.json" -TemplateParameterFile (Resolve-Path -Path "$PSScriptRoot\parameters\masterdeployrg-license.parameters.json") -baseParametersURL "https://$deploymentStorageAccountName.blob.core.windows.net/deployments/" -parametersSasToken $token -Verbose;
-}
-
 # Get public IP of core firewall that was just deployed
 $corePUBLICip = (Get-AzureRmResourceGroupDeployment -ResourceGroupName Demo-Infra-FWCore-RG -Name "Fortigate2NIC-deploy-DemoFWCore01").Outputs.publicIP.value
 
@@ -73,11 +65,11 @@ $fwURL = "https://$corePUBLICip" + ":8443"
 $dockerURL = "http://$corePUBLICip" + ":8080"
 $RDPAddress = $corePUBLICip + ":33891"
 
+# Apply policy
+Write-Host "Applying Azure Policy on subscription..."
+$workspaceName = (Get-AzureRmResourceGroupDeployment -ResourceGroupName Demo-Infra-LoggingSec-RG -Name "Workspace-Deploy-Demo-Workspace-unique-LA").Outputs.workspaceName.value
+
+. (Resolve-Path "$PSScriptRoot\scripts\deployPolicy.ps1") -workspaceName $workspaceName
+
 Write-Host "There was no deployment errors detected. All look good."
 Write-Host "Connect to the Core firewall using a web browser and connect to $fwURL"
-Write-Host "Connect to the Jumpbox01 using RDP to $RDPAddress"
-
-if ($confirmation -eq 'y') {
-    # Web Server Deployments
-    Write-Host "Connect to the demo website using a web browser and connect to $dockerURL"
-}

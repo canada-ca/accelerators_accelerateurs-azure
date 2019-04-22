@@ -33,9 +33,7 @@ $confirmation = Read-Host "Do you want to license the cisco asav firewall during
 if ($confirmation -eq 'y') {
     $idtoken = Read-Host "Type in the smartlicense to use. Need to be good for 3 licenses"
 }
-else {
-    Write-Host "Since you opted not to license the ASAv I will not deploy the demo web server due to lack of throughput on the ASAv that would result if a deployment failure..."
-}
+
 ((Get-Content -path $PSScriptRoot\ciscoasav\register.ios.template -raw) -replace '\[idtoken\]', $idtoken) | Set-Content -Path $tempDirName\register.ios
 
 # sign in
@@ -60,9 +58,11 @@ $null = Set-AzureRmCurrentStorageAccount -ResourceGroupName $storageRG -Name $de
 $token = New-AzureStorageContainerSASToken -Name $containerName -Permission r -ExpiryTime (Get-Date).AddMinutes(90.0)
 
 # Deploy base infrastructure
-New-AzureRmDeployment -Location $Location -Name Base-Infrastructure -TemplateUri "https://azpwsdeployment.blob.core.windows.net/library/arm/masterdeploy/20190319.1/masterdeploysubrg.json" -TemplateParameterFile (Resolve-Path -Path "$PSScriptRoot\parameters\masterdeploysubrg.parameters.json") -baseParametersURL "https://$deploymentStorageAccountName.blob.core.windows.net/$containerName/" -parametersSasToken $token -Verbose;
+New-AzureRmDeployment -Location $Location -Name "Deploy-Infrastructure-Dependencies" -TemplateUri "https://azpwsdeployment.blob.core.windows.net/library/arm/masterdeploy/20190319.1/masterdeploysub.json" -TemplateParameterFile (Resolve-Path -Path "$PSScriptRoot\parameters\masterdeploy-base.parameters.json") -baseParametersURL "https://$deploymentStorageAccountName.blob.core.windows.net/$containerName/" -parametersSasToken $token -Verbose;
 
-$provisionningState = (Get-AzureRmDeployment -Name Base-Infrastructure).ProvisioningState
+New-AzureRmDeployment -Location $Location -Name "Deploy-Infrastructure" -TemplateUri "https://azpwsdeployment.blob.core.windows.net/library/arm/masterdeploy/20190319.1/masterdeploysubrg.json" -TemplateParameterFile (Resolve-Path -Path "$PSScriptRoot\parameters\masterdeploy.parameters.json") -baseParametersURL "https://$deploymentStorageAccountName.blob.core.windows.net/$containerName/" -parametersSasToken $token -Verbose;
+
+$provisionningState = (Get-AzureRmDeployment -Name "Deploy-Infrastructure").ProvisioningState
 
 if ($provisionningState -eq "Failed") {
     Cleanup
@@ -92,44 +92,17 @@ cmd /c echo "y" | .\scripts\plink.exe -ssh -l azureadmin -pw Canada123! -m .\cis
 Start-Sleep -Seconds 5
 .\scripts\plink.exe -ssh -l azureadmin -pw Canada123! -m $tempDirName\register.ios -P 10023 $coreASAPIBLICip
 
-
-Write-Host "Deploying Servser..."
-
-# Deploy Server in infrastructure
-if ($confirmation -eq 'y') {
-    # Create the SaS token for the contrainer
-    $token = New-AzureStorageContainerSASToken -Name $containerName -Permission r -ExpiryTime (Get-Date).AddMinutes(90.0)
-
-    New-AzureRmDeployment -Location $Location -Name DockerDemo -TemplateUri "https://azpwsdeployment.blob.core.windows.net/library/arm/masterdeploy/20190319.1/masterdeployrg.json" -TemplateParameterFile (Resolve-Path -Path "$PSScriptRoot\parameters\masterdeployrg-dockerdemo.parameters.json") -baseParametersURL "https://$deploymentStorageAccountName.blob.core.windows.net/$containerName/" -parametersSasToken $token -Verbose;
-    $provisionningState = (Get-AzureRmDeployment -Name DockerDemo).ProvisioningState
-
-    if ($provisionningState -eq "Failed") {
-        Cleanup
-    }
-} else {
-    $token = New-AzureStorageContainerSASToken -Name $containerName -Permission r -ExpiryTime (Get-Date).AddMinutes(90.0)
-
-    New-AzureRmDeployment -Location $Location -Name Jumpbox-DockerDemo -TemplateUri "https://azpwsdeployment.blob.core.windows.net/library/arm/masterdeploy/20190319.1/masterdeployrg.json" -TemplateParameterFile (Resolve-Path -Path "$PSScriptRoot\parameters\masterdeployrg-jump-docker.parameters.json") -baseParametersURL "https://$deploymentStorageAccountName.blob.core.windows.net/$containerName/" -parametersSasToken $token -Verbose;
-    $provisionningState = (Get-AzureRmDeployment -Name Jumpbox-DockerDemo).ProvisioningState
-
-    if ($provisionningState -eq "Failed") {
-        Cleanup
-    }
-}
-
-$dockerURL = "http://$coreASAPIBLICip"
-$RDPAddress = $coreASAPIBLICip + ":3389"
 $MGMTFirewallASDM = $coreASAPIBLICip + ":10443"
 $SharedFirewallASDM = $coreASAPIBLICip + ":10444"
+
+# Apply policy
+Write-Host "Applying Azure Policy on subscription..."
+$workspaceName = (Get-AzureRmResourceGroupDeployment -ResourceGroupName Demo-Infra-LoggingSec-RG -Name "Workspace-Deploy-Demo-Workspace-unique-LA").Outputs.workspaceName.value
+
+. (Resolve-Path "$PSScriptRoot\scripts\deployPolicy.ps1") -workspaceName $workspaceName
 
 Write-Host "There was no deployment errors detected. All look good."
 Write-Host
 Write-Host "Connect to the Core firewall using ASDM to $coreASAPIBLICip"
 Write-Host "Connect to the Management firewall using ASDM to $MGMTFirewallASDM"
 Write-Host "Connect to the Shared firewall using ASDM to $SharedFirewallASDM"
-Write-Host "Connect to the temporary Jumpbox server using RDP to $RDPAddress"
-
-if ($confirmation -eq 'y') {
-    # Web Server Deployments
-    Write-Host "Connect to the demo website using a web browser at $dockerURL"
-}
