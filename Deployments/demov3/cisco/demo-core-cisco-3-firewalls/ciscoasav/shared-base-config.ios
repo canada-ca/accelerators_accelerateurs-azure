@@ -46,7 +46,13 @@ route PAZ-Interconnect 10.25.20.0 255.255.252.0 10.25.16.17 1
 route APP-Interconnect 10.25.24.0 255.255.252.0 10.25.16.33 1
 route DB-Interconnect 10.25.28.0 255.255.252.0 10.25.16.49 1
 !
-access-list SharedToCore_access_in_1 line 1 extended permit ip any any 
+access-list SharedToCore_access_in_1 line 1 extended permit ip any any
+access-list DB-Interconnect_access_in line 1 extended permit ip any any 
+access-list PAZ-Interconnect_access_in line 1 extended permit ip any any 
+access-list APP-Interconnect_access_in line 1 extended permit ip any any 
+access-group APP-Interconnect_access_in in interface APP-Interconnect
+access-group DB-Interconnect_access_in in interface DB-Interconnect
+access-group PAZ-Interconnect_access_in in interface PAZ-Interconnect
 access-group SharedToCore_access_in_1 in interface SharedToCore
 !
 end 
