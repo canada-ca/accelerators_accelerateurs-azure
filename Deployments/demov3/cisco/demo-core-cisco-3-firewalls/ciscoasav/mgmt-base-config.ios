@@ -32,8 +32,18 @@ interface Management0/0
 !
 same-security-traffic permit intra-interface
 !
+access-list DB-Interconnect_access_in line 1 extended permit ip any any 
+access-list PAZ-Interconnect_access_in line 1 extended permit ip any any 
+access-list APP-Interconnect_access_in line 1 extended permit ip any any 
+access-list MgmtToCore_access_in line 1 extended permit ip any any
 access-list MgmtToCore_access_in line 1 extended permit ip any any 
+access-list MgmtToCore_access_in line 1 extended permit ip any any 
+access-list MgmtToCore_access_in line 1 extended permit ip any any
+!
 access-group MgmtToCore_access_in in interface MgmtToCore
+access-group APP-Interconnect_access_in in interface APP-Interconnect
+access-group DB-Interconnect_access_in in interface DB-Interconnect
+access-group PAZ-Interconnect_access_in in interface PAZ-Interconnect
 !
 http server enable
 http 0.0.0.0 0.0.0.0 MgmtToCore
