@@ -1,0 +1,38 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "fwObject": {
+            "value": {
+                "vmKeyVault": {
+                    "keyVaultResourceGroupName": "Demo-Infra-Keyvault-RG",
+                    "keyVaultName": "Demo-Infra-KV-[unique]"
+                },
+                "vmName": "demo-asav-core",
+                "softwareVersion": "910.1.0",
+                "adminUsername": "azureadmin",
+                "adminSecret": "fwpassword",
+                "sshPublicKey": "",
+                "authenticationType": "password",
+                "vmSize": "Standard_D3_v2",
+                "location": "canadacentral",
+                "storageAccountName": "demoasav",
+                "storageAccountType": "Standard_LRS",
+                "storageAccountNewOrExisting": "new",
+                "storageAccountRG": "Demo-Infra-FWCore-RG",
+                "publicIPAddressName": "demo-asav-core-pubip",
+                "publicIPDnsLabel": "demo-asav-core",
+                "publicIPNewOrExisting": "new",
+                "publicIPRG": "Demo-Infra-FWCore-RG",
+                "publicIPAllocationMethod": "Static",
+                "publicIPsku": "Basic",
+                "virtualNetworkName": "Demo-Infra-NetCore-VNET",
+                "virtualNetworkRG": "Demo-Infra-NetCore-RG",
+                "Subnet1Name": "Demo-Core-Outside",
+                "subnet1StartAddress": "10.10.10.132",
+                "Subnet2Name": "Demo-Core-CoreToSpokes",
+                "subnet2StartAddress": "10.10.10.4"
+            }
+        }
+    }
+}

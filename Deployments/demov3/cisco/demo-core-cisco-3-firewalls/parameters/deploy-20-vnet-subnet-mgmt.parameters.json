@@ -1,0 +1,105 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetArray": {
+            "value": [
+                {
+                    "name": "Demo-Infra-NetMGMT-VNET",
+                    "resourceGroup": "Demo-Infra-NetMGMT-RG",
+                    "addressPrefixes": [
+                        "10.25.0.0/20"
+                    ],
+                    "subnets": [
+                        {
+                            "name": "Demo-MGMT-APP-AD",
+                            "properties": {
+                                "addressPrefix": "10.25.8.16/28",
+                                "routeTableName": "Demo-Infra-NetMGMT-APP-AD-RT"
+                            }
+                        },
+                        {
+                            "name": "Demo-MGMT-PAZ-RDS",
+                            "properties": {
+                                "addressPrefix": "10.25.4.0/28",
+                                "routeTableName": "Demo-Infra-NetMGMT-PAZ-RDS-RT"
+                            }
+                        },
+                        {
+                            "name": "Demo-MGMT-APP-RDS",
+                            "properties": {
+                                "addressPrefix": "10.25.8.0/28",
+                                "routeTableName": "Demo-Infra-NetMGMT-APP-RDS-RT"
+                            }
+                            
+                        },
+                        {
+                            "name": "Demo-MGMT-DB-RDS",
+                            "properties": {
+                                "addressPrefix": "10.25.12.0/28",
+                                "routeTableName": "Demo-Infra-NetMGMT-DB-RDS-RT"
+                            }
+                        },
+                        {
+                            "name": "Demo-MGMT-PAZ-Test",
+                            "properties": {
+                                "addressPrefix": "10.25.4.32/27",
+                                "routeTableName": "Demo-Infra-NetMGMT-PAZ-Test-RT"
+                            }
+                        },
+                        {
+                            "name": "Demo-MGMT-APP-Test",
+                            "properties": {
+                                "addressPrefix": "10.25.8.32/27",
+                                "routeTableName": "Demo-Infra-NetMGMT-APP-Test-RT"
+                            }
+                            
+                        },
+                        {
+                            "name": "Demo-MGMT-DB-Test",
+                            "properties": {
+                                "addressPrefix": "10.25.12.32/27",
+                                "routeTableName": "Demo-Infra-NetMGMT-DB-Test-RT"
+                            }
+                        },
+                        {
+                            "name": "Demo-MGMT-MgmtToCore",
+                            "properties": {
+                                "addressPrefix": "10.25.0.0/28",
+                                "routeTableName": "Demo-Infra-NetMGMT-MgmtToCore-RT"
+                            }
+                            
+                        },
+                        {
+                            "name": "Demo-MGMT-PAZ-Interconnect",
+                            "properties": {
+                                "addressPrefix": "10.25.0.16/28"
+                           }
+                        },
+                        {
+                            "name": "Demo-MGMT-APP-Interconnect",
+                            "properties": {
+                                "addressPrefix": "10.25.0.32/28"
+                           }
+                        },
+                        {
+                            "name": "Demo-MGMT-DB-Interconnect",
+                            "properties": {
+                                "addressPrefix": "10.25.0.48/28"
+                           }
+                        }
+
+                    ],
+                    "tagValues": {
+                        "Owner": "cloudteam@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "Demo-EA",
+                        "Enviroment": "Sandbox",
+                        "Classification": "Unclassified",
+                        "Organizations": "Demo-CCC-E&O",
+                        "DeploymentVersion": "2019-01-09-02"
+                    }
+                }
+            ]
+        }
+    }
+}
