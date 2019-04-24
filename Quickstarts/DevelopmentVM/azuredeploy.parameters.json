@@ -12,7 +12,7 @@
             "value": "GEN-UNIQUE"
         },
         "baseName": {
-            "value": "baseVMName"
+            "value": "GEN-UNIQUE-8"
         }
     }
 }
