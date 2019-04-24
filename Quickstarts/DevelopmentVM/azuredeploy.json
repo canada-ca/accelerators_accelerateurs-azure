@@ -55,7 +55,7 @@
         "virtualNetworkName": "[concat(parameters('baseName'),'VNET')]",
         "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
         "windowsOSVersion": "2016-Datacenter",
-        "dnsLabelPrefix": "[concat(variables('vmName'), substring(uniqueString( resourceGroup().id ), 0, 5))]",
+        "dnsLabelPrefix": "[concat(toLower(variables('vmName')), substring(uniqueString( resourceGroup().id ), 0, 5))]",
         "_artifactsLocation": "[deployment().properties.templateLink.uri]"
     },
     "resources": [
