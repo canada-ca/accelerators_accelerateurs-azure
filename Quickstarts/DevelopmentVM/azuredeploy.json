@@ -44,14 +44,14 @@
         }
     },
     "variables": {
-        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'sadevvm')]",
+        "storageAccountName": "[concat(parameters('baseName'), uniquestring(resourceGroup().id))]",
         "nicName": "[concat(variables('vmName'),'-nic1')]",
         "addressPrefix": "10.0.0.0/16",
         "subnetName": "Subnet",
         "subnetPrefix": "10.0.0.0/24",
         "publicIPAddressName": "[concat(variables('vmName'),'-pubip')]",
-        "vmName": "[parameters('baseName')]",
-        "virtualNetworkName": "devVNET",
+        "vmName": "[concat(parameters('baseName'),'VM')]",
+        "virtualNetworkName": "[concat(parameters('baseName'),'VNET')]",
         "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
         "windowsOSVersion": "2016-Datacenter",
         "dnsLabelPrefix": "[concat(variables('vmName'), substring(uniqueString( resourceGroup().id ), 0, 5))]",
