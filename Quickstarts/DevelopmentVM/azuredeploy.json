@@ -17,8 +17,9 @@
         },
         "baseName": {
             "type": "string",
+            "defaultValue": "gcDevVM",
             "metadata": {
-                "description": "Base string for naming resources."
+                "description": "Base name string used for naming resources such as the VM Name, NIC, Public IP etc."
             }
         },
         "rdpPort": {
