@@ -1,7 +1,5 @@
 @startuml
 
-artifact resourcegroups
-artifact keyvault_infra
 artifact routes_core
 artifact routes_mgmt_ad
 artifact routes_mgmt_mgmttocore
@@ -12,56 +10,33 @@ artifact routes_shared_crm
 artifact routes_shared_rds
 artifact routes_shared_sandbox
 artifact routes_shared_sharedtocore
-artifact vnet_subnet_core 
+artifact vnet_subnet_core
 artifact vnet_subnet_mgmt
 artifact vnet_subnet_shared
 artifact vnet_peering_core
 artifact vnet_peering_mgmt
 artifact vnet_peering_shared
-artifact storage_vmdiag_MGMT_RDS
-artifact storage_vmdiag_Shared_Sandbox
 artifact core_cisco_asav
 artifact mgmt_cisco_asav
 artifact shared_cisco_asav
-artifact jumpbox01_MGMT_RDS
-artifact dockerdemo_Shared_Sandbox
 
-keyvault_infra <-- resourcegroups
-routes_core <-- resourcegroups
-routes_mgmt_ad <-- resourcegroups
-routes_mgmt_mgmttocore <-- resourcegroups
-routes_mgmt_rds <-- resourcegroups
-routes_mgmt_test <-- resourcegroups
-routes_shared_ad <-- resourcegroups
-routes_shared_crm <-- resourcegroups
-routes_shared_rds <-- resourcegroups
-routes_shared_sandbox <-- resourcegroups
-routes_shared_sharedtocore <-- resourcegroups
-storage_vmdiag_MGMT_RDS <-- resourcegroups
-storage_vmdiag_Shared_Sandbox <-- resourcegroups
-vnet_subnet_core <-- routes_core
-vnet_subnet_mgmt <-- routes_mgmt_ad
-vnet_subnet_mgmt <-- routes_mgmt_mgmttocore
-vnet_subnet_mgmt <-- routes_mgmt_rds
-vnet_subnet_mgmt <-- routes_mgmt_test
-vnet_subnet_shared <-- routes_shared_ad
-vnet_subnet_shared <-- routes_shared_crm
-vnet_subnet_shared <-- routes_shared_sandbox
-vnet_subnet_shared <-- routes_shared_sharedtocore
-vnet_subnet_shared <-- routes_shared_rds
-vnet_peering_core <-- vnet_subnet_core
-vnet_peering_core <-- vnet_subnet_mgmt
-vnet_peering_core <-- vnet_subnet_shared
-vnet_peering_mgmt <-- vnet_peering_core
-vnet_peering_shared <-- vnet_peering_core
-core_cisco_asav <-- vnet_subnet_core
-mgmt_cisco_asav <-- vnet_peering_mgmt
-shared_cisco_asav <-- vnet_peering_shared
-jumpbox01_MGMT_RDS <-- core_cisco_asav
-jumpbox01_MGMT_RDS <-- storage_vmdiag_MGMT_RDS
-jumpbox01_MGMT_RDS <-- keyvault_infra
-dockerdemo_Shared_Sandbox <-- shared_cisco_asav
-dockerdemo_Shared_Sandbox <-- storage_vmdiag_Shared_Sandbox
-dockerdemo_Shared_Sandbox <-- keyvault_infra
+vnet_subnet_core --> routes_core
+vnet_subnet_mgmt --> routes_mgmt_ad
+vnet_subnet_mgmt --> routes_mgmt_mgmttocore
+vnet_subnet_mgmt --> routes_mgmt_rds
+vnet_subnet_mgmt --> routes_mgmt_test
+vnet_subnet_shared --> routes_shared_ad
+vnet_subnet_shared --> routes_shared_crm
+vnet_subnet_shared --> routes_shared_rds
+vnet_subnet_shared --> routes_shared_sandbox
+vnet_subnet_shared --> routes_shared_sharedtocore
+vnet_peering_core --> vnet_subnet_core
+vnet_peering_core --> vnet_subnet_mgmt
+vnet_peering_core --> vnet_subnet_shared
+vnet_peering_mgmt --> vnet_peering_core
+vnet_peering_shared --> vnet_peering_core
+core_cisco_asav --> vnet_subnet_core
+mgmt_cisco_asav --> vnet_peering_mgmt
+shared_cisco_asav --> vnet_peering_shared
 
 @enduml

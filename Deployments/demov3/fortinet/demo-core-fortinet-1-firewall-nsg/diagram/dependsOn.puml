@@ -1,46 +1,26 @@
 @startuml
 
-artifact resourcegroups
-artifact keyvaultinfra
-artifact routescore
-artifact routesmgmt
-artifact routesshared
-artifact nsgshared
-artifact vnetsubnetcore
-artifact vnetsubnetmgmt
-artifact vnetsubnetshared
-artifact vnetpeeringcore
-artifact vnetpeeringmgmt
-artifact vnetpeeringshared
-artifact storagevmdiagMGMTRDS
-artifact storagevmdiagSharedSandbox
-artifact coreciscoasav
-artifact jumpbox01MGMTRDS
-artifact dockerDemoSharedSandbox
+artifact routes_core
+artifact routes_mgmt
+artifact routes_shared
+artifact nsg_shared
+artifact vnet_subnet_core
+artifact vnet_subnet_mgmt
+artifact vnet_subnet_shared
+artifact vnet_peering_core
+artifact vnet_peering_mgmt
+artifact vnet_peering_shared
+artifact core_fortigate
 
-resourcegroups --> keyvaultinfra
-resourcegroups --> routescore
-resourcegroups --> routesmgmt
-resourcegroups --> routesshared
-resourcegroups --> nsgshared
-resourcegroups --> storagevmdiagMGMTRDS
-resourcegroups --> storagevmdiagSharedSandbox
-routescore --> vnetsubnetcore
-routesmgmt --> vnetsubnetmgmt
-routesshared --> vnetsubnetshared
-nsgshared --> vnetsubnetshared
-vnetsubnetcore --> coreciscoasav
-vnetpeeringcore --> dockerDemoSharedSandbox
-vnetpeeringcore --> vnetpeeringmgmt
-vnetpeeringcore --> vnetpeeringshared
-vnetsubnetcore --> vnetpeeringcore
-vnetsubnetmgmt --> vnetpeeringcore
-vnetsubnetshared --> vnetpeeringcore
-storagevmdiagMGMTRDS --> jumpbox01MGMTRDS
-coreciscoasav --> jumpbox01MGMTRDS
-storagevmdiagSharedSandbox --> dockerDemoSharedSandbox
-coreciscoasav --> dockerDemoSharedSandbox
-keyvaultinfra --> jumpbox01MGMTRDS
-keyvaultinfra --> dockerDemoSharedSandbox
+vnet_subnet_core --> routes_core
+vnet_subnet_mgmt --> routes_mgmt
+vnet_subnet_shared --> routes_shared
+vnet_subnet_shared --> nsg_shared
+vnet_peering_core --> vnet_subnet_core
+vnet_peering_core --> vnet_subnet_mgmt
+vnet_peering_core --> vnet_subnet_shared
+vnet_peering_mgmt --> vnet_peering_core
+vnet_peering_shared --> vnet_peering_core
+core_fortigate --> vnet_subnet_core
 
 @enduml
