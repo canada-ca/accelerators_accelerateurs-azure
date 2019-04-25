@@ -1,3 +1,4 @@
+# Ex: .\cleantemplate.ps1 ..\parameters\masterdeploy.parameters.json -outFileName dependsOn.puml
 Param(
     [string]$inFileName = "",
     [string]$outFileName = ""
