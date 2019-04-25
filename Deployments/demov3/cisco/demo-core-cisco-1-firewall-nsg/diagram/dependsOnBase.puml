@@ -1,0 +1,10 @@
+@startuml
+
+artifact resourcegroups
+artifact workspace_LogAnalytics
+artifact keyvault_infra
+
+workspace_LogAnalytics --> resourcegroups
+keyvault_infra --> resourcegroups
+
+@enduml
