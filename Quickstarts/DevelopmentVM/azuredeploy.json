@@ -45,7 +45,7 @@
         }
     },
     "variables": {
-        "storageAccountName": "[concat(parameters('baseName'), uniquestring(resourceGroup().id))]",
+        "storageAccountName": "[concat(toLower(parameters('baseName')), uniquestring(resourceGroup().id))]",
         "nicName": "[concat(variables('vmName'),'-nic1')]",
         "addressPrefix": "10.0.0.0/16",
         "subnetName": "Subnet",
