@@ -1,0 +1,20 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "peerArray": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of vpn objects. Make sure the GatewaySubnet subnet exist in the VNET you are deploying in."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [],
+    "outputs": {
+        "peerArray": {
+            "value": "[parameters('peerArray')]",
+            "type": "array"
+        }
+    }
+}
