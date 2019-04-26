@@ -7,13 +7,13 @@
                 {
                     "name": "resourcegroups",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/resourcegroups/20190207.2/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/resourcegroups/20190207.2/azuredeploysub.json",
                     "parametersFile": "deploy-10-resourcegroups-canadacentral.parameters.json"
                 },
                 {
                     "name": "keyvault-infra",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/keyvaults/20190311.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/keyvaults/20190311.1/azuredeploysub.json",
                     "parametersFile": "deploy-40-keyvaults.parameters.json",
                     "dependsOn": [
                         "resourcegroups"
@@ -22,7 +22,7 @@
                 {
                     "name": "routes-core",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/routes/20190311.1/azuredeploysub.json",
                     "parametersFile": "deploy-15-routes-core.parameters.json",
                     "dependsOn": [
                         "resourcegroups"
@@ -31,7 +31,7 @@
                 {
                     "name": "routes-mgmt-ad",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/routes/20190311.1/azuredeploysub.json",
                     "parametersFile": "deploy-15-routes-mgmt-ad.parameters.json",
                     "dependsOn": [
                         "resourcegroups"
@@ -40,7 +40,7 @@
                 {
                     "name": "routes-mgmt-mgmttocore",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/routes/20190311.1/azuredeploysub.json",
                     "parametersFile": "deploy-15-routes-mgmt-mgmttocore.parameters.json",
                     "dependsOn": [
                         "resourcegroups"
@@ -49,7 +49,7 @@
                 {
                     "name": "routes-mgmt-rds",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/routes/20190311.1/azuredeploysub.json",
                     "parametersFile": "deploy-15-routes-mgmt-rds.parameters.json",
                     "dependsOn": [
                         "resourcegroups"
@@ -58,7 +58,7 @@
                 {
                     "name": "routes-mgmt-test",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/routes/20190311.1/azuredeploysub.json",
                     "parametersFile": "deploy-15-routes-mgmt-test.parameters.json",
                     "dependsOn": [
                         "resourcegroups"
@@ -67,7 +67,7 @@
                 {
                     "name": "routes-shared-ad",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/routes/20190311.1/azuredeploysub.json",
                     "parametersFile": "deploy-15-routes-shared-ad.parameters.json",
                     "dependsOn": [
                         "resourcegroups"
@@ -76,7 +76,7 @@
                 {
                     "name": "routes-shared-crm",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/routes/20190311.1/azuredeploysub.json",
                     "parametersFile": "deploy-15-routes-shared-crm.parameters.json",
                     "dependsOn": [
                         "resourcegroups"
@@ -85,7 +85,7 @@
                 {
                     "name": "routes-shared-rds",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/routes/20190311.1/azuredeploysub.json",
                     "parametersFile": "deploy-15-routes-shared-rds.parameters.json",
                     "dependsOn": [
                         "resourcegroups"
@@ -94,7 +94,7 @@
                 {
                     "name": "routes-shared-sandbox",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/routes/20190311.1/azuredeploysub.json",
                     "parametersFile": "deploy-15-routes-shared-sandbox.parameters.json",
                     "dependsOn": [
                         "resourcegroups"
@@ -103,7 +103,7 @@
                 {
                     "name": "routes-shared-sharedtocore",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/routes/20190311.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/routes/20190311.1/azuredeploysub.json",
                     "parametersFile": "deploy-15-routes-shared-sharedtocore.parameters.json",
                     "dependsOn": [
                         "resourcegroups"
@@ -112,7 +112,7 @@
                 {
                     "name": "vnet-subnet-core",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/vnet-subnet/20190319.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/vnet-subnet/20190319.1/azuredeploysub.json",
                     "parametersFile": "deploy-20-vnet-subnet-core.parameters.json",
                     "dependsOn": [
                         "routes-core"
@@ -121,7 +121,7 @@
                 {
                     "name": "vnet-subnet-mgmt",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/vnet-subnet/20190319.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/vnet-subnet/20190319.1/azuredeploysub.json",
                     "parametersFile": "deploy-20-vnet-subnet-mgmt.parameters.json",
                     "dependsOn": [
                         "routes-mgmt-ad",
@@ -133,7 +133,7 @@
                 {
                     "name": "vnet-subnet-shared",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/vnet-subnet/20190319.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/vnet-subnet/20190319.1/azuredeploysub.json",
                     "parametersFile": "deploy-20-vnet-subnet-shared.parameters.json",
                     "dependsOn": [
                         "routes-shared-ad",
@@ -146,7 +146,7 @@
                 {
                     "name": "vnet-peering-core",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/vnet-peering/20190323.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/vnet-peering/20190323.1/azuredeploysub.json",
                     "parametersFile": "deploy-30-vnet-peering-core.parameters.json",
                     "dependsOn": [
                         "vnet-subnet-core",
@@ -157,7 +157,7 @@
                 {
                     "name": "vnet-peering-mgmt",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/vnet-peering/20190323.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/vnet-peering/20190323.1/azuredeploysub.json",
                     "parametersFile": "deploy-30-vnet-peering-mgmt.parameters.json",
                     "dependsOn": [
                         "vnet-peering-core"
@@ -166,7 +166,7 @@
                 {
                     "name": "vnet-peering-shared",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/vnet-peering/20190323.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/vnet-peering/20190323.1/azuredeploysub.json",
                     "parametersFile": "deploy-30-vnet-peering-shared.parameters.json",
                     "dependsOn": [
                         "vnet-peering-core"
@@ -175,7 +175,7 @@
                 {
                     "name": "storage-vmdiag-MGMT-RDS",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/storage/20190311.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/storage/20190311.1/azuredeploysub.json",
                     "parametersFile": "deploy-55-storage-mgmt-rds.parameters.json",
                     "dependsOn": [
                         "resourcegroups"
@@ -184,7 +184,7 @@
                 {
                     "name": "storage-vmdiag-Shared-Sandbox",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/storage/20190311.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/storage/20190311.1/azuredeploysub.json",
                     "parametersFile": "deploy-55-storage-shared-sandbox.parameters.json",
                     "dependsOn": [
                         "resourcegroups"
@@ -197,7 +197,7 @@
                 {
                     "name": "core-fortigate",
                     "resourceGroup": "Demo-Infra-FWCore-RG",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/fortigate/20190328.1/azuredeploy.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/fortigate/20190328.1/azuredeploy.json",
                     "parametersFile": "deploy-50-fortigate-core.parameters.json",
                     "dependsOn": [
                         "vnet-subnet-core"
@@ -206,7 +206,7 @@
                 {
                     "name": "mgmt-fortigate",
                     "resourceGroup": "Demo-Infra-FWMGMT-RG",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/fortigate4NIC/20190328.1/azuredeploy.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/fortigate4NIC/20190328.1/azuredeploy.json",
                     "parametersFile": "deploy-50-fortigate-mgmt.parameters.json",
                     "dependsOn": [
                         "vnet-subnet-mgmt"
@@ -215,7 +215,7 @@
                 {
                     "name": "shared-fortigate",
                     "resourceGroup": "Demo-Infra-FWShared-RG",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/fortigate4NIC/20190328.1/azuredeploy.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/fortigate4NIC/20190328.1/azuredeploy.json",
                     "parametersFile": "deploy-50-fortigate-shared.parameters.json",
                     "dependsOn": [
                         "vnet-subnet-shared"
@@ -224,7 +224,7 @@
                 {
                     "name": "jumpbox01-MGMT-RDS",
                     "resourceGroup": "Demo-MGMT-RDS-RG",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/servers/20190324.1/azuredeploy.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/servers/20190324.1/azuredeploy.json",
                     "parametersFile": "deploy-60-servers.parameters.json",
                     "dependsOn": [
                         "vnet-subnet-core",

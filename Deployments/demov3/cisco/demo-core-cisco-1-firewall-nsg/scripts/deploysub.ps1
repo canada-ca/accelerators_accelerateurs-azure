@@ -64,4 +64,4 @@ $null = Set-AzureRmCurrentStorageAccount -ResourceGroupName $storageRG -Name $de
 $token = New-AzureStorageContainerSASToken -Name $containerName -Permission r -ExpiryTime (Get-Date).AddMinutes(60.0)
 
 # Deploy infrastructure dependencies
-New-AzureRmDeployment -Location $Location -Name "Deploy-$deploymentName" -TemplateUri "https://azpwsdeployment.blob.core.windows.net/library/arm/masterdeploy/20190319.1/masterdeploysub.json" -TemplateParameterFile (Resolve-Path -Path $parameterFile) -baseParametersURL "https://$deploymentStorageAccountName.blob.core.windows.net/$containerName/" -parametersSasToken $token -Verbose;
+New-AzureRmDeployment -Location $Location -Name "Deploy-$deploymentName" -TemplateUri "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/masterdeploy/20190319.1/masterdeploysub.json" -TemplateParameterFile (Resolve-Path -Path $parameterFile) -baseParametersURL "https://$deploymentStorageAccountName.blob.core.windows.net/$containerName/" -parametersSasToken $token -Verbose;
