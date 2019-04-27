@@ -1,0 +1,127 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyvaultObj": {
+            "type": "object",
+            "metadata": {
+                "description": "Object containing keyvault parameters"
+            }
+        }
+    },
+    "variables": {},
+    "functions": [
+        {
+            "namespace": "pspc",
+            "members": {
+                "getUniqueKeyvaultName": {
+                    "parameters": [
+                        {
+                            "name": "keyvaultName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(contains(parameters('keyvaultName'), '[unique]'), replace(parameters('keyvaultName'), '[unique]', uniqueString(resourceGroup().id)), parameters('keyvaultName'))]"
+                    }
+                },
+                "getValidKeyvaultName": {
+                    "parameters": [
+                        {
+                            "name": "keyvaultName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(greater(length(parameters('keyvaultName')),24), concat(substring(parameters('keyvaultName'), 0, 24)), parameters('keyvaultName'))]"
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "apiVersion": "2016-10-01",
+            "name": "[pspc.getValidKeyvaultName(pspc.getUniqueKeyvaultName(parameters('keyvaultObj').name))]",
+            "location": "[resourceGroup().location]",
+            "type": "Microsoft.KeyVault/vaults",
+            "tags": "[parameters('keyvaultObj').tagValues]",
+            "properties": {
+                "tenantId": "[subscription().tenantId]",
+                "enabledForDeployment": "[parameters('keyvaultObj').enabledForDeployment]",
+                "enabledForTemplateDeployment": "[parameters('keyvaultObj').enabledForTemplateDeployment]",
+                "enabledForDiskEncryption": "[parameters('keyvaultObj').enabledForDiskEncryption]",
+                "accessPolicies": [
+                    {
+                        "objectId": "[parameters('keyvaultObj').accessPoliciesObjectId]",
+                        "tenantId": "[subscription().tenantId]",
+                        "permissions": {
+                            "keys": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Create",
+                                "Import",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore"
+                            ],
+                            "secrets": [
+                                "Get",
+                                "List",
+                                "Set",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore"
+                            ],
+                            "certificates": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Create",
+                                "Import",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore",
+                                "ManageContacts",
+                                "ManageIssuers",
+                                "GetIssuers",
+                                "ListIssuers",
+                                "SetIssuers",
+                                "DeleteIssuers"
+                            ]
+                        }
+                    }
+                ],
+                "sku": {
+                    "name": "[parameters('keyvaultObj').sku]",
+                    "family": "A"
+                },
+                "networkAcls": "[parameters('keyvaultObj').networkAcls]"
+            }
+        },
+        {
+            "comments": "Change the temporary secret created by this template to a value of your choice in the Azure Portal",
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(pspc.getValidKeyvaultName(pspc.getUniqueKeyvaultName(parameters('keyvaultObj').name)), '/', parameters('keyvaultObj').secrets[copyIndex()].name)]",
+            "apiVersion": "2016-10-01",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "secret",
+                "count": "[length(parameters('keyvaultObj').secrets)]"
+            },
+            "properties": {
+                "value": "[parameters('keyvaultObj').secrets[copyIndex()].properties.value]"
+            },
+            "dependsOn": [
+                "[pspc.getValidKeyvaultName(pspc.getUniqueKeyvaultName(parameters('keyvaultObj').name))]"
+            ]
+        }
+    ],
+    "outputs": {}
+}
