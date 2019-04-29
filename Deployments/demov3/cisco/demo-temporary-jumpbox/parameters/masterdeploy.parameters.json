@@ -7,13 +7,13 @@
                 {
                     "name": "storage-vmdiag-mgmt-rds",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/storage/20190311.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/storage/20190311.1/azuredeploysub.json",
                     "parametersFile": "deploy-55-storage-mgmt-rds.parameters.json"
                 },
                 {
                     "name": "dockerdemo-Shared-Sandbox",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/servers/20190326.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/servers/20190326.1/azuredeploysub.json",
                     "parametersFile": "deploy-60-servers.parameters.json",
                     "dependsOn": [
                         "storage-vmdiag-mgmt-rds"

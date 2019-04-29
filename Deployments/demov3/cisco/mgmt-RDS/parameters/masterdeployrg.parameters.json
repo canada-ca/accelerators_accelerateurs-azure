@@ -7,7 +7,7 @@
                 {
                     "name": "Demo-mgmt-rds",
                     "resourceGroup": "Demo-MGMT-RDS-RG",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/rds/20190406.1/azuredeploy.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/rds/20190406.1/azuredeploy.json",
                     "parametersFile": "deploy-60-rds.parameters.json"
                 }
             ]

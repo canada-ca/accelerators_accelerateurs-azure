@@ -7,7 +7,7 @@
                 {
                     "name": "vnet-subnet-mgmt",
                     "location": "canadacentral",
-                    "templateLink": "https://azpwsdeployment.blob.core.windows.net/library/arm/vnet-subnet/20190319.1/azuredeploysub.json",
+                    "templateLink": "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/vnet-subnet/20190319.1/azuredeploysub.json",
                     "parametersFile": "deploy-20-vnet-subnet-mgmt-postadds.parameters.json"
                 }
             ]

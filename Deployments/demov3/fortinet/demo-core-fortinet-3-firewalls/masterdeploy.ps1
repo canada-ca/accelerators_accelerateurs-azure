@@ -56,7 +56,7 @@ $null = Set-AzureRmCurrentStorageAccount -ResourceGroupName $storageRG -Name $de
 $token = New-AzureStorageContainerSASToken -Name $containerName -Permission r -ExpiryTime (Get-Date).AddMinutes(90.0)
 
 # Deploy base infrastructure
-New-AzureRmDeployment -Location $Location -Name Base-Infrastructure -TemplateUri "https://azpwsdeployment.blob.core.windows.net/library/arm/masterdeploy/20190319.1/masterdeploysubrg.json" -TemplateParameterFile (Resolve-Path -Path "$PSScriptRoot\parameters\masterdeploysubrg.parameters.json") -baseParametersURL "https://$deploymentStorageAccountName.blob.core.windows.net/deployments/" -parametersSasToken $token -Verbose;
+New-AzureRmDeployment -Location $Location -Name Base-Infrastructure -TemplateUri "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/masterdeploy/20190319.1/masterdeploysubrg.json" -TemplateParameterFile (Resolve-Path -Path "$PSScriptRoot\parameters\masterdeploysubrg.parameters.json") -baseParametersURL "https://$deploymentStorageAccountName.blob.core.windows.net/deployments/" -parametersSasToken $token -Verbose;
 
 # Get public IP of core firewall that was just deployed
 $corePUBLICip = (Get-AzureRmResourceGroupDeployment -ResourceGroupName Demo-Infra-FWCore-RG -Name "Fortigate2NIC-deploy-DemoFWCore01").Outputs.publicIP.value

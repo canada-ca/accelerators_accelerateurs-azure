@@ -38,7 +38,7 @@ if(!$resourceGroup)
     New-AzureRmResourceGroup -Name $storageRG -Location $location
 
     #Write-Host "Creating storage account in resourcegroup '$storageRG'";
-    #New-AzureRmResourceGroupDeployment -ResourceGroupName $storageRG -Name Create-Deployment-Storage-Account -TemplateUri "https://azpwsdeployment.blob.core.windows.net/library/arm/storage/20190317.1/azuredeploy.json" -TemplateParameterFile $resolvedParametersFileName -Verbose
+    #New-AzureRmResourceGroupDeployment -ResourceGroupName $storageRG -Name Create-Deployment-Storage-Account -TemplateUri "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/storage/20190317.1/azuredeploy.json" -TemplateParameterFile $resolvedParametersFileName -Verbose
 }
 else{
     Write-Host "Using existing resource group '$storageRG'";
@@ -49,7 +49,7 @@ $deploymentStorageAccountName = (Get-AzureRmResourceGroupDeployment -ResourceGro
 
 if ($notPresent) {
     Write-Host "Creating storage account $storageAccountName in resourcegroup '$storageRG'";
-    New-AzureRmResourceGroupDeployment -ResourceGroupName $storageRG -Name Create-Deployment-Storage-Account -TemplateUri "https://azpwsdeployment.blob.core.windows.net/library/arm/storage/20190317.1/azuredeploy.json" -TemplateParameterFile $resolvedParametersFileName -Verbose
+    New-AzureRmResourceGroupDeployment -ResourceGroupName $storageRG -Name Create-Deployment-Storage-Account -TemplateUri "https://raw.githubusercontent.com/canada-ca/accelerators_accelerateurs-azure/master/Templates/arm/storage/20190317.1/azuredeploy.json" -TemplateParameterFile $resolvedParametersFileName -Verbose
     $deploymentStorageAccountName = (Get-AzureRmResourceGroupDeployment -ResourceGroupName $storageRG -Name "storageAccount.$storageAccountName" -ErrorVariable notPresent -ErrorAction SilentlyContinue).Outputs.storageAccountName.value
 }
 
