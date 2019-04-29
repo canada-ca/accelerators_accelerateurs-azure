@@ -1,5 +1,5 @@
 # Introduction 
-This template deploys a 2 NIC Cisco ASAv Firewall resource.
+This template deploys a 4 NIC Cisco ASAv Firewall resource.
 
 # Parameter format
 ```json
@@ -36,7 +36,11 @@ This template deploys a 2 NIC Cisco ASAv Firewall resource.
                 "Subnet1Name": "outside",
                 "subnet1StartAddress": "10.96.96.132",
                 "Subnet2Name": "inside",
-                "subnet2StartAddress": "10.96.96.4"
+                "subnet2StartAddress": "10.96.96.4",
+                "Subnet3Name": "three",
+                "subnet3StartAddress": "10.96.96.36",
+                "Subnet4Name": "four",
+                "subnet4StartAddress": "10.96.96.68"
             }
         }
     }
@@ -80,6 +84,10 @@ This template deploys a 2 NIC Cisco ASAv Firewall resource.
 | subnet1StartAddress         | string | Yes      | IP address of the external interface                                                                                         |
 | Subnet2Name                 | string | Yes      | Name of the internal subnet                                                                                                  |
 | subnet2StartAddress         | string | Yes      | IP address of the internal interface                                                                                         |
+| Subnet3Name                 | string | Yes      | Name of the 3rd subnet                                                                                                       |
+| subnet3StartAddress         | string | Yes      | IP address of the 3rd interface                                                                                              |
+| Subnet4Name                 | string | Yes      | Name of the 4th subnet                                                                                                       |
+| subnet4StartAddress         | string | Yes      | IP address of the 4th interface                                                                                              |
 
 ## Keyvault Object
 | Name                      | Type                           | Required | Value                                                                    |
@@ -104,5 +112,3 @@ This is helpfull to ensure there will be no keyvault duplicates in Azure as it n
 | -------- | ----------------------------------------------------------------------------------------------------- |
 | 20190327 | Refactor template and implement keyvault secret for password. New parameter file format is also used. |
 | 20190429 | Updated documentation and cleanup parameters                                                          |
-
-
