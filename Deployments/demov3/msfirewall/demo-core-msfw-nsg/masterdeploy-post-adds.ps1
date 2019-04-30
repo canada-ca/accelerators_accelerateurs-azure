@@ -7,8 +7,7 @@ Param(
     [string]$subscriptionId = "",
     [string]$storageAccountName = "deployments",
     [string]$containerName = "demo-core-mgmt-vnet-post-adds",
-    [string]$location = "canadacentral",
-    [string]$configFilePath = "$PSScriptRoot\settings.xml"
+    [string]$location = "canadacentral"
 )
 
 function Cleanup {
@@ -17,8 +16,6 @@ function Cleanup {
 }
 
 $ErrorActionPreference = "Stop"
-
-$configFilePath = Resolve-Path $configFilePath
 
 # sign in
 #Write-Host "Logging in...";
