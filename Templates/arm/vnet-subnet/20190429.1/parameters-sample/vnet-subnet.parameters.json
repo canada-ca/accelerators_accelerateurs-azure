@@ -1,0 +1,63 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetArray": {
+            "value": [
+                {
+                    "resourceGroup": "PwS2-validate-servers-1-RG",
+                    "name": "PwS2-validate-servers-1-VNET",
+                    "addressPrefixes": [
+                        "10.96.96.0/24"
+                    ],
+                    "subnets": [
+                        {
+                            "name": "test1",
+                            "properties": {
+                                "addressPrefix": "10.96.96.0/25"
+                            }
+                        }
+                        {
+                            "name": "test1",
+                            "properties": {
+                                "addressPrefix": "10.96.96.0/25",
+                                "networkSecurityGroupName": "networkSecurityGroups_TestShared_name"
+                            }
+                        }
+                    ],
+                    "tagValues": {
+                        "Owner": "build.pipeline@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Validate",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-13-01"
+                    }
+                },
+                {
+                    "resourceGroup": "PwS2-validate-servers-2-RG",
+                    "name": "PwS2-validate-servers-2-VNET",
+                    "addressPrefixes": [
+                        "10.96.97.0/24"
+                    ],
+                    "subnets": [
+                        {
+                            "name": "test1",
+                            "properties": {
+                                "addressPrefix": "10.96.97.0/25"
+                            }
+                        }
+                    ],
+                    "tagValues": {
+                        "Owner": "build.pipeline@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Validate",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-13-01"
+                    }
+                }
+            ]
+        }
+    }
+}

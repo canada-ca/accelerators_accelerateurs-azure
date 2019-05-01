@@ -1,0 +1,50 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URI where artifacts required by this template are located including a trailing '/'"
+            },
+            "defaultValue": "[deployment().properties.templateLink.uri]"
+        },
+        "DNSRecords": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of DNS objects."
+            }
+        }
+    },
+    "variables": {
+        "baseVMUrl": "[concat(uri(parameters('_artifactsLocation'), 'dns.json'), parameters('containerSasToken'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat('DNS-Deploy', parameters('DNSRecords')[copyIndex()].dnsZoneName)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "resourceGroup": "[parameters('DNSRecords')[copyIndex()].resourceGroup]",
+            "copy": {
+                    "name": "obj",
+                    "count": "[length(parameters('DNSRecords'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "DNSObj": {
+                        "value": "[parameters('DNSRecords')[copyIndex()]]"
+                    }
+                },
+                "templateLink": {
+                    "uri": "[variables('baseVMUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }  
+        }
+    ]
+}

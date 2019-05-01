@@ -1,0 +1,89 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "fwObject": {
+            "type": "object"
+        },
+        "adminPassword": {
+            "defaultValue": "",
+            "type": "securestring",
+            "metadata": {
+                "description": "Password for the Virtual Machine."
+            }
+        }
+    },
+    "variables": {
+        "network_NIC_fg11_Name": "[concat(parameters('fwObject').FortiGateName,'-Nic0')]",
+        "network_NIC_fg11_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg11_Name'))]",
+        "network_NIC_fg12_Name": "[concat(parameters('fwObject').FortiGateName,'-Nic1')]",
+        "network_NIC_fg12_Id": "[resourceId('Microsoft.Network/networkInterfaces',variables('network_NIC_fg12_Name'))]",
+        "compute_AvailabilitySet_FG_Name": "[concat(parameters('fwObject').FortiGateName,'-AvailabilitySet')]",
+        "compute_AvailabilitySet_FG_Id": "[resourceId('Microsoft.Compute/availabilitySets', variables('compute_AvailabilitySet_FG_Name'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('fwObject').FortiGateName]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "plan": {
+                "name": "[parameters('fwObject').FortiGateImageSKU]",
+                "publisher": "fortinet",
+                "product": "fortinet_fortigate-vm_v5"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('fwObject').instanceType]"
+                },
+                "availabilitySet": {
+                    "id": "[variables('compute_AvailabilitySet_FG_Id')]"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('fwObject').FortiGateName]",
+                    "adminUsername": "[parameters('fwObject').adminUsername]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "customData": "[parameters('fwObject').FirewallConfig]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "fortinet",
+                        "offer": "fortinet_fortigate-vm_v5",
+                        "sku": "[parameters('fwObject').FortiGateImageSKU]",
+                        "version": "[parameters('fwObject').FortiGateImageVersion]"
+                    },
+                    "osDisk": {
+                        "name": "[concat(parameters('fwObject').FortiGateName, '-DiskOS')]",
+                        "createOption": "FromImage"
+                    },
+                    "dataDisks": [
+                        {
+                            "name": "[concat(parameters('fwObject').FortiGateName, '-DiskData')]",
+                            "diskSizeGB": 30,
+                            "lun": 0,
+                            "createOption": "Empty"
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "properties": {
+                                "primary": true
+                            },
+                            "id": "[variables('network_NIC_fg11_Id')]"
+                        },
+                        {
+                            "properties": {
+                                "primary": false
+                            },
+                            "id": "[variables('network_NIC_fg12_Id')]"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

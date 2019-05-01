@@ -1,0 +1,77 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetObj": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "subnets": "[parameters('vnetObj').subnets]"
+    },
+    "functions": [
+        {
+            "namespace": "pspc",
+            "members": {
+                "getRouteTableid": {
+                    "parameters": [
+                        {
+                            "name": "routeTableName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "object",
+                        "value": {
+                            "id": "[concat(resourceGroup().id, '/providers/Microsoft.Network/routeTables/', parameters('routeTableName'))]"
+                        }
+                    }
+                },
+                "getNSGid": {
+                    "parameters": [
+                        {
+                            "name": "NSGName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "object",
+                        "value": {
+                            "id": "[concat(resourceGroup().id, '/providers/Microsoft.Network/networkSecurityGroups/', parameters('NSGName'))]"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "name": "[parameters('vnetObj').name]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2017-10-01",
+            "tags": "[parameters('vnetObj').tagValues]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": "[parameters('vnetObj').addressPrefixes]"
+                },
+                "dhcpOptions": "[if(contains(parameters('vnetObj'), 'dhcpOptions'), parameters('vnetObj').dhcpOptions, json('null'))]",
+                "copy": [
+                    {
+                        "name": "subnets",
+                        "count": "[length(variables('subnets'))]",
+                        "input": {
+                            "name": "[variables('subnets')[copyIndex('subnets')].name]",
+                            "properties": {
+                                "addressPrefix": "[variables('subnets')[copyIndex('subnets')].properties.addressPrefix]",
+                                "routeTable": "[if(contains(variables('subnets')[copyIndex('subnets')].properties, 'routeTableName'), pspc.getRouteTableid(variables('subnets')[copyIndex('subnets')].properties.routeTableName), json('null'))]",
+                                "networkSecurityGroup": "[if(contains(variables('subnets')[copyIndex('subnets')].properties, 'networkSecurityGroupName'), pspc.getNSGid(variables('subnets')[copyIndex('subnets')].properties.networkSecurityGroupName), json('null'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {}
+}

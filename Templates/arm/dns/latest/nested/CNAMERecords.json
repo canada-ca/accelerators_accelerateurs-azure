@@ -1,0 +1,26 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "DNSObj": {
+            "type": "object",
+            "metadata": {
+                "description": "Object containing DNS parameters"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Deploy CNAME Records.",
+            "type": "Microsoft.Network/dnszones/CNAME",
+            "name": "[concat(parameters('DNSObj').dnsZoneName, '/', parameters('DNSObj').CNAMERecords[copyIndex()].name)]",
+            "apiVersion": "2018-05-01",
+            "copy": {
+                "name": "obj",
+                "count": "[length(parameters('DNSObj').CNAMERecords)]"
+            },
+            "properties": "[parameters('DNSObj').CNAMERecords[copyIndex()].properties]"
+        }
+    ]
+}
