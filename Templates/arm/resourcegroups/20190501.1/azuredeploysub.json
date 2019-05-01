@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "rgLocation": {
+            "type": "string"
+        },
+        "rgNames": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of resourceGroups objects."
+            }
+        },
+        "tagValues": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "baseVMUrl": "[concat(uri(deployment().properties.templateLink.uri, 'resourcegroups.json'), parameters('containerSasToken'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat('Deploy-rg-', parameters('rgNames')[copyIndex()].resourceGroup)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('rgLocation')]",
+            "dependsOn": [],
+            "copy": {
+                    "name": "obj",
+                    "count": "[length(parameters('rgNames'))]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "rgObj": {
+                        "value": "[parameters('rgNames')[copyIndex()]]"
+                    },
+                    "rgLocation": {
+                        "value": "[parameters('rgLocation')]"
+                    },
+                    "tagValues": {
+                        "value": "[parameters('tagValues')]"
+                    }
+                },
+                "templateLink": {
+                    "uri": "[variables('baseVMUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }  
+        }
+    ],
+    "outputs": {}
+}

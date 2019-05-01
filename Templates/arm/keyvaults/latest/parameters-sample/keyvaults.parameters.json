@@ -1,0 +1,106 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyvaultArray": {
+            "value": [
+                {
+                    "name": "PwS2-validate-keyvault",
+                    "sku": "Standard",
+                    "enabledForDeployment": true,
+                    "enabledForTemplateDeployment": true,
+                    "enabledForDiskEncryption": true,
+                    "accessPoliciesObjectId": "267cced3-2154-43ff-b79b-b12c331ad1d1",
+                    "networkAcls": {
+                        "defaultAction": "Allow",
+                        "bypass": "AzureServices",
+                        "virtualNetworkRules": [],
+                        "ipRules": []
+                    },
+                    "secrets": [
+                        {
+                            "name": "server2016DefaultPassword",
+                            "properties": {
+                                "value": "Validate123!"
+                            }
+                        },
+                        {
+                            "name": "linuxDefaultPassword",
+                            "properties": {
+                                "value": "Validate123!"
+                            }
+                        },
+                        {
+                            "name": "adDefaultPassword",
+                            "properties": {
+                                "value": "Validate123!"
+                            }
+                        },
+                        {
+                            "name": "defaultAdminUsername",
+                            "properties": {
+                                "value": "azureadmin"
+                            }
+                        }
+                    ],
+                    "tagValues": {
+                        "Owner": "build.pipeline@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Validate",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-14-01"
+                    }
+                },
+                {
+                    "name": "PwS2-validate-[unique]",
+                    "sku": "Standard",
+                    "enabledForDeployment": true,
+                    "enabledForTemplateDeployment": true,
+                    "enabledForDiskEncryption": true,
+                    "accessPoliciesObjectId": "267cced3-2154-43ff-b79b-b12c331ad1d1",
+                    "networkAcls": {
+                        "defaultAction": "Allow",
+                        "bypass": "AzureServices",
+                        "virtualNetworkRules": [],
+                        "ipRules": []
+                    },
+                    "secrets": [
+                        {
+                            "name": "server2016DefaultPassword",
+                            "properties": {
+                                "value": "Validate123!"
+                            }
+                        },
+                        {
+                            "name": "linuxDefaultPassword",
+                            "properties": {
+                                "value": "Validate123!"
+                            }
+                        },
+                        {
+                            "name": "adDefaultPassword",
+                            "properties": {
+                                "value": "Validate123!"
+                            }
+                        },
+                        {
+                            "name": "defaultAdminUsername",
+                            "properties": {
+                                "value": "azureadmin"
+                            }
+                        }
+                    ],
+                    "tagValues": {
+                        "Owner": "build.pipeline@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Validate",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-14-01"
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -8,62 +8,62 @@
         "rgNames": {
             "value": [
                 {
-                    "resourceGroup": "Demo-Shared-DevTestLab-CCC-RG"
+                    "resourceGroup": "[name]-Shared-DevTestLab-CCC-RG"
                 },
                 {
-                    "resourceGroup": "Demo-Infra-FWCore-RG"
+                    "resourceGroup": "[name]-Infra-FWCore-RG"
                 },
                 {
-                    "resourceGroup": "Demo-Infra-Keyvault-RG"
+                    "resourceGroup": "[name]-Infra-Keyvault-RG"
                 },
                 {
-                    "resourceGroup": "Demo-Infra-LoggingPerf-RG"
+                    "resourceGroup": "[name]-Infra-LoggingPerf-RG"
                 },
                 {
-                    "resourceGroup": "Demo-Infra-LoggingSec-RG"
+                    "resourceGroup": "[name]-Infra-LoggingSec-RG"
                 },
                 {
-                    "resourceGroup": "Demo-Infra-Monitoring-RG"
+                    "resourceGroup": "[name]-Infra-Monitoring-RG"
                 },
                 {
-                    "resourceGroup": "Demo-Infra-NetCore-RG"
+                    "resourceGroup": "[name]-Infra-NetCore-RG"
                 },
                 {
-                    "resourceGroup": "Demo-Infra-NetMGMT-RG"
+                    "resourceGroup": "[name]-Infra-NetMGMT-RG"
                 },
                 {
-                    "resourceGroup": "Demo-Infra-NetShared-RG"
+                    "resourceGroup": "[name]-Infra-NetShared-RG"
                 },
                 {
-                    "resourceGroup": "Demo-Infra-Storage-RG"
+                    "resourceGroup": "[name]-Infra-Storage-RG"
                 },
                 {
-                    "resourceGroup": "Demo-Infra-Backup-RG"
+                    "resourceGroup": "[name]-Infra-Backup-RG"
                 },
                 {
-                    "resourceGroup": "Demo-MGMT-RDS-RG"
+                    "resourceGroup": "[name]-MGMT-RDS-RG"
                 },
                 {
-                    "resourceGroup": "Demo-MGMT-ADDS-RG"
+                    "resourceGroup": "[name]-MGMT-ADDS-RG"
                 },
                 {
-                    "resourceGroup": "Demo-Shared-RDS-RG"
+                    "resourceGroup": "[name]-Shared-RDS-RG"
                 },
                 {
-                    "resourceGroup": "Demo-Shared-ADDS-RG"
+                    "resourceGroup": "[name]-Shared-ADDS-RG"
                 },
                 {
-                    "resourceGroup": "Demo-Shared-Sandbox-RG"
+                    "resourceGroup": "[name]-Shared-Sandbox-RG"
                 }
             ]
         },
         "tagValues": {
             "value": {
                 "Owner": "cloudteam@tpsgc-pwgsc.gc.ca",
-                "CostCenter": "Demo-EA",
+                "CostCenter": "[name]-EA",
                 "Enviroment": "Sandbox",
                 "Classification": "Unclassified",
-                "Organizations": "Demo-CCC-E&O",
+                "Organizations": "[name]-CCC-E&O",
                 "DeploymentVersion": "2018-12-12-01"
             }
         }

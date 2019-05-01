@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "fwObject": {
+            "value": {
+                "vmKeyVault": {
+                    "keyVaultResourceGroupName": "PwS2-validate-ciscoasav2NIC-RG",
+                    "keyVaultName": "PwS2-validate-[unique]"
+                },
+                "vmName": "validatefw",
+                "softwareVersion": "910.1.0",
+                "adminUsername": "azureadmin",
+                "adminSecret": "fwpassword",
+                "sshPublicKey": "",
+                "authenticationType": "password",
+                "vmSize": "Standard_D3_v2",
+                "location": "canadacentral",
+                "storageAccountName": "validasav",
+                "storageAccountRG": "PwS2-validate-ciscoasav2NIC-RG",
+                "storageAccountType": "Standard_LRS",
+                "storageAccountNewOrExisting": "new",
+                "publicIPAddressName": "validatefw-pubip",
+                "publicIPDnsLabel": "validatefw",
+                "publicIPNewOrExisting": "new",
+                "publicIPRG": "PwS2-validate-ciscoasav2NIC-RG",
+                "publicIPAllocationMethod": "Static",
+                "publicIPsku": "Basic",
+                "virtualNetworkName": "PwS2-validate-servers-VNET",
+                "virtualNetworkRG": "PwS2-validate-ciscoasav2NIC-RG",
+                "Subnet1Name": "outside",
+                "subnet1StartAddress": "10.96.96.132",
+                "Subnet2Name": "inside",
+                "subnet2StartAddress": "10.96.96.4",
+                "Subnet3Name": "trois",
+                "subnet3StartAddress": "10.96.96.36",
+                "Subnet4Name": "quatre",
+                "subnet4StartAddress": "10.96.96.68"
+            }
+        }
+    }
+}

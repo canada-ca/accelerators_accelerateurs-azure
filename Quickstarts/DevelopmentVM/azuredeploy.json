@@ -15,6 +15,13 @@
                 "description": "Password for the Virtual Machine."
             }
         },
+        "baseName": {
+            "type": "string",
+            "defaultValue": "gcDevVM",
+            "metadata": {
+                "description": "Base name string used for naming resources such as the VM Name, NIC, Public IP etc."
+            }
+        },
         "rdpPort": {
             "type": "int",
             "defaultValue": 3389,
@@ -38,17 +45,17 @@
         }
     },
     "variables": {
-        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'sadevvm')]",
-        "nicName": "gcDevVM-nic1",
+        "storageAccountName": "[concat(toLower(parameters('baseName')), uniquestring(resourceGroup().id))]",
+        "nicName": "[concat(variables('vmName'),'-nic1')]",
         "addressPrefix": "10.0.0.0/16",
         "subnetName": "Subnet",
         "subnetPrefix": "10.0.0.0/24",
-        "publicIPAddressName": "gcDevVM-pubip",
-        "vmName": "gcDevVM",
-        "virtualNetworkName": "devVNET",
+        "publicIPAddressName": "[concat(variables('vmName'),'-pubip')]",
+        "vmName": "[concat(parameters('baseName'),'VM')]",
+        "virtualNetworkName": "[concat(parameters('baseName'),'VNET')]",
         "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
         "windowsOSVersion": "2016-Datacenter",
-        "dnsLabelPrefix": "[concat('gcdevvm-', substring(uniqueString( resourceGroup().id ), 0, 5))]",
+        "dnsLabelPrefix": "[concat(toLower(variables('vmName')), substring(uniqueString( resourceGroup().id ), 0, 5))]",
         "_artifactsLocation": "[deployment().properties.templateLink.uri]"
     },
     "resources": [

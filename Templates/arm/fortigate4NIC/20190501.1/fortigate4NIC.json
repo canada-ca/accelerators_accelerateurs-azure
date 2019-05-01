@@ -1,0 +1,387 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "fwObject": {
+            "type": "object"
+        },
+        "containerSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URI where artifacts required by this template are located including a trailing '/'"
+            },
+            "defaultValue": "[deployment().properties.templateLink.uri]"
+        }
+    },
+    "variables": {
+        "updateIPURI": "[concat(uri(parameters('_artifactsLocation'), 'nested/update-nic.json'), parameters('containerSasToken'))]",
+        "firewallURI": "[concat(uri(parameters('_artifactsLocation'), 'nested/firewall.json'), parameters('containerSasToken'))]",
+        "subnet1Ref": "[resourceId(parameters('fwObject').vnetResourceGroup,'Microsoft.Network/virtualNetworks/subnets', parameters('fwObject').vnetName, parameters('fwObject').Subnet1Name)]",
+        "subnet2Ref": "[resourceId(parameters('fwObject').vnetResourceGroup,'Microsoft.Network/virtualNetworks/subnets', parameters('fwObject').vnetName, parameters('fwObject').Subnet2Name)]",
+        "subnet3Ref": "[resourceId(parameters('fwObject').vnetResourceGroup,'Microsoft.Network/virtualNetworks/subnets', parameters('fwObject').vnetName, parameters('fwObject').Subnet3Name)]",
+        "subnet4Ref": "[resourceId(parameters('fwObject').vnetResourceGroup,'Microsoft.Network/virtualNetworks/subnets', parameters('fwObject').vnetName, parameters('fwObject').Subnet4Name)]",
+        "publicIPID": "[resourceId(parameters('fwObject').publicIPResourceGroup, 'Microsoft.Network/publicIPAddresses', parameters('fwObject').publicIPAddressName)]",
+        "network_NIC_fg11_Name": "[concat(parameters('fwObject').FortiGateName,'-Nic0')]",
+        "network_NIC_fg12_Name": "[concat(parameters('fwObject').FortiGateName,'-Nic1')]",
+        "network_NIC_fg13_Name": "[concat(parameters('fwObject').FortiGateName,'-Nic2')]",
+        "network_NIC_fg14_Name": "[concat(parameters('fwObject').FortiGateName,'-Nic3')]",
+        "compute_AvailabilitySet_FG_Name": "[concat(parameters('fwObject').FortiGateName,'-AvailabilitySet')]",
+    },
+    "functions": [
+        {
+            "namespace": "pspc",
+            "members": {
+                "objPublicIPAddressConfig": {
+                    "parameters": [
+                        {
+                            "name": "publicIPRG",
+                            "type": "string"
+                        },
+                        {
+                            "name": "publicIPAddressName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "object",
+                        "value": {
+                            "id": "[resourceId(parameters('publicIPRG'),'Microsoft.Network/publicIPAddresses',parameters('publicIPAddressName'))]"
+                        }
+                    }
+                },
+                "storageName": {
+                    "parameters": [
+                        {
+                            "name": "name",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[toLower(if(greater(length(parameters('name')),11), concat(substring(parameters('name'), 0, 11)), parameters('name')))]"
+                    }
+                },
+                "getResourceGroupID": {
+                    "parameters": [
+                        {
+                            "name": "resourceGroupName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[uniqueString(concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroupName')))]"
+                    }
+                },
+                "getUniqueKeyvaultName": {
+                    "parameters": [
+                        {
+                            "name": "keyVaultName",
+                            "type": "string"
+                        },
+                        {
+                            "name": "resourceGroupID",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(contains(parameters('keyvaultName'), '[unique]'), replace(parameters('keyvaultName'), '[unique]', parameters('resourceGroupID')), parameters('keyvaultName'))]"
+                    }
+                },
+                "getValidKeyvaultName": {
+                    "parameters": [
+                        {
+                            "name": "keyvaultName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(greater(length(parameters('keyvaultName')),24), concat(substring(parameters('keyvaultName'), 0, 24)), parameters('keyvaultName'))]"
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[variables('compute_AvailabilitySet_FG_Name')]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 2
+            },
+            "sku": {
+                "name": "Aligned"
+            }
+        },
+        {
+            "condition": "[equals(parameters('fwObject').publicIPNewOrExistingOrNone, 'new')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2017-09-01",
+            "name": "[parameters('fwObject').publicIPAddressName]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "publicIPAllocationMethod": "[parameters('fwObject').publicIPAddressType]"
+            }
+        },
+        {
+            "apiVersion": "2017-09-01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('network_NIC_fg11_Name')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('subnet1Ref')]"
+                            }
+                        }
+                    }
+                ],
+                "enableIPForwarding": true
+            }
+        },
+        {
+            "apiVersion": "2017-09-01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('network_NIC_fg12_Name')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('subnet2Ref')]"
+                            }
+                        }
+                    }
+                ],
+                "enableIPForwarding": true
+            }
+        },
+        {
+            "apiVersion": "2017-09-01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('network_NIC_fg13_Name')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('subnet3Ref')]"
+                            }
+                        }
+                    }
+                ],
+                "enableIPForwarding": true
+            }
+        },
+        {
+            "apiVersion": "2017-09-01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('network_NIC_fg14_Name')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('subnet4Ref')]"
+                            }
+                        }
+                    }
+                ],
+                "enableIPForwarding": true
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "UpdateNIC1",
+            "apiVersion": "2018-02-01",
+            "dependsOn": [
+                "[variables('network_NIC_fg11_Name')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('updateIPURI')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nicName": {
+                        "value": "[variables('network_NIC_fg11_Name')]"
+                    },
+                    "SubnetRef": {
+                        "value": "[variables('subnet1Ref')]"
+                    },
+                    "privateIp": {
+                        "value": "[reference(concat('Microsoft.Network/networkInterfaces/', variables('network_NIC_fg11_Name'))).ipConfigurations[0].properties.privateIPAddress]"
+                    },
+                    "publicIPID": {
+                        "value": "[variables('publicIPID')]"
+                    },
+                    "publicIPNewOrExistingOrNone": {
+                        "value": "[parameters('fwObject').publicIPNewOrExistingOrNone]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "UpdateNIC2",
+            "apiVersion": "2018-02-01",
+            "dependsOn": [
+                "[variables('network_NIC_fg12_Name')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('updateIPURI')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nicName": {
+                        "value": "[variables('network_NIC_fg12_Name')]"
+                    },
+                    "SubnetRef": {
+                        "value": "[variables('subnet2Ref')]"
+                    },
+                    "privateIp": {
+                        "value": "[reference(concat('Microsoft.Network/networkInterfaces/', variables('network_NIC_fg12_Name'))).ipConfigurations[0].properties.privateIPAddress]"
+                    },
+                    "publicIPID": {
+                        "value": "[variables('publicIPID')]"
+                    },
+                    "publicIPNewOrExistingOrNone": {
+                        "value": "none"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "UpdateNIC3",
+            "apiVersion": "2018-02-01",
+            "dependsOn": [
+                "[variables('network_NIC_fg13_Name')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('updateIPURI')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nicName": {
+                        "value": "[variables('network_NIC_fg13_Name')]"
+                    },
+                    "SubnetRef": {
+                        "value": "[variables('subnet3Ref')]"
+                    },
+                    "privateIp": {
+                        "value": "[reference(concat('Microsoft.Network/networkInterfaces/', variables('network_NIC_fg13_Name'))).ipConfigurations[0].properties.privateIPAddress]"
+                    },
+                    "publicIPID": {
+                        "value": "[variables('publicIPID')]"
+                    },
+                    "publicIPNewOrExistingOrNone": {
+                        "value": "none"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "UpdateNIC4",
+            "apiVersion": "2018-02-01",
+            "dependsOn": [
+                "[variables('network_NIC_fg14_Name')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('updateIPURI')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nicName": {
+                        "value": "[variables('network_NIC_fg14_Name')]"
+                    },
+                    "SubnetRef": {
+                        "value": "[variables('subnet4Ref')]"
+                    },
+                    "privateIp": {
+                        "value": "[reference(concat('Microsoft.Network/networkInterfaces/', variables('network_NIC_fg14_Name'))).ipConfigurations[0].properties.privateIPAddress]"
+                    },
+                    "publicIPID": {
+                        "value": "[variables('publicIPID')]"
+                    },
+                    "publicIPNewOrExistingOrNone": {
+                        "value": "none"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('DeployFW-', parameters('fwObject').FortiGateName)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "UpdateNIC1",
+                "UpdateNIC2",
+                "UpdateNIC3",
+                "UpdateNIC4"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('firewallURI')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "adminPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('fwObject').vmKeyVault.keyVaultResourceGroupName, '/providers/Microsoft.KeyVault/vaults/', pspc.getValidKeyvaultName(pspc.getUniqueKeyvaultName(parameters('fwObject').vmKeyVault.keyVaultName, pspc.getResourceGroupID(parameters('fwObject').vmKeyVault.keyVaultResourceGroupName))))]"
+                            },
+                            "secretName": "[parameters('fwObject').adminSecret]"
+                        }
+                    },
+                    "fwObject": { "value": "[parameters('fwObject')]" }
+                }
+            }  
+        }
+    ],
+    "outputs": {
+        "publicIP": {
+            "type": "string",
+            "value": "[if(equals(parameters('fwObject').publicIPNewOrExistingOrNone,'new'), reference(resourceId('Microsoft.Network/publicIPAddresses',parameters('fwObject').publicIPAddressName)).ipAddress, 'dynamic')]"
+        }
+    }
+}

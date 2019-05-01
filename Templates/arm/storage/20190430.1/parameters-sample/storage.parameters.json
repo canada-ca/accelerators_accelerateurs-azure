@@ -1,0 +1,26 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageArray": {
+            "value": [
+                {
+                    "comment": "Comment goes here",
+                    "storageAccountPrefix": "vmdiag",
+                    "accountType": "Standard_LRS",
+                    "kind": "StorageV2",
+                    "supportsHttpsTrafficOnly": true
+                },
+                {
+                    "comment": "Comment goes here",
+                    "storageAccountPrefix": "vmdiag",
+                    "accountType": "Standard_LRS",
+                    "kind": "StorageV2",
+                    "supportsHttpsTrafficOnly": true,
+                    "containerName": ["test-library-dev","test-library-release"],
+                    "advancedThreatProtectionEnabled": true
+                }
+            ]
+        }
+    }
+}

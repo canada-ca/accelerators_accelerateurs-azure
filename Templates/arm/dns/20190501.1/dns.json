@@ -1,0 +1,210 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URI where artifacts required by this template are located including a trailing '/'"
+            },
+            "defaultValue": "[deployment().properties.templateLink.uri]"
+        },
+        "DNSObj": {
+            "type": "object",
+            "metadata": {
+                "description": "Object containing DNS parameters"
+            }
+        }
+    },
+    "variables": {
+        "ARecordsUrl": "[concat(uri(parameters('_artifactsLocation'), 'nested/ARecords.json'), parameters('containerSasToken'))]",
+        "CNAMERecordsUrl": "[concat(uri(parameters('_artifactsLocation'), 'nested/CNAMERecords.json'), parameters('containerSasToken'))]",
+        "AAAARecordsUrl": "[concat(uri(parameters('_artifactsLocation'), 'nested/AAAARecords.json'), parameters('containerSasToken'))]",
+        "MXRecordsUrl": "[concat(uri(parameters('_artifactsLocation'), 'nested/MXRecords.json'), parameters('containerSasToken'))]",
+        "NSRecordsUrl": "[concat(uri(parameters('_artifactsLocation'), 'nested/NSRecords.json'), parameters('containerSasToken'))]",
+        "SRVRecordsUrl": "[concat(uri(parameters('_artifactsLocation'), 'nested/SRVRecords.json'), parameters('containerSasToken'))]",
+        "TXTRecordsUrl": "[concat(uri(parameters('_artifactsLocation'), 'nested/TXTRecords.json'), parameters('containerSasToken'))]",
+        "PTRRecordsUrl": "[concat(uri(parameters('_artifactsLocation'), 'nested/PTRRecords.json'), parameters('containerSasToken'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/dnszones",
+            "name": "[parameters('DNSObj').dnsZoneName]",
+            "apiVersion": "2016-04-01",
+            "location": "global",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[contains(parameters('DNSObj'),'ARecords')]",
+            "apiVersion": "2018-05-01",
+            "name": "nestedTemplateARecords",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/dnszones', parameters('DNSObj').dnsZoneName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('ARecordsUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "DNSObj": {
+                        "value": "[parameters('DNSObj')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[contains(parameters('DNSObj'),'CNAMERecords')]",
+            "apiVersion": "2018-05-01",
+            "name": "nestedTemplateCNAMERecords",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/dnszones', parameters('DNSObj').dnsZoneName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('CNAMERecordsUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "DNSObj": {
+                        "value": "[parameters('DNSObj')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[contains(parameters('DNSObj'),'AAAARecords')]",
+            "apiVersion": "2018-05-01",
+            "name": "nestedTemplateAAAARecords",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/dnszones', parameters('DNSObj').dnsZoneName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('AAAARecordsUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "DNSObj": {
+                        "value": "[parameters('DNSObj')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[contains(parameters('DNSObj'),'MXRecords')]",
+            "apiVersion": "2018-05-01",
+            "name": "nestedTemplateMXRecords",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/dnszones', parameters('DNSObj').dnsZoneName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('MXRecordsUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "DNSObj": {
+                        "value": "[parameters('DNSObj')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[contains(parameters('DNSObj'),'NSRecords')]",
+            "apiVersion": "2018-05-01",
+            "name": "nestedTemplateNSRecords",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/dnszones', parameters('DNSObj').dnsZoneName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('NSRecordsUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "DNSObj": {
+                        "value": "[parameters('DNSObj')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[contains(parameters('DNSObj'),'SRVRecords')]",
+            "apiVersion": "2018-05-01",
+            "name": "nestedTemplateSRVRecords",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/dnszones', parameters('DNSObj').dnsZoneName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('SRVRecordsUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "DNSObj": {
+                        "value": "[parameters('DNSObj')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[contains(parameters('DNSObj'),'TXTRecords')]",
+            "apiVersion": "2018-05-01",
+            "name": "nestedTemplateTXTRecords",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/dnszones', parameters('DNSObj').dnsZoneName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('TXTRecordsUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "DNSObj": {
+                        "value": "[parameters('DNSObj')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[contains(parameters('DNSObj'),'PTRRecords')]",
+            "apiVersion": "2018-05-01",
+            "name": "nestedTemplatePTRRecords",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/dnszones', parameters('DNSObj').dnsZoneName)]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('PTRRecordsUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "DNSObj": {
+                        "value": "[parameters('DNSObj')]"
+                    }
+                }
+            }
+        }
+    ]
+}

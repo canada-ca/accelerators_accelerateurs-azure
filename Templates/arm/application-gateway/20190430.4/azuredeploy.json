@@ -1,0 +1,353 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "gatewayName": {
+            "type":"string",
+            "metadata": {
+                "description": "The name of the application gateway"
+              }
+        },
+        "tier":
+        {
+            "type": "string",
+            "allowedValues": [
+                "WAF",
+                "Standard"
+            ],
+            "defaultValue": "WAF",
+            "metadata": {
+                "description": "The type of gateway you want to deploy (ie. WAF, Standard)"
+              }
+        },
+        "applicationGatewaySize": {
+            "type": "string",
+            "allowedValues": [
+              "WAF_Medium",
+              "WAF_Large"
+            ],
+
+            "defaultValue": "WAF_Medium",
+            "metadata": {
+              "description": "The size of Application Gateway to deploy (ie Medium, Large)"
+            }
+        },
+        "capacity": {
+            "type": "int",
+            "allowedValues": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10
+            ],
+            "defaultValue": 2,
+            "metadata": {
+                "description": "Number of instances of the gateway"
+            }
+        },
+        "sslCertificates": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of base64 private SSL certificates in .pfx format used by the gateway.  V1 currently does not support keyvault and v2 is not in Canada at this time."
+            }
+        },
+        "authenticationCertificates": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of public SSL certificates used by the gateway"
+            }
+        },
+        "frontendIPConfigurations":{
+            "type": "array",
+            "metadata": {
+                "description": "Array of front end IP configurations."
+              }
+        },
+        "backendAddressPools":{
+            "type": "array",
+            "metadata": {
+                "description": "Array of backend pools and associated machines."
+              }
+        },
+        "backendHttpSettingsCollection": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of protocol and timeout settings."
+              }
+        }, 
+        "httpListeners":{
+            "type": "array",
+            "metadata": {
+                "description": "Array of listeners that includes the protocol and SSL certificates."
+              }
+        },
+        "urlPathMaps": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Array of URL paths that route traffic back to different backend server pools. See https://docs.microsoft.com/en-us/azure/application-gateway/url-route-overview"
+              }
+        },
+        "requestRoutingRules": {
+            "type":"array",
+            "metadata": {
+                "description": "Array of routing rules that includes the listener, backendpool and httpSettings."
+              }
+        },
+        "probes": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of custom health probes to create. See https://docs.microsoft.com/en-us/azure/application-gateway/application-gateway-probe-overview"
+              }
+        },
+        "rewriteRuleSets": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Array of HTTP rewrite rules.  See https://docs.microsoft.com/en-us/azure/application-gateway/rewrite-http-headers"
+              }
+        },
+        "redirectConfigurations": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Array of redirect configuration that allows redirecting from one listner to another.  See https://docs.microsoft.com/en-us/azure/application-gateway/redirect-overview"
+              }
+        },
+        "frontendPorts":{
+            "type": "array",
+            "metadata": {
+                "description": "Array of frontend ports to allow"
+              }
+        },
+        "webApplicationFirewallConfiguration": {
+            "type": "object",
+            "metadata": {
+                "description": "Sets the WAF configuration for the firewall mode, ruleset, filesizes, etc...  See https://docs.microsoft.com/en-us/azure/application-gateway/application-gateway-waf-configuration"
+              }
+        },
+        "enableHttp2": {
+            "type": "bool",
+            "metadata": {
+                "description": "Specifies if HTTPS2 should be enabled or not"
+              }
+        },
+        "vnetResourceGroupName":{
+            "type": "string",
+            "metadata": {
+                "description": "The resource group name for the main vnet where the application gateway will reside"
+              }
+        },
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the vnet the application gateway will reside in"
+              }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the subnet the application gateway will reside in.  Application gateway must reside in its own subnet"
+              }
+        },
+        "keyVaultRG": {
+            "type":"string",
+            "metadata": {
+                "description": "Name of the keyvault where the passwords are stored"
+              }
+        },
+        "keyVaultName": {
+            "type": "string"
+        }
+      },
+      "variables": {
+          "subnetid": "[concat(subscription().id, '/resourceGroups/', parameters('vnetResourceGroupName'), '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]",
+          "name": "[parameters('gatewayName')]",
+          "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways',variables('name'))]",
+          "keyVaultId": "[resourceId(subscription().subscriptionId, parameters('keyVaultRG'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+        },
+       "resources": [
+        {
+            "type": "Microsoft.Network/applicationGateways",
+            "apiVersion": "2018-12-01",
+            "name": "[variables('name')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "sku": {
+                    "name": "[parameters('applicationGatewaySize')]",
+                    "tier": "[parameters('tier')]",
+                    "capacity": "[parameters('capacity')]"
+                },
+                "gatewayIPConfigurations": [
+                    {
+                        "name": "appGatewayIpConfig",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetid')]"
+                            }
+                        },
+                        "type": "Microsoft.Network/applicationGateways/gatewayIPConfigurations"
+                    }
+                ],
+                "copy": [
+                    {
+                        "name": "sslCertificates",
+                         "count":"[length(parameters('sslCertificates'))]",
+                         "input": {
+                            "name": "[parameters('sslCertificates')[copyIndex('sslCertificates')].name]",
+                            "properties": {
+                                "data": "[parameters('sslCertificates')[copyIndex('sslCertificates')].data]",
+                                "password": "[parameters('sslCertificates')[copyIndex('sslCertificates')].passwordSecret]"
+                                
+                            },
+                            "type": "Microsoft.Network/applicationGateways/sslCertificates"
+                         }
+                    },
+                    {
+                        "name": "authenticationCertificates",
+                         "count":"[length(parameters('authenticationCertificates'))]",
+                         "input": {
+                            "name": "[parameters('authenticationCertificates')[copyIndex('authenticationCertificates')].name]",
+                            "properties": {
+                                "data": "[parameters('authenticationCertificates')[copyIndex('authenticationCertificates')].data]"
+                            },
+                            "type": "Microsoft.Network/applicationGateways/authenticationCertificates"
+                         }
+                    },
+                    {
+                        "name": "frontendIPConfigurations",
+                         "count":"[length(parameters('frontendIPConfigurations'))]",
+                         "input": {
+                            "name": "[parameters('frontendIPConfigurations')[copyIndex('frontendIPConfigurations')].name]",
+                            "properties": {
+                                "privateIPAllocationMethod": "Dynamic",
+                                "subnet": {
+                                    "id": "[variables('subnetid')]"
+                                }
+                            },
+                            "type": "Microsoft.Network/applicationGateways/frontendIPConfigurations"
+                         }
+                    },
+                    {
+                        "name": "frontendPorts",
+                        "count":"[length(parameters('frontendPorts'))]",
+                        "input": {
+                           "name": "[parameters('frontendPorts')[copyIndex('frontendPorts')].name]",
+                           "properties": {
+                                "port": "[parameters('frontendPorts')[copyIndex('frontendPorts')].port]"
+                           },
+                           "type": "Microsoft.Network/applicationGateways/frontendPorts"
+                        }
+                   },
+                   {
+                        "name": "backendAddressPools",
+                        "count":"[length(parameters('backendAddressPools'))]",
+                        "input": {
+                        "name": "[parameters('backendAddressPools')[copyIndex('backendAddressPools')].name]",
+                        "properties": {
+                            "backendAddresses": "[parameters('backendAddressPools')[copyIndex('backendAddressPools')].backendAddresses]"
+                        },
+                        "type": "Microsoft.Network/applicationGateways/backendAddressPools"
+                        }
+                    },
+                    {
+                        "name": "backendHttpSettingsCollection",
+                        "count":"[length(parameters('backendHttpSettingsCollection'))]",
+                        "input": {
+                        "name": "[parameters('backendHttpSettingsCollection')[copyIndex('backendHttpSettingsCollection')].name]",
+                        "properties": {
+                            "port": "[parameters('backendHttpSettingsCollection')[copyIndex('backendHttpSettingsCollection')].port]",
+                            "protocol": "[parameters('backendHttpSettingsCollection')[copyIndex('backendHttpSettingsCollection')].protocol]",
+                            "cookieBasedAffinity": "[parameters('backendHttpSettingsCollection')[copyIndex('backendHttpSettingsCollection')].cookieBasedAffinity]",
+                            "pickHostNameFromBackendAddress": "[parameters('backendHttpSettingsCollection')[copyIndex('backendHttpSettingsCollection')].pickHostNameFromBackendAddress]",
+                            "affinityCookieName": "[parameters('backendHttpSettingsCollection')[copyIndex('backendHttpSettingsCollection')].affinityCookieName]",
+                            "requestTimeout": "[parameters('backendHttpSettingsCollection')[copyIndex('backendHttpSettingsCollection')].requestTimeout]",
+                            "authenticationCertificates": "if(contains(parameters('backendHttpSettingsCollection')[copyIndex('backendHttpSettingsCollection')],'authenticationCertificateName'),parameters('backendHttpSettingsCollection')[copyIndex('backendHttpSettingsCollection')].authenticationCertificateName,json('[]')))]",
+                            "probe": "[if(contains(parameters('backendHttpSettingsCollection')[copyIndex('backendHttpSettingsCollection')],'probeName'),parameters('backendHttpSettingsCollection')[copyIndex('backendHttpSettingsCollection')].probeName, json('null'))]" 
+                        },
+                        "type": "Microsoft.Network/applicationGateways/backendHttpSettingsCollection"
+                        }
+                    },
+                    {
+                        "name": "httpListeners",
+                        "count":"[length(parameters('httpListeners'))]",
+                        "input": {
+                        "name": "[parameters('httpListeners')[copyIndex('httpListeners')].name]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(variables('applicationGatewayID'), '/frontendIPConfigurations/',parameters('httpListeners')[copyIndex('httpListeners')].frontendIPConfigurationName)]"
+                            },
+                            "frontendPort": {
+                                "id": "[[concat(variables('applicationGatewayID'), '/frontendPorts/',parameters('httpListeners')[copyIndex('httpListeners')].frontendPortName)]"
+                            },
+                            "protocol": "[parameters('httpListeners')[copyIndex('httpListeners')].protocol]",
+                            "sslCertificate": {
+                                "id": "[concat(variables('applicationGatewayID'), '/sslCertificates/', parameters('httpListeners')[copyIndex('httpListeners')].sslCertificateName)]"
+                            },
+                            "hostName": "[if(contains(parameters('httpListeners')[copyIndex('httpListeners')], 'hostName'), parameters('httpListeners')[copyIndex('httpListeners')].hostName,json('null'))]",
+                            "requireServerNameIndication": "[parameters('httpListeners')[copyIndex('httpListeners')].requireServerNameIndication]"
+                        },
+                        "type": "Microsoft.Network/applicationGateways/httpListeners"
+                        }
+                    },
+                    {
+                        "name": "requestRoutingRules",
+                        "count":"[length(parameters('requestRoutingRules'))]",
+                        "input": {
+                        "name": "[parameters('requestRoutingRules')[copyIndex('requestRoutingRules')].name]",
+                        "properties": {
+                            "httpListener": {
+                                "id": "[concat(variables('applicationGatewayID'), '/httpListeners/', parameters('requestRoutingRules')[copyIndex('requestRoutingRules')].httpListenerName)]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[[concat(variables('applicationGatewayID'), '/backendAddressPools/', parameters('requestRoutingRules')[copyIndex('requestRoutingRules')].backendAddressPoolName)]"
+                            },
+                            "backendHttpSettings": {
+                                "id": "[concat(variables('applicationGatewayID'), '/backendHttpSettingsCollection/', parameters('requestRoutingRules')[copyIndex('requestRoutingRules')].backendHttpSettingsName)]"
+                            }                            
+                        },
+                        "type": "Microsoft.Network/applicationGateways/requestRoutingRules"
+                        }
+                    },
+                    {
+                        "name": "probes",
+                        "count":"[length(parameters('probes'))]",
+                        "input": {
+                        "name": "[parameters('probes')[copyIndex('probes')].name]",
+                        "properties": {
+                            "protocol": "[parameters('probes')[copyIndex('probes')].protocol]",
+                            "host": "[parameters('probes')[copyIndex('probes')].host]",
+                            "path": "[parameters('probes')[copyIndex('probes')].path]",
+                            "interval": "[parameters('probes')[copyIndex('probes')].interval]",
+                            "timeout": "[parameters('probes')[copyIndex('probes')].timeout]",
+                            "unhealthyThreshold": "[parameters('probes')[copyIndex('probes')].unhealthyThreshold]",
+                            "pickHostNameFromBackendHttpSettings": "[parameters('probes')[copyIndex('probes')].pickHostNameFromBackendHttpSettings]",
+                            "minServers": "[parameters('probes')[copyIndex('probes')].minServers]",
+                            "match": {
+                                "body": "",
+                                "statusCodes": [
+                                    "200-399"
+                                ]
+                            }                          
+                        },
+                        "type": "Microsoft.Network/applicationGateways/probes"
+                        }
+                    }
+                ],
+                "urlPathMaps": "[parameters('urlPathMaps')]",                              
+                "rewriteRuleSets": "[parameters('rewriteRuleSets')]",
+                "redirectConfigurations": "[parameters('redirectConfigurations')]",
+                "webApplicationFirewallConfiguration": "[parameters('webApplicationFirewallConfiguration')]",
+                "enableHttp2": "[parameters('enableHttp2')]"
+            }
+        
+        }
+    ]
+}
+        

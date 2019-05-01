@@ -1,0 +1,53 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "value": "[SasToken]"
+        },
+        "vpnArray": {
+            "value": [
+                {
+                    "resourceGroup": "rgCore",
+                    "vnet": "vnet-core",
+                    "sku": {
+                        "name": "Basic",
+                        "tier": "Basic",
+                        "capacity": 2
+                    },
+                    "gatewayType": "Vpn",
+                    "vpnType": "RouteBased",
+                    "enableBgp": false,
+                    "activeActive": false,
+                    "vpnClientConfiguration": {
+                        "vpnClientAddressPool": {
+                            "addressPrefixes": [
+                                "172.16.1.0/24"
+                            ]
+                        },
+                        "vpnClientProtocols": [
+                            "SSTP"
+                        ],
+                        "vpnClientRootCertificates": [
+                            {
+                                "name": "P2SRootCert",
+                                "properties": {
+                                    "publicCertData": "MIIC5zCCAc+gAwIBAgIQIFzV4QQO+b9Bzf3URxNa5jANBgkqhkiG9w0BAQsFADAW MRQwEgYDVQQDDAtQMlNSb290Q2VydDAeFw0xODA5MTMxMzM3MDVaFw0xOTA5MTMx MzU3MDVaMBYxFDASBgNVBAMMC1AyU1Jvb3RDZXJ0MIIBIjANBgkqhkiG9w0BAQEF AAOCAQ8AMIIBCgKCAQEAvUyme0pEQheswvmknFSfu0tuWdsOGM0RCp2uehgQIGvS aqTU6NlT5FFpYVdTLA4o7OKQXLwXsP3yEyi7/GYGr+dy4P4HEs3hWla/XohVV8hB Yq5wjG3N2MsNnDGpGSQtC5xLx2GbyrBoDdmq8xHoEpzOHnFtnYRB6RYqgsjwoZ/N SeokAnKk8066LA0R31gQcSVrhX0192QtVJmrQ7hfmq+iVKske4Luz2sx3z/Felv5 F9rnOgxC+NC31GANz+O3SWgarm8zAj2mRxTaztTHmWVvRC2bC//MWjYxAGpRnoR9 9CbYWiXxPWj+kkEV5KHcKrh7YIksUb/kV24dDiCUBQIDAQABozEwLzAOBgNVHQ8B Af8EBAMCAgQwHQYDVR0OBBYEFPsWT4Q1V9r3Jzx8YGT45Uzl8VqSMA0GCSqGSIb3 DQEBCwUAA4IBAQCIq5KxqqB1LCNjIsdSXU8PLYla8rR8zSLa+gjd2WzZfZ6gopKL ciVkL3KN0gzLIKsjSs4qyGW+omuEG4mlfoQYJX8qenMIqaWqBMB2zs6jQRZCBvky nl6EAT1LbizlC/ZC0E/0B/ceKRQdjl35pK8g5Z8H4eIe81erx38WdylEFzRhRW5e ngOSG67YdA8Zp68co/+3z0jSCGp0qE9pT6DnP8xbSgHQwweL0qHxvc0Y8NQOANw4 wkR4dJg1NB+BOeDAV8wc4dXt64gMHt/z1j0TZ12/FVphujZuCSMAFK7Yxf5o7Nrk 4/FUwRROi30s4zR9/u/gRNFoRaeecYvt2cBZ"
+                                }
+                            }
+                        ],
+                        "vpnClientRevokedCertificates": [],
+                        "vpnClientIpsecPolicies": []
+                    },
+                    "tagValues": {
+                        "businessOwner": "PSPC-CCC",
+                        "costCenter": "PSPC-EA",
+                        "deploymentStage": "Sandbox",
+                        "dataProfile": "Unclassified",
+                        "version": "0.1"
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "loadbalancersArray": {
+            "value": [
+                {
+                    "name": "testlb1",
+                    "sku": "Basic",
+                    "publicIPAddressName": "testlb-PubIP",
+                    "publicIPAddressesProperties": {
+                        "publicIPAllocationMethod": "Static",
+                        "publicIPAddressVersion": "IPv4"
+                    },
+                    "inboundNatRules": [
+                        {
+                            "name": "testlb1_ADFS_443",
+                            "frontendPort": 443,
+                            "backendPort": 445,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "enableTcpReset": false
+                        },
+                        {
+                            "name": "testlb1_ADFS_444",
+                            "frontendPort": 444,
+                            "backendPort": 446,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "enableTcpReset": false
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

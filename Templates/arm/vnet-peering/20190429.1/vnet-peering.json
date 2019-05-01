@@ -1,0 +1,53 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "peerObj": {
+            "type": "object",
+            "metadata": {
+                "description": "vnet-peering objects."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2018-05-01",
+            "comments": "This resource is just there to add delay since vnet-peering resources have a tendency to fail if enought time is not provided after the vnet-subnet creation",
+            "name": "[concat('Sleep-', parameters('peerObj').peer[copyIndex()].vnetName)]",
+            "type": "Microsoft.Resources/deployments",
+            "copy": {
+                    "name": "peer",
+                    "count": "[length(parameters('peerObj').peer)]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": []
+                }
+            }
+        },
+        {
+            "name": "[concat(parameters('peerObj').vnet, '/peering-to-', parameters('peerObj').peer[copyIndex()].vnetName)]",
+            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+            "apiVersion": "2018-11-01",
+            "dependsOn": ["[concat('Sleep-', parameters('peerObj').peer[copyIndex()].vnetName)]"],
+            "copy": {
+                "name": "peer",
+                "count": "[length(parameters('peerObj').peer)]"
+            },
+            "properties": {
+                "allowVirtualNetworkAccess": "[parameters('peerObj').peer[copyIndex()].allowVirtualNetworkAccess]",
+                "allowForwardedTraffic": "[parameters('peerObj').peer[copyIndex()].allowForwardedTraffic]",
+                "allowGatewayTransit": "[parameters('peerObj').peer[copyIndex()].allowGatewayTransit]",
+                "useRemoteGateways": "[parameters('peerObj').peer[copyIndex()].useRemoteGateways]",
+                "remoteVirtualNetwork": {
+                    "id": "[if(contains(parameters('peerObj').peer[copyIndex()], 'subscriptionId'), concat(parameters('peerObj').peer[copyIndex()].subscriptionId, '/resourceGroups/', parameters('peerObj').peer[copyIndex()].rgName, '/providers/Microsoft.Network/virtualNetworks/', parameters('peerObj').peer[copyIndex()].vnetName), concat(subscription().id, '/resourceGroups/', parameters('peerObj').peer[copyIndex()].rgName, '/providers/Microsoft.Network/virtualNetworks/', parameters('peerObj').peer[copyIndex()].vnetName))]"
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

@@ -1,0 +1,34 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ASGArray": {
+            "value": [
+                {
+                    "resourceGroup": "temptest",
+                    "applicationSecurityGroupName": "testASG1",
+                    "tagValues": {
+                        "Owner": "build.pipeline@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Validate",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-14-01"
+                    }
+                },
+                {
+                    "resourceGroup": "temptest",
+                    "applicationSecurityGroupName": "testASG2",
+                    "tagValues": {
+                        "Owner": "build.pipeline@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Validate",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-14-01"
+                    }
+                }
+            ]
+        }
+    }
+}

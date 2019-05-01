@@ -56,7 +56,7 @@ if ([string]::IsNullOrEmpty($workspaceName)) {
 $gcPolicySet = New-AzureRMPolicySetDefinition -Name 'GC PBMM Policy Set' -PolicyDefinition "$tempDirName\gcpolicy.json"
 
 $isoPolicySet = Get-AzureRMPolicySetDefinition -Id '/providers/Microsoft.Authorization/policySetDefinitions/89c6cddc-1c73-4ac1-b19c-54d1a15a42f2'
- 
+
 New-AzureRMPolicyAssignment -Name 'GC Audit ISO 27001:2013' -PolicySetDefinition $isoPolicySet -Scope "/subscriptions/$subscriptionId" -AssignIdentity -Location $location -Verbose
 
 New-AzureRMPolicyAssignment -Name 'GC PBMM Policy Audit' -PolicySetDefinition $gcPolicySet -Scope "/subscriptions/$subscriptionId" -AssignIdentity -Location $location -Verbose

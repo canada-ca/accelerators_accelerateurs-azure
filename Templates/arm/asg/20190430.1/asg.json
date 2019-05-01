@@ -1,0 +1,22 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ASGObj": {
+            "type": "object",
+            "metadata": {
+                "description": "Object containing ASG security rules parameters"
+            }
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-11-01",
+            "type": "Microsoft.Network/applicationSecurityGroups",
+            "name": "[parameters('ASGObj').applicationSecurityGroupName]",
+            "location": "[resourceGroup().location]",
+            "tags": "[parameters('ASGObj').tagValues]",
+            "properties": {}
+        }
+    ]
+}

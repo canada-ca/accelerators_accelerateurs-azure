@@ -1,0 +1,179 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "DNSRecords": {
+            "value": [
+                {
+                    "resourceGroup": "rgDNS",
+                    "dnsZoneName": "demo.lab.com",
+                    "ARecords": [
+                        {
+                            "name": "mgmt",
+                            "properties": {
+                                "TTL": 60,
+                                "ARecords": [
+                                    {
+                                        "ipv4Address": "13.88.227.200"
+                                    },
+                                    {
+                                        "ipv4Address": "2.2.2.2"
+                                    }
+                                ],
+                                "targetResource": {}
+                            }
+                        },
+                        {
+                            "name": "mgmtin",
+                            "properties": {
+                                "TTL": 120,
+                                "ARecords": [
+                                    {
+                                        "ipv4Address": "10.250.3.4"
+                                    }
+                                ],
+                                "targetResource": {}
+                            }
+                        }
+                    ],
+                    "CNAMERecords": [
+                        {
+                            "name": "mgmtC",
+                            "properties": {
+                                "TTL": 60,
+                                "CNAMERecord": {
+                                    "cname": "mgmt.pspc.ducourier.com"
+                                },
+                                "targetResource": {}
+                            }
+                        },
+                        {
+                            "name": "mgmtinc",
+                            "properties": {
+                                "TTL": 120,
+                                "CNAMERecord": {
+                                    "cname": "mgmtin.pspc.ducourier.com"
+                                },
+                                "targetResource": {}
+                            }
+                        }
+                    ],
+                    "AAAARecords": [
+                        {
+                            "name": "ipV61",
+                            "properties": {
+                                "TTL": 3600,
+                                "AAAARecords": [
+                                    {
+                                        "ipv6Address": "fe80:cd00:0:cde:1257:0:211e:729c"
+                                    },
+                                    {
+                                        "ipv6Address": "fe80:cd00:0:cde:1257:0:211e:729d"
+                                    }
+                                ],
+                                "targetResource": {}
+                            }
+                        }
+                    ],
+                    "MXRecords": [
+                        {
+                            "name": "testMX",
+                            "properties": {
+                                "TTL": 3600,
+                                "MXRecords": [
+                                    {
+                                        "exchange": "mail.test.com",
+                                        "preference": 5
+                                    },
+                                    {
+                                        "exchange": "mail2.test.com",
+                                        "preference": 10
+                                    }
+                                ],
+                                "targetResource": {}
+                            }
+                        }
+                    ],
+                    "NSRecords": [
+                        {
+                            "name": "testNS",
+                            "properties": {
+                                "TTL": 3600,
+                                "NSRecords": [
+                                    {
+                                        "nsdname": "ns1.test.com"
+                                    },
+                                    {
+                                        "nsdname": "ns2.test.com"
+                                    }
+                                ],
+                                "targetResource": {}
+                            }
+                        }
+                    ],
+                    "SRVRecords": [
+                        {
+                            "name": "_ldap._tcp._msdcs",
+                            "properties": {
+                                "TTL": 3600,
+                                "SRVRecords": [
+                                    {
+                                        "port": 389,
+                                        "priority": 0,
+                                        "target": "bigbox.example.com",
+                                        "weight": 100
+                                    },
+                                    {
+                                        "port": 389,
+                                        "priority": 2,
+                                        "target": "bigbox2.example.com",
+                                        "weight": 101
+                                    }
+                                ],
+                                "targetResource": {}
+                            }
+                        }
+                    ],
+                    "TXTRecords": [
+                        {
+                            "name": "testTXT",
+                            "properties": {
+                                "TTL": 3600,
+                                "TXTRecords": [
+                                    {
+                                        "value": [
+                                            "This is a test TXT DNS Record value"
+                                        ]
+                                    },
+                                    {
+                                        "value": [
+                                            "This is another TXT record value"
+                                        ]
+                                    }
+                                ],
+                                "targetResource": {}
+                            }
+                        }
+                    ],
+                    "PTRRecords": [
+                        {
+                            "name": "testPTR",
+                            "properties": {
+                                "TTL": 3600,
+                                "PTRRecords": [
+                                    {
+                                        "ptrdname": "test.com"
+                                    },
+                                    {
+                                        "ptrdname": "test2.com"
+                                    }
+                                ],
+                                "targetResource": {}
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

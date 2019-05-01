@@ -36,7 +36,7 @@ Process {
     . choco.exe install vscode
     . choco.exe install googlechrome
     . choco.exe install azcopy
-    . choco.exe install visioviewer2016
+    # . choco.exe install visioviewer2016
 
     #add the AZCOPY path to the path variable
     $AZCOPYpath = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy"
