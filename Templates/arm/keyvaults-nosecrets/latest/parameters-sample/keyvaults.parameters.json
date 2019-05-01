@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyvaultArray": {
+            "value": [
+                {
+                    "resourceGroup": "rgkeyVaults",
+                    "name": "pspckeys",
+                    "sku": "Standard",
+                    "enabledForDeployment": false,
+                    "enabledForTemplateDeployment": true,
+                    "enabledForDiskEncryption": false,
+                    "accessPoliciesObjectId": "267cced3-2154-43ff-b79b-b12c331ad1d1",
+                    "networkAcls": {
+                        "defaultAction": "Allow",
+                        "bypass": "AzureServices",
+                        "virtualNetworkRules": [],
+                        "ipRules": []
+                    },
+                    "tagValues": {
+                        "Owner": "build.pipeline@tpsgc-pwgsc.gc.ca",
+                        "CostCenter": "PSPC-EA",
+                        "Enviroment": "Validate",
+                        "Classification": "Unclassified",
+                        "Organizations": "PSPC-CCC-E&O",
+                        "DeploymentVersion": "2018-12-14-01"
+                    }
+                }
+            ]
+        }
+    }
+}
