@@ -1,0 +1,95 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string"
+        },
+        "publicIPAddressName": {
+            "type": "string"
+        },
+        "publicIPAddressesProperties": {
+            "type": "object"
+        },
+        "inboundNatRules": {
+            "type": "array"
+        }
+    },
+    "functions": [
+        {
+            "namespace": "pspc",
+            "members": {
+                "replaceFIPC": {
+                    "parameters": [
+                        {
+                            "name": "natRuleObj",
+                            "type": "object"
+                        },
+                        {
+                            "name": "replaceStr",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "object",
+                        "value": "[json(replace(string(parameters('natRuleObj')), '{}', concat('{ \"id\":\"',parameters('replaceStr'),'\"}')))]"
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "apiVersion": "2018-08-01",
+            "name": "[parameters('name')]",
+            "type": "Microsoft.Network/loadBalancers",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "[parameters('sku')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', parameters('publicIPAddressName'))]"
+            ],
+            "tags": {},
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "LoadBalancerFrontEnd",
+                        "properties": {
+                            "publicIPAddress": {
+                                "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2018-08-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIPAddressName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "[parameters('sku')]"
+            },
+            "tags": {},
+            "properties": "[parameters('publicIPAddressesProperties')]"
+        },
+        {
+            "type": "Microsoft.Network/loadBalancers/inboundNatRules",
+            "name": "[concat(parameters('name'), '/', parameters('inboundNatRules')[copyIndex()].name)]",
+            "apiVersion": "2018-12-01",
+            "copy": {
+                "name": "obj",
+                "count": "[length(parameters('inboundNatRules'))]"
+            },
+            "properties": "[pspc.replaceFIPC(parameters('inboundNatRules')[copyIndex()].properties, concat(resourceId('Microsoft.Network/loadBalancers', parameters('name')), '/frontendIPConfigurations/LoadBalancerFrontEnd'))]",
+            "dependsOn": [
+                "[parameters('name')]"
+            ]
+        }
+    ]
+}

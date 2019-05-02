@@ -1,5 +1,5 @@
 # Introduction 
-This template deploys a 2 NIC Cisco ASAv Firewall resource.
+This template deploys a keyvault resource.
 
 # Parameter format
 ```json
