@@ -1,0 +1,288 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URI where artifacts required by this template are located including a trailing '/'"
+            },
+            "defaultValue": "[deployment().properties.templateLink.uri]"
+        },
+        "_debugLevel": {
+            "type": "string",
+            "defaultValue": "none"
+        },
+        "keyVaultResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the resource group containing the keyvault."
+            }
+        },
+        "keyVaultName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the keyvault containing the secret."
+            }
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the administrator of the new VM and the domain. Exclusion list: 'administrator'. For example johnadmin"
+            },
+            "defaultValue": "azureadmin"
+        },
+        "adminPasswordSecret": {
+            "type": "string",
+            "metadata": {
+                "description": "The password for the administrator account of the new VM and the domain"
+            },
+            "defaultValue": "P@ssw0rd1234"
+        },
+        "adDomainName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the AD domain. For example contoso.com"
+            },
+            "defaultValue": "mgmt.demo.gc.ca.local"
+        },
+        "dnsServerPrivateIp": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Optional: Array of IP address of Domain DNS servers"
+            }
+        },
+        "rdsVnetRG": {
+            "type": "string",
+            "metadata": {
+                "description": "The Resource Group containing the RDS Virtual Network resource"
+            },
+            "defaultValue": "Demo-Infra-NetMGMT-RG"
+        },
+        "rdsVnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The vnet name for the RDS servers. For example johnvnet1"
+            },
+            "defaultValue": "Demo-Infra-NetMGMT-VNET"
+        },
+        "rdsPAZSubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The subnet name for RDS PAZ servers. For example johnsubnet1"
+            },
+            "defaultValue": "APP-AD"
+        },
+        "rdsAPPSubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The subnet name for RDS APP servers. For example johnsubnet1"
+            },
+            "defaultValue": "APP-AD"
+        },
+        "rdsGatewayName": {
+            "type": "string",
+            "metadata": {
+                "description": "The  name for the RDS Gateway server. For example DemoRDSGW"
+            },
+            "minLength": 1,
+            "maxLength": 12,
+            "defaultValue": "DemoRDSGW"
+        },
+        "rdsBrokerName": {
+            "type": "string",
+            "metadata": {
+                "description": "The  name for the RDS Content Broker server. For example DemoRDSCB"
+            },
+            "minLength": 1,
+            "maxLength": 12,
+            "defaultValue": "DemoRDSCBRK"
+        },
+        "rdsSessionHostNamePrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "The  name for the RDS Session server. For example DemoRDSCB"
+            },
+            "minLength": 1,
+            "maxLength": 12,
+            "defaultValue": "DemoRDSSH"
+        },
+        "numberOfRdshInstances": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Number of RemoteDesktopSessionHosts"
+            }
+        },
+        "imageSKU": {
+            "type": "string",
+            "allowedValues": [
+                "2012-R2-Datacenter",
+                "2016-Datacenter"
+            ],
+            "metadata": {
+                "description": "Windows server SKU"
+            },
+            "defaultValue": "2016-Datacenter"
+        },
+        "rdshVmSize": {
+            "type": "string",
+            "metadata": {
+                "description": "The size of the RDSH VMs"
+            },
+            "defaultValue": "Standard_A4_v2"
+        },
+        "tagValues": {
+            "type": "object",
+            "metadata": {
+                "description": "Object containing tags pairs"
+            },
+            "defaultValue": {
+                "Owner": "some.user@email.gc.ca",
+                "CostCenter": "GC-EA",
+                "Enviroment": "Sandbox",
+                "Classification": "Unclassified",
+                "Organizations": "GC-CCC-E&O"
+            }
+        }
+    },
+    "variables": {
+        "baseVMUrl": "[concat(uri(parameters('_artifactsLocation'), 'rds.json'), parameters('containerSasToken'))]"
+    },
+    "functions": [
+        {
+            "namespace": "pspc",
+            "members": {
+                "arrayASGConfig": {
+                    "parameters": [
+                        {
+                            "name": "ASGArray",
+                            "type": "array"
+                        }
+                    ],
+                    "output": {
+                        "type": "array",
+                        "value": "[parameters('ASGArray')]"
+                    }
+                },
+                "getResourceGroupID": {
+                    "parameters": [
+                        {
+                            "name": "resourceGroupName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[uniqueString(concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroupName')))]"
+                    }
+                },
+                "getUniqueKeyvaultName": {
+                    "parameters": [
+                        {
+                            "name": "keyVaultName",
+                            "type": "string"
+                        },
+                        {
+                            "name": "resourceGroupID",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(contains(parameters('keyvaultName'), '[unique]'), replace(parameters('keyvaultName'), '[unique]', parameters('resourceGroupID')), parameters('keyvaultName'))]"
+                    }
+                },
+                "getValidKeyvaultName": {
+                    "parameters": [
+                        {
+                            "name": "keyvaultName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(greater(length(parameters('keyvaultName')),24), concat(substring(parameters('keyvaultName'), 0, 24)), parameters('keyvaultName'))]"
+                    }
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "name": "Deploy-Remote-Desktop-Service",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "adminUsername": {
+                        "value": "[parameters('adminUsername')]"
+                    },
+                    "adminPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('keyVaultResourceGroupName'), '/providers/Microsoft.KeyVault/vaults/', pspc.getValidKeyvaultName(pspc.getUniqueKeyvaultName(parameters('keyVaultName'), pspc.getResourceGroupID(parameters('keyVaultResourceGroupName')))))]"
+                            },
+                            "secretName": "[parameters('adminPasswordSecret')]"
+                        }
+                    },
+                    "adDomainName": {
+                        "value": "[parameters('adDomainName')]"
+                    },
+                    "dnsServerPrivateIp": {
+                        "value": "[parameters('dnsServerPrivateIp')]"
+                    },
+                    "rdsVnetRG": {
+                        "value": "[parameters('rdsVnetRG')]"
+                    },
+                    "rdsVnetName": {
+                        "value": "[parameters('rdsVnetName')]"
+                    },
+                    "rdsPAZSubnetName": {
+                        "value": "[parameters('rdsPAZSubnetName')]"
+                    },
+                    "rdsAPPSubnetName": {
+                        "value": "[parameters('rdsAPPSubnetName')]"
+                    },
+                    "rdsGatewayName": {
+                        "value": "[parameters('rdsGatewayName')]"
+                    },
+                    "rdsBrokerName": {
+                        "value": "[parameters('rdsBrokerName')]"
+                    },
+                    "rdsSessionHostNamePrefix": {
+                        "value": "[parameters('rdsSessionHostNamePrefix')]"
+                    },
+                    "numberOfRdshInstances": {
+                        "value": "[parameters('numberOfRdshInstances')]"
+                    },
+                    "imageSKU": {
+                        "value": "[parameters('imageSKU')]"
+                    },
+                    "rdshVmSize": {
+                        "value": "[parameters('rdshVmSize')]"
+                    },
+                    "tagValues": {
+                        "value": "[parameters('tagValues')]"
+                    },
+                    "containerSaSToken": {"value": "[parameters('containerSasToken')]"},
+                    "_artifactsLocation": {"value": "[parameters('_artifactsLocation')]"}
+                },
+                "templateLink": {
+                    "uri": "[variables('baseVMUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "debugSetting": {
+                    "detailLevel": "[parameters('_debugLevel')]"
+                }
+            }  
+        }
+    ],
+    "outputs": {}
+}
