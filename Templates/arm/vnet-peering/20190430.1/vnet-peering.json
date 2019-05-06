@@ -44,7 +44,7 @@
                 "allowGatewayTransit": "[parameters('peerObj').peer[copyIndex()].allowGatewayTransit]",
                 "useRemoteGateways": "[parameters('peerObj').peer[copyIndex()].useRemoteGateways]",
                 "remoteVirtualNetwork": {
-                    "id": "[if(contains(parameters('peerObj').peer[copyIndex()], 'subscriptionId'), concat(parameters('peerObj').peer[copyIndex()].subscriptionId, '/resourceGroups/', parameters('peerObj').peer[copyIndex()].rgName, '/providers/Microsoft.Network/virtualNetworks/', parameters('peerObj').peer[copyIndex()].vnetName), concat(subscription().id, '/resourceGroups/', parameters('peerObj').peer[copyIndex()].rgName, '/providers/Microsoft.Network/virtualNetworks/', parameters('peerObj').peer[copyIndex()].vnetName))]"
+                    "id": "[if(contains(parameters('peerObj').peer[copyIndex()], 'subscriptionId'), concat('/subscriptions/', parameters('peerObj').peer[copyIndex()].subscriptionId, '/resourceGroups/', parameters('peerObj').peer[copyIndex()].rgName, '/providers/Microsoft.Network/virtualNetworks/', parameters('peerObj').peer[copyIndex()].vnetName), concat(subscription().id, '/resourceGroups/', parameters('peerObj').peer[copyIndex()].rgName, '/providers/Microsoft.Network/virtualNetworks/', parameters('peerObj').peer[copyIndex()].vnetName))]"
                 }
             }
         }
