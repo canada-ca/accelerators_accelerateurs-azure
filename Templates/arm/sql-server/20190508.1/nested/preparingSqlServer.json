@@ -1,0 +1,244 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sqlVMName": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "adminUsername": {
+            "type": "string"
+        },
+        "adminPassword": {
+            "type": "securestring"
+        },
+        "domainUsername": {
+            "type": "string"
+        },
+        "domainPassword": {
+            "type": "securestring"
+        },
+        "domainName": {
+            "type": "string"
+        },
+        "serverOUPath":{
+            "type": "string"
+        },
+        "accountOUPath":{
+            "type": "string"
+        },
+        "sqlAOPrepareModulesURL": {
+            "type": "string"
+        },
+        "sqlAOPrepareConfigurationFunction": {
+            "type": "string"
+        },
+        "sqlAOEPName": {
+            "type": "string"
+        },
+        "sqlServerServiceAccountUserName": {
+            "type": "string"
+        },
+        "sqlServerServiceAccountPassword": {
+            "type": "securestring"
+        },
+        "sharePath": {
+            "type": "string"
+        },
+        "sqlwVMName": {
+            "type": "string"
+        },
+        "fswModulesURL": {
+            "type": "string"
+        },
+        "fswConfigurationFunction": {
+            "type": "string"
+        },
+        "sqlPatchingConfig": {
+            "type": "object"
+        },
+        "sqlBackupConfig": {
+            "type": "object"
+        },
+        "numberOfDisks": {
+            "type": "string"
+        },
+        "workloadType": {
+            "type": "string"
+        },
+        "rServicesEnabled":{
+            "type": "bool",
+            "defaultValue": false
+        },
+        "sqlConnectivityType":{
+            "type": "string",
+            "defaultValue": "Private"
+        },
+        "sqlPortNumber":{
+            "type": "int",
+            "defaultValue": 1433
+        },
+        "sqlStorageDisksConfigurationType":{
+            "type": "string",
+            "defaultValue": "NEW"
+        },
+        "sqlStorageStartingDeviceId":{
+           "type": "int",
+           "defaultValue": 2
+        },
+        "sqlServerLicenseType":{
+            "type":"string",
+            "defaultValue": "PAYG"
+        },
+        "keyVaultCredentialSettings":{
+            "type": "object",
+            "defaultValue": {
+                "Enable": false,
+                "CredentialName": ""
+            }
+        },
+        "sqlStorageAccountName":{
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('sqlwVMName'),'/CreateFileShareWitness')]",
+            "apiVersion": "2015-06-15",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.71",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "modulesURL": "[parameters('fswModulesURL')]",
+                    "configurationFunction": "[parameters('fswConfigurationFunction')]",
+                    "properties": {
+                        "domainName": "[parameters('domainName')]",
+                        "SharePath": "[parameters('sharePath')]",
+                        "domainCreds": {
+                            "userName": "[parameters('domainUserName')]",
+                            "password": "privateSettingsRef:domainPassword"
+                        },
+                        "ouPath": "[parameters('serverOUPath')]"
+                    }
+                },
+                "protectedSettings": {
+                    "items": {
+                        "domainPassword": "[parameters('domainPassword')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat(parameters('sqlVMName'),copyIndex())]",
+            "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
+            "apiVersion": "2017-03-01-preview",
+            "copy": { 
+                "name": "vmcopy", 
+                "count": 2
+              }, 
+            "location": "[parameters('location')]",
+            "properties": {
+                "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('sqlVMName'),copyIndex()))]",
+                "SqlServerLicenseType": "[parameters('sqlServerLicenseType')]",
+                "AutoPatchingSettings": {
+                    "Enable": "[parameters('sqlPatchingConfig').patchingEnabled]",
+                    "DayOfWeek": "[parameters('sqlPatchingConfig').dayOfWeek]",
+                    "MaintenanceWindowStartingHour": "[parameters('sqlPatchingConfig').maintenanceWindowStartingHour]",
+                    "MaintenanceWindowDuration":"[parameters('sqlPatchingConfig').maintenanceWindowDuration]"
+                },
+                "AutoBackupSettings": {
+                    "Enable": "[parameters('sqlBackupConfig').backupEnabled]",
+                    "RetentionPeriod": "[parameters('sqlBackupConfig').retentionPeriod]",
+                    "EnableEncryption": "[parameters('sqlBackupConfig').enableEncryption]",
+                    "BackupSystemDbs": "[parameters('sqlBackupConfig').backupSystemDbs]",
+                    "BackupScheduleType": "[parameters('sqlBackupConfig').backupScheduleType]",
+                    "FullBackupFrequency": "[parameters('sqlBackupConfig').fullBackupFrequency]",
+                    "FullBackupStartTime": "[parameters('sqlBackupConfig').fullBackupStartTime]",
+                    "FullBackupWindowHours": "[parameters('sqlBackupConfig').fullBackupWindowHours]",
+                    "LogBackupFrequency": "[parameters('sqlBackupConfig').logBackupFrequency]",
+                    "Password": "[parameters('sqlBackupConfig').password]",
+                    "StorageAccountUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts', concat('sqlbackup',uniquestring(parameters('sqlStorageAccountName')))), '2018-07-01').primaryEndpoints['blob']]",
+                    "StorageAccessKey": "[first(listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('sqlbackup',uniquestring(parameters('sqlStorageAccountName')))), '2018-07-01').keys).value]"
+                },
+                "KeyVaultCredentialSettings": 
+                {
+                    "Enable": false,
+                    "CredentialName": ""
+                },
+                "ServerConfigurationsManagementSettings": {
+                    "SQLConnectivityUpdateSettings": {
+                        "ConnectivityType": "[parameters('sqlConnectivityType')]",
+                        "Port": "[parameters('sqlPortNumber')]",
+                        "SQLAuthUpdateUserName": "",
+                        "SQLAuthUpdatePassword": ""
+                    },
+                    "SQLWorkloadTypeUpdateSettings": {
+                        "SQLWorkloadType": "[parameters('workloadType')]"
+                    },
+                    "SQLStorageUpdateSettings": {
+                        "DiskCount": "[parameters('numberOfDisks')]",
+                        "DiskConfigurationType": "[parameters('sqlStorageDisksConfigurationType')]",
+                        "StartingDeviceID": "[parameters('sqlStorageStartingDeviceId')]"
+                    },
+                    "AdditionalFeaturesServerConfigurations": {
+                        "IsRServicesEnabled": "[parameters('rServicesEnabled')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('sqlVMName'),'0/sqlAOPrepare')]",
+            "apiVersion": "2015-06-15",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/',parameters('sqlwVMName'),'/extensions/CreateFileShareWitness')]",
+                "[concat('Microsoft.SqlVirtualMachine/SqlVirtualMachines/',parameters('sqlVMName'),'0')]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.71",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "modulesURL": "[parameters('sqlAOPrepareModulesURL')]",
+                    "configurationFunction": "[parameters('sqlAOPrepareConfigurationFunction')]",
+                    "properties": {
+                        "domainName": "[parameters('domainName')]",
+                        "sqlAlwaysOnEndpointName": "[parameters('sqlAOEPName')]",
+                        "adminCreds": {
+                            "userName": "[parameters('adminUserName')]",
+                            "password": "privateSettingsRef:AdminPassword"
+                        },
+                        "domainCreds": {
+                            "userName": "[parameters('domainUserName')]",
+                            "password": "privateSettingsRef:domainPassword"
+                        },
+                        "sqlServiceCreds": {
+                            "userName": "[parameters('sqlServerServiceAccountUserName')]",
+                            "password": "privateSettingsRef:SqlServerServiceAccountPassword"
+                        },
+                        "NumberOfDisks": "[parameters('numberOfDisks')]",
+                        "WorkloadType": "[parameters('workloadType')]",
+                        "serverOUPath": "[parameters('serverOUPath')]",
+                        "accountOUPath": "[parameters('accountOUPath')]"
+                    }
+                },
+                "protectedSettings": {
+                    "items": {
+                        "adminPassword": "[parameters('adminPassword')]",
+                        "domainPassword": "[parameters('domainPassword')]",
+                        "sqlServerServiceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]"
+                    }
+                }
+            }
+        }
+    ]
+}

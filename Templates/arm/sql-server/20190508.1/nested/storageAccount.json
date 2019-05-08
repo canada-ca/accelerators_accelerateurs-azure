@@ -1,0 +1,73 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string"
+    },
+    "sqlStorageAccountName": {
+      "type": "string"
+    },
+    "SqlStorageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS"
+    },
+    "blobEncryptionEnabled": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable or disable Blob encryption at Rest."
+      }
+    },
+    "tagValues": {
+      "type": "object"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[concat('sqldiag',uniquestring(parameters('sqlStorageAccountName')))]",
+      "apiVersion": "2019-04-01",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tagValues')]",
+      "kind": "Storage",
+      "sku": {
+        "name":"[parameters('SqlStorageAccountType')]"
+      },
+      "properties": {
+        "encryption": {
+          "keySource": "Microsoft.Storage",
+          "services": {
+            "blob": {"enabled": "[parameters('blobEncryptionEnabled')]"}
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[concat('sqlbackup',uniquestring(parameters('sqlStorageAccountName')))]",
+      "apiVersion": "2019-04-01",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tagValues')]",
+      "kind": "Storage",
+      "sku": {
+        "name":"[parameters('SqlStorageAccountType')]"
+      },
+      "properties": {
+<<<<<<< HEAD
+        "accountType": "[parameters('SqlStorageAccountType')]"
+=======
+        "encryption": {
+          "keySource": "Microsoft.Storage",
+          "services": {
+            "blob": {
+              "enabled": "[parameters('blobEncryptionEnabled')]"
+            }
+          }
+        }
+>>>>>>> 6cefbd610a34c5936e78f0947db248d0481d3937
+      }
+    }
+  ],
+  "outputs": {}
+}

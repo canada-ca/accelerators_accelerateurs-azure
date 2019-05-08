@@ -1,0 +1,29 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmObject": {
+      "type": "object",
+      "metadata": {
+        "description": "Object of MS firewall objects."
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmObject').vm.computerName,'/AADLoginForLinux')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "autoUpgradeMinorVersion": true,
+        "provisioningState": "Succeeded",
+        "publisher": "Microsoft.Azure.ActiveDirectory.LinuxSSH",
+        "type": "AADLoginForLinux",
+        "typeHandlerVersion": "1.0"
+      }
+    }
+  ],
+  "outputs": {}
+}
