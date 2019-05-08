@@ -1,0 +1,202 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "gatewayName": {
+            "value": "Demo-Infra-AG1"
+        },
+        "tier": {
+            "value": "WAF"
+        },
+        "applicationGatewaySize": {
+            "value": "WAF_Medium"
+        },
+        "capacity": {
+            "value": 2
+        },
+        "sslCertificates": {
+            "value": [
+                {
+                    "name": "managementWildcardCert",
+                    "data": "Base 64 of your .pks file here",
+                    "passwordSecret": "Your Certificate Password Here"
+                },
+                {
+                    "name": "SharedWildcardCert",
+                    "data": "Base 64 of your .pks file here",
+                    "passwordSecret": "Your Certificate Password Here"
+                }
+            ]
+        },
+        "authenticationCertificates": {
+            "value": [
+                {
+                    "name": "managementWildcardCert",
+                    "data": "Base64 of your .cer file here"
+                },
+                                {
+                    "name": "sharedWildcardCert",
+                    "data": "Base64 of your .cer file here"
+                }
+            ]
+        },
+        "frontendIPConfigurations": {
+            "value": [
+                {
+                    "name": "appGatewayFrontendIP",
+                    "privateIPAllocationMethod": "Dynamic"
+                }
+            ]
+        },
+        "backendAddressPools": {
+            "value": [
+               {
+                    "name": "dockerdemoBackendAddressPool",
+                    "backendAddresses": [
+                        {
+                            "ipAddress": "10.10.21.68"
+                        }
+                    ]
+                },
+                {
+                    "name": "adfsBackendAddressPool",
+                    "backendAddresses": [
+                        {
+                            "ipAddress": "10.10.24.24"
+                        },
+                        {
+                            "ipAddress": "10.10.24.23"
+                        }
+                    ]
+                }
+            ]
+        },
+        "backendHttpSettingsCollection": {
+            "value": [
+                {
+                    "name": "dockerBackendHttpSettings",
+                    "port": 8080,
+                    "protocol": "Http",
+                    "cookieBasedAffinity": "Disabled",
+                    "pickHostNameFromBackendAddress": false,
+                    "affinityCookieName": "ApplicationGatewayAffinity",
+                    "requestTimeout": 20
+                },
+                {
+                    "name": "adfsBackendHttpSettings",
+                    "port": 443,
+                    "protocol": "Https",
+                    "cookieBasedAffinity": "Disabled",
+                    "pickHostNameFromBackendAddress": false,
+                    "affinityCookieName": "ApplicationGatewayAffinity",
+                    "requestTimeout": 60,
+                    "authenticationCertificateName": [
+                        {
+                            "id": "[concat(resourceId('Microsoft.Network/applicationGateways',Demo-Infra-AG1), '/authenticationCertificates/sharedWildcardCert)]"
+                        }
+                    ]
+                }
+            ]
+        },
+        "httpListeners": {
+            "value": [
+                {
+                    "name": "dockerListener",
+                    "frontendIPConfigurationName": "appGatewayFrontendIP",
+                    "frontendPortName": "appGatewayFrontendPort",
+                    "protocol": "Https",
+                    "sslCertificateName": "managementWildcardCert",
+                    "hostName": "docker.mgmt.demo.ca",
+                    "requireServerNameIndication": true
+                },
+                {
+                    "name": "stsListener",
+                    "frontendIPConfigurationName": "appGatewayFrontendIP",
+                    "frontendPortName": "appGatewayFrontendPort",
+                    "protocol": "Https",
+                    "sslCertificateName": "sharedWildcardCert",
+                    "hostName": "sts.shared.demo.ca",
+                    "requireServerNameIndication": true
+                }
+            ]
+        },
+        "urlPathMaps": {
+            "value": []
+        },
+        "requestRoutingRules": {
+            "value": [
+                {
+                    "name": "dockerRoutingRule",
+                    "ruleType": "Basic",
+                    "httpListenerName": "dockerListener",
+                    "backendAddressPoolName": "dockerdemoBackendAddressPool",
+                    "backendHttpSettingsName": "dockerBackendHttpSettings"
+                },
+                {
+                    "name": "adfsRoutingRule",
+                    "ruleType": "Basic",
+                    "httpListenerName": "stsListener",
+                    "backendAddressPoolName": "adfsBackendAddressPool",
+                    "backendHttpSettingsName": "adfsBackendHttpSettings"
+                }
+            ]
+        },
+        "probes": {
+            "value": [{
+                "name": "adfsProbe",
+                "protocol": "Https",
+                "host": "sts.shared.pws3.pspc-spac.ca",
+                "path": "/adfs/ls/idpinitiatedsignon.aspx",
+                "interval": 30,
+                "timeout": 30,
+                "unhealthyThreshold": 3,
+                "pickHostNameFromBackendHttpSettings": false,
+                "minServers": 0,
+                "match": {
+                    "body": "",
+                    "statusCodes": [
+                        "200-399"
+                    ]
+                }
+            }]
+        },
+        "frontendPorts": {
+            "value": [
+                {
+                    "name": "appGatewayFrontendPort",
+                    "port": 443
+                }
+            ]
+        },
+        "webApplicationFirewallConfiguration": {
+            "value": {
+                "enabled": true,
+                "firewallMode": "Detection",
+                "ruleSetType": "OWASP",
+                "ruleSetVersion": "3.0",
+                "disabledRuleGroups": [],
+                "requestBodyCheck": true,
+                "maxRequestBodySizeInKb": 128,
+                "fileUploadLimitInMb": 100
+            }
+        },
+        "enableHttp2": {
+            "value": true
+        },
+        "vnetResourceGroupName": {
+            "value": "Demo-Infra-NetCore-RG"
+        },
+        "vnetName": {
+            "value": "Demo-Infra-NetCore-VNET"
+        },
+        "subnetName": {
+            "value": "Demo-core-waf"
+        },
+        "keyVaultRG": {
+            "value":"Demo-Infra-Keyvault-RG"
+        },
+        "keyVaultName": {
+            "value": "Demo-Infra-Keyvault"
+        }
+    }
+}
