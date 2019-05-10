@@ -1,0 +1,65 @@
+[
+    {
+        "roleName":"Management Group Contributor",
+        "scopeLevel":"managementGroup",
+        "managementGroupID":"XXXXXX",
+        "subscriptionID":"",
+        "location":"CanadaCentral",
+        "userPrincipalName":"",
+        "groupDisplayName":"xxxxxxxxxxxxx"
+    },
+    {
+        "roleName":"Management Group Reader",
+        "scopeLevel":"managementGroup",
+        "managementGroupID":"mosharaf",
+        "subscriptionID":"",
+        "location":"CanadaCentral",
+        "userPrincipalName":"",
+        "groupDisplayName":"xxxxxxxxxxxxx"
+    },
+    {
+        "roleName":"owner",
+        "scopeLevel":"subscription",
+        "managementGroupID":"",
+        "subscriptionID":"xxxxxx-xxxx-xxx-xxx-xxxx-xxxxxxxx",
+        "location":"CanadaCentral",
+        "userPrincipalName":"xxxxxxxxxxxxx",
+        "groupDisplayName":""
+    },
+    {
+        "roleName":"Cost Management Contributor",
+        "scopeLevel":"subscription",
+        "managementGroupID":"",
+        "subscriptionID":"xxxxxx-xxxx-xxx-xxx-xxxx-xxxxxxxx",
+        "location":"CanadaCentral",
+        "userPrincipalName":"xxxxxxxxxxxxx",
+        "groupDisplayName":""
+    },
+    {
+        "roleName":"Cost Management Reader",
+        "scopeLevel":"subscription",
+        "managementGroupID":"",
+        "subscriptionID":"xxxxxx-xxxx-xxx-xxx-xxxx-xxxxxxxx",
+        "location":"CanadaCentral",
+        "userPrincipalName":"xxxxxxxxxxxxx",
+        "groupDisplayName":""
+    },
+    {
+        "roleName":"Security Admin",
+        "scopeLevel":"subscription",
+        "managementGroupID":"",
+        "subscriptionID":"xxxxxx-xxxx-xxx-xxx-xxxx-xxxxxxxx",
+        "location":"CanadaCentral",
+        "userPrincipalName":"xxxxxxxxxxxxx",
+        "groupDisplayName":""
+    },
+    {
+        "roleName":"Security Reader",
+        "scopeLevel":"subscription",
+        "managementGroupID":"",
+        "subscriptionID":"xxxxxx-xxxx-xxx-xxx-xxxx-xxxxxxxx",
+        "location":"CanadaCentral",
+        "userPrincipalName":"xxxxxxxxxxxxx",
+        "groupDisplayName":"xxxxxxxxxxxxx"
+    }
+]

@@ -1,0 +1,14 @@
+{
+       "principalID":{
+           "value": "a1d5b802-c5bf-463a-ae3c-5459adda02b9"
+       },
+       "roleDefinitionID":{
+           "value": "b24988ac-6180-42a0-ab88-20f7382dd24c"
+       },
+       "scopeLevel":{
+           "value": "resourceGroup"
+       },
+       "managementGroupID":{
+           "value":""
+       }
+}

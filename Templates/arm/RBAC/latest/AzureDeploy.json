@@ -1,0 +1,65 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "comments": "This template assign user principals or groups to roles on the subscription level. It has the support for Management Group level but it's not active and will throw exception until it's fully supported in Azure as of March 2019",
+    "author": "Mohamed Sharaf <Mohamed.Sharaf@Microsoft.com>"
+  },
+  "parameters": {
+    "principalID": {
+      "type": "string",
+      "metadata": {
+        "description": "Object ID for the user or group in AAD"
+      }
+    },
+    "roleDefinitionID": {
+      "type": "string",
+      "metadata": {
+        "description": "the id of the role that you wanna assign"
+      }
+    },
+    "scopeLevel": {
+      "type": "string",
+      "allowedValues": [
+        "subscription",
+        "managementGroup",
+        "resourceGroup"
+      ],
+      "defaultValue": "subscription",
+      "metadata": {
+        "description": "the scope leve is either subscription, resource group or management group"
+      }
+    },
+    "managementGroupID": {
+      "type": "string",
+      "metadata": {
+        "description": "the id of the management group. the id is a string not GUID"
+      }
+    },
+    "assignmentName": {
+      "type": "string",
+      "defaultValue": "[newGuid()]"
+    }
+  },
+  "variables": {
+    "roleID.subscription": "[concat(subscription().Id, '/providers/Microsoft.Authorization/roleDefinitions/',parameters('roleDefinitionID'))]",
+    "roleID.mg": "[concat('/providers/Microsoft.Management/managementGroups/',parameters('managementGroupID'),'/providers/Microsoft.Authorization/roleDefinitions/',parameters('roleDefinitionID'))]",
+    "subscription": "[subscription().Id]",
+    "managementGroup": "[concat('/providers/Microsoft.Management/managementGroups/',parameters('managementGroupID'))]",
+    "resourceGroup": "[if(equals(parameters('scopeLevel'), 'resourceGroup'), resourceGroup().id, '')]",
+    "roleId.rg": "[if(equals(parameters('scopeLevel'), 'resourceGroup'), concat('resourceGroups/',resourceGroup().name, '/providers/Microsoft.Authorization/roleDefinitions/',parameters('roleDefinitionID')), '')]"
+  },
+      "resources": [
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "name": "[parameters('assignmentName')]",
+      "apiVersion": "2017-05-01",
+      "properties": {
+        "roleDefinitionId": "[if(equals(parameters('scopeLevel'),'subscription'),variables('roleID.subscription'), if(equals(parameters('scopeLevel'), 'resourceGroup'), variables('roleId.rg'), variables('roleID.mg')))]",
+        "principalId": "[parameters('principalID')]",
+        "scope": "[variables(parameters('scopeLevel'))]"
+      }
+    }
+  ],
+  "outputs": {}
+}
