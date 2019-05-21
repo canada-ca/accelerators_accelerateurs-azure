@@ -1,9 +1,11 @@
 # Azure Templates Library
 
-This folder contains a "consumer view" of all ARM Templates and associated versions used to deploy the demonstration found in the Deployments folder. You can also use those same templates to assemble and deploy resources in your Azure Subscriptions.
+UPDATE:
 
-Each templates contains multiple versions to ensure deployment consistency over time. If you start to deploy resources using a specific template you can be assured it will remain available as it is months down the road.
+Work has begun migrating all template development to it's final home at https://github.com/canada-ca-azure-templates
 
-As new features and improvements are added over time you are invited to review new templates versions and update your deployment to use them to remain current and secure.
+This new GitHub Organisation will contain individual repo for each templates. This will allow you to contribute updates to the templates or to consume them when needed.
 
-Development of new template and versions is currently done in a seperate Azure Devops project (https://dev.azure.com/PSPC-CCC/Core) using individual repo for each templates. This is currently tightly coupled with Azure DevOps CI/CD pipelines. It will require time and effort to migrate the solution to github.
+For example, to deploy a server template using the version 20190506 (https://github.com/canada-ca-azure-templates/servers/tree/20190506) you would use the following repo link: https://raw.githubusercontent.com/canada-ca-azure-templates/servers/20190506/template/azuredeploy.json
+
+The current Templates/arm folder in this repo will not be updated anymore but will remain as a template source for legacy deployments that still use it.
