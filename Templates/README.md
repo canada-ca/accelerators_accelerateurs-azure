@@ -3,6 +3,7 @@
 | Link                                                                                          | Name                            |
 | --------------------------------------------------------------------------------------------- | ------------------------------- |
 | [active-directory](https://github.com/canada-ca-azure-templates/active-directory)             | Active Directory Service        |
+|[application-gateway](https://github.com/canada-ca-azure-templates/application-gateway)                                       | Application Gateway     |
 | [asg](https://github.com/canada-ca-azure-templates/asg)                                       | Application Security Groups     |
 | [availabilityset](https://github.com/canada-ca-azure-templates/availabilityset)               | Availability Sets               |
 | [azurefirewall](https://github.com/canada-ca-azure-templates/azurefirewall)                   | Azure Firewall                  |
@@ -13,6 +14,8 @@
 | [devtestlab](https://github.com/canada-ca-azure-templates/devtestlab)                         | Dev & Test labs                 |
 | [fortigate2nic](https://github.com/canada-ca-azure-templates/fortigate2nic)                   | Fortigate Firewall with 2 NICs  |
 | [fortigate4nic](https://github.com/canada-ca-azure-templates/fortigate4nic)                   | Fortigate Firewall with 4 NICs  |
+| [fortigateap](https://github.com/canada-ca-azure-templates/fortigateap)                       | Fortigate HA Active Passive Firewall  |
+| [fortigateha](https://github.com/canada-ca-azure-templates/fortigateha)                       | Fortigate HA Active Active Firewall  |
 | [keyvaults](https://github.com/canada-ca-azure-templates/keyvaults)                           | Key Vaults                      |
 | [loadbalancers](https://github.com/canada-ca-azure-templates/loadbalancers)                   | Loadbalancer                    |
 | [loganalytics](https://github.com/canada-ca-azure-templates/loganalytics)                     | Workspaces log analytic         |
@@ -27,6 +30,7 @@
 | [servers](https://github.com/canada-ca-azure-templates/servers)                               | Servers                         |
 | [servers-decyptVMDisks](https://github.com/canada-ca-azure-templates/servers-decyptVMDisks)   | Servers Encrypt VM Disks        |
 | [servers-encryptVMDisks](https://github.com/canada-ca-azure-templates/servers-encryptVMDisks) | Servers Decrypt VM Disks        |
+| [sql-reporting-services](https://github.com/canada-ca-azure-templates/sql-reporting-services)| SQL Reporting Services |
 | [sql-server-cluster](https://github.com/canada-ca-azure-templates/sql-server-cluster)         | SQL Server Cluster              |
 | [storage](https://github.com/canada-ca-azure-templates/storage)                               | Storage Accounts                |
 | [vnet-peering](https://github.com/canada-ca-azure-templates/vnet-peering)                     | VNET Peering                    |
