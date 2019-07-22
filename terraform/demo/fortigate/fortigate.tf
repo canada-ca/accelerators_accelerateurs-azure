@@ -227,8 +227,8 @@ resource azurerm_virtual_machine demo-core-fwcore-rg__DemoFWCore-A {
   "${azurerm_network_interface.demo-core-fwcore-rg__DemoFWCore-A-Nic3.id}", 
   "${azurerm_network_interface.demo-core-fwcore-rg__DemoFWCore-A-Nic4.id}" ]
   primary_network_interface_id     = "${azurerm_network_interface.demo-core-fwcore-rg__DemoFWCore-A-Nic1.id}"
-  delete_data_disks_on_termination = "false"
-  delete_os_disk_on_termination    = "false"
+  delete_data_disks_on_termination = "true"
+  delete_os_disk_on_termination    = "true"
   os_profile {
     computer_name  = "${local.fwprefix}-A"
     admin_username = "fwadmin"
@@ -278,8 +278,8 @@ resource azurerm_virtual_machine demo-core-fwcore-rg__DemoFWCore-B {
     "${azurerm_network_interface.demo-core-fwcore-rg__DemoFWCore-B-Nic3.id}",
     "${azurerm_network_interface.demo-core-fwcore-rg__DemoFWCore-B-Nic4.id}"]
   primary_network_interface_id     = "${azurerm_network_interface.demo-core-fwcore-rg__DemoFWCore-B-Nic1.id}"
-  delete_data_disks_on_termination = "false"
-  delete_os_disk_on_termination    = "false"
+  delete_data_disks_on_termination = "true"
+  delete_os_disk_on_termination    = "true"
   os_profile {
     computer_name  = "${local.fwprefix}-B"
     admin_username = "fwadmin"
