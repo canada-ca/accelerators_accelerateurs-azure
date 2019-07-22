@@ -28,8 +28,6 @@ variable "vnetname" {
   }
 }
 
-
-
 variable "fwsubnets" {
   default = {
     "outside" = "Demo-Outside"
@@ -37,5 +35,8 @@ variable "fwsubnets" {
     "mgmt" = "Demo-Management"
     "ha" = "Demo-HASync"
   }
-  
+}
+
+variable "fwprefix" {
+  default = "DemoFWCore"
 }

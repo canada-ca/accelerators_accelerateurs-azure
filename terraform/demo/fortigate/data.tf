@@ -1,3 +1,5 @@
+data "azurerm_client_config" "current" {}
+
 data "azurerm_key_vault" "keyvaultsecrets" {
   name = "Demo-Core-KV-${substr(sha1("${data.azurerm_client_config.current.subscription_id}${var.rgname.keyvault}"),0,8)}"
   resource_group_name = "${var.rgname.keyvault}"
