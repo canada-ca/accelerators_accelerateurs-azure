@@ -8,7 +8,7 @@
                     "name": "Demo-Infra-NetShared-Default-RT",
                     "resourceGroup": "Demo-Infra-NetShared-RG",
                     "properties": {
-                        "disableBgpRoutePropagation": false,
+                        "disableBgpRoutePropagation": true,
                         "routes": [
                             {
                                 "name": "default",
