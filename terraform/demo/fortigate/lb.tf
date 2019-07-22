@@ -1,18 +1,18 @@
 resource azurerm_lb_backend_address_pool demo-core-fwcore-rg__DemoFWCore-ExternalLoadBalancer__DemoFWCorepublicLBBE {
-  name                = "DemoFWCorepublicLBBE"
-  resource_group_name = "${var.rgname.fortigate}"
+  name                = "${var.envprefix}FWCorepublicLBBE"
+  resource_group_name = "${local.rgname.fortigate}"
   loadbalancer_id     = "${azurerm_lb.demo-core-fwcore-rg__DemoFWCore-ExternalLoadBalancer.id}"
 }
 
 resource azurerm_lb_backend_address_pool demo-core-fwcore-rg__DemoFWCore-InternalLoadBalancer__DemoFWCore-ILB-Demo-CoreToSpokes-BackEnd {
-  name                = "DemoFWCore-ILB-Demo-CoreToSpokes-BackEnd"
-  resource_group_name = "${var.rgname.fortigate}"
+  name                = "${var.envprefix}FWCore-ILB-Demo-CoreToSpokes-BackEnd"
+  resource_group_name = "${local.rgname.fortigate}"
   loadbalancer_id     = "${azurerm_lb.demo-core-fwcore-rg__DemoFWCore-InternalLoadBalancer.id}"
 }
 
 resource azurerm_lb_probe demo-core-fwcore-rg__DemoFWCore-ExternalLoadBalancer__lbprobe {
   name                = "lbprobe"
-  resource_group_name = "${var.rgname.fortigate}"
+  resource_group_name = "${local.rgname.fortigate}"
   loadbalancer_id     = "${azurerm_lb.demo-core-fwcore-rg__DemoFWCore-ExternalLoadBalancer.id}"
   protocol            = "Tcp"
   port                = "8008"
@@ -22,7 +22,7 @@ resource azurerm_lb_probe demo-core-fwcore-rg__DemoFWCore-ExternalLoadBalancer__
 
 resource azurerm_lb_probe demo-core-fwcore-rg__DemoFWCore-InternalLoadBalancer__lbprobe {
   name                = "lbprobe"
-  resource_group_name = "${var.rgname.fortigate}"
+  resource_group_name = "${local.rgname.fortigate}"
   loadbalancer_id     = "${azurerm_lb.demo-core-fwcore-rg__DemoFWCore-InternalLoadBalancer.id}"
   protocol            = "Tcp"
   port                = "8008"
@@ -32,9 +32,9 @@ resource azurerm_lb_probe demo-core-fwcore-rg__DemoFWCore-InternalLoadBalancer__
 
 resource azurerm_lb_rule demo-core-fwcore-rg__DemoFWCore-ExternalLoadBalancer__jumpboxRDP {
   name                           = "jumpboxRDP"
-  resource_group_name            = "${var.rgname.fortigate}"
+  resource_group_name            = "${local.rgname.fortigate}"
   loadbalancer_id                = "${azurerm_lb.demo-core-fwcore-rg__DemoFWCore-ExternalLoadBalancer.id}"
-  frontend_ip_configuration_name = "DemoFWCorepublicLBFE"
+  frontend_ip_configuration_name = "${var.envprefix}FWCorepublicLBFE"
   protocol                       = "Tcp"
   frontend_port                  = "33890"
   backend_port                   = "33890"
@@ -47,9 +47,9 @@ resource azurerm_lb_rule demo-core-fwcore-rg__DemoFWCore-ExternalLoadBalancer__j
 
 resource azurerm_lb_rule demo-core-fwcore-rg__DemoFWCore-ExternalLoadBalancer__RDSGW {
   name                           = "RDSGW"
-  resource_group_name            = "${var.rgname.fortigate}"
+  resource_group_name            = "${local.rgname.fortigate}"
   loadbalancer_id                = "${azurerm_lb.demo-core-fwcore-rg__DemoFWCore-ExternalLoadBalancer.id}"
-  frontend_ip_configuration_name = "DemoFWCorepublicLBFE"
+  frontend_ip_configuration_name = "${var.envprefix}FWCorepublicLBFE"
   protocol                       = "Tcp"
   frontend_port                  = "443"
   backend_port                   = "443"
@@ -62,9 +62,9 @@ resource azurerm_lb_rule demo-core-fwcore-rg__DemoFWCore-ExternalLoadBalancer__R
 
 resource azurerm_lb_rule demo-core-fwcore-rg__DemoFWCore-InternalLoadBalancer__lbruleFE2all {
   name                           = "lbruleFE2all"
-  resource_group_name            = "${var.rgname.fortigate}"
+  resource_group_name            = "${local.rgname.fortigate}"
   loadbalancer_id                = "${azurerm_lb.demo-core-fwcore-rg__DemoFWCore-InternalLoadBalancer.id}"
-  frontend_ip_configuration_name = "DemoFWCore-ILB-Demo-CoreToSpokes-FrontEnd"
+  frontend_ip_configuration_name = "${var.envprefix}FWCore-ILB-Demo-CoreToSpokes-FrontEnd"
   protocol                       = "All"
   frontend_port                  = "0"
   backend_port                   = "0"
@@ -76,27 +76,27 @@ resource azurerm_lb_rule demo-core-fwcore-rg__DemoFWCore-InternalLoadBalancer__l
 }
 
 resource azurerm_lb demo-core-fwcore-rg__DemoFWCore-ExternalLoadBalancer {
-  name                = "DemoFWCore-ExternalLoadBalancer"
+  name                = "${var.envprefix}FWCore-ExternalLoadBalancer"
   location            = "${var.location}"
-  resource_group_name = "${var.rgname.fortigate}"
+  resource_group_name = "${local.rgname.fortigate}"
   sku                 = "Standard"
   frontend_ip_configuration {
-    name                 = "DemoFWCorepublicLBFE"
+    name                 = "${var.envprefix}FWCorepublicLBFE"
     public_ip_address_id = "${azurerm_public_ip.demo-core-fwcore-rg__DemoFWCore-ELB-PubIP.id}"
   }
-  tags = "${var.tags}"
+  tags = "${local.tags}"
 }
 
 resource azurerm_lb demo-core-fwcore-rg__DemoFWCore-InternalLoadBalancer {
-  name                = "DemoFWCore-InternalLoadBalancer"
+  name                = "${var.envprefix}FWCore-InternalLoadBalancer"
   location            = "${var.location}"
-  resource_group_name = "${var.rgname.fortigate}"
+  resource_group_name = "${local.rgname.fortigate}"
   sku                 = "Standard"
   frontend_ip_configuration {
-    name               = "DemoFWCore-ILB-Demo-CoreToSpokes-FrontEnd"
+    name               = "${var.envprefix}FWCore-ILB-Demo-CoreToSpokes-FrontEnd"
     subnet_id          = "${data.azurerm_subnet.Demo-CoreToSpokes.id}"
     private_ip_address = "100.96.116.4"
     private_ip_address_allocation = "Static"
   }
-  tags = "${var.tags}"
+  tags = "${local.tags}"
 }

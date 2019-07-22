@@ -5,3 +5,5 @@ deployments/AzPwS01/~$Cloud IPAM 2018102501.xlsx
 .terraform
 terraform.tfstate
 terraform.tfstate.backup
+coreA-lic.conf
+coreB-lic.conf

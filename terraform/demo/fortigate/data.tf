@@ -1,8 +1,8 @@
 data "azurerm_client_config" "current" {}
 
 data "azurerm_key_vault" "keyvaultsecrets" {
-  name = "Demo-Core-KV-${substr(sha1("${data.azurerm_client_config.current.subscription_id}${var.rgname.keyvault}"),0,8)}"
-  resource_group_name = "${var.rgname.keyvault}"
+  name = "${var.envprefix}-Core-KV-${substr(sha1("${data.azurerm_client_config.current.subscription_id}${local.rgname.keyvault}"),0,8)}"
+  resource_group_name = "${local.rgname.keyvault}"
 }
 
 data "azurerm_key_vault_secret" "fwpasswordsecret" {
@@ -11,26 +11,26 @@ data "azurerm_key_vault_secret" "fwpasswordsecret" {
 }
 
 data "azurerm_subnet" "Demo-Outside" {
-  name                 = "${var.fwsubnets.outside}"
-  virtual_network_name = "${var.vnetname.netcore}"
-  resource_group_name  = "${var.rgname.netcore}"
+  name                 = "${local.fwsubnets.outside}"
+  virtual_network_name = "${local.vnetname.netcore}"
+  resource_group_name  = "${local.rgname.netcore}"
 }
 
 data "azurerm_subnet" "Demo-CoreToSpokes" {
-  name                 = "${var.fwsubnets.inside}"
-  virtual_network_name = "${var.vnetname.netcore}"
-  resource_group_name  = "${var.rgname.netcore}"
+  name                 = "${local.fwsubnets.inside}"
+  virtual_network_name = "${local.vnetname.netcore}"
+  resource_group_name  = "${local.rgname.netcore}"
 }
 
 data "azurerm_subnet" "Demo-HASync" {
-  name                 = "${var.fwsubnets.ha}"
-  virtual_network_name = "${var.vnetname.netcore}"
-  resource_group_name  = "${var.rgname.netcore}"
+  name                 = "${local.fwsubnets.ha}"
+  virtual_network_name = "${local.vnetname.netcore}"
+  resource_group_name  = "${local.rgname.netcore}"
 }
 
 data "azurerm_subnet" "Demo-Management" {
-  name                 = "${var.fwsubnets.mgmt}"
-  virtual_network_name = "${var.vnetname.netcore}"
-  resource_group_name  = "${var.rgname.netcore}"
+  name                 = "${local.fwsubnets.mgmt}"
+  virtual_network_name = "${local.vnetname.netcore}"
+  resource_group_name  = "${local.rgname.netcore}"
 }
 

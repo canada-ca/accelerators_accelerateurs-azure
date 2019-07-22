@@ -1,5 +1,5 @@
 resource "azurerm_key_vault" "demo-core-keyvault-rg__Demo-Core-KV" {
-  name                            = "Demo-Core-KV-${substr(sha1("${data.azurerm_client_config.current.subscription_id}Demo-Core-Keyvault-RG"),0,8)}"
+  name                            = "${var.envprefix}-Core-KV-${substr(sha1("${data.azurerm_client_config.current.subscription_id}Demo-Core-Keyvault-RG"),0,8)}"
   location                        = "${var.location}"
   resource_group_name             = "${azurerm_resource_group.Demo-Core-Keyvault-RG.name}"
   sku_name                        = "standard"

@@ -1,5 +1,5 @@
 resource azurerm_route_table demo-core-netmgmt-rg__Demo-MGMT-APP-RT {
-  name                = "Demo-MGMT-APP-RT"
+  name                = "${var.envprefix}-MGMT-APP-RT"
   location            = "${var.location}"
   resource_group_name = "${azurerm_resource_group.Demo-Core-NetMGMT-RG.name}"
   route {
@@ -8,19 +8,19 @@ resource azurerm_route_table demo-core-netmgmt-rg__Demo-MGMT-APP-RT {
     next_hop_type  = "VnetLocal"
   }
   route {
-    name                   = "Demo-MGMT-VNET"
+    name                   = "${var.envprefix}-MGMT-VNET"
     address_prefix         = "100.96.120.0/21"
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "100.96.116.4"
   }
   route {
-    name                   = "Demo-Management"
+    name                   = "${var.envprefix}-Management"
     address_prefix         = "100.96.116.64/27"
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "100.96.116.4"
   }
   route {
-    name                   = "Demo-Core-VNET"
+    name                   = "${var.envprefix}-Core-VNET"
     address_prefix         = "100.96.112.0/21"
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "100.96.116.4"
@@ -34,7 +34,7 @@ resource azurerm_route_table demo-core-netmgmt-rg__Demo-MGMT-APP-RT {
   tags = "${var.tags}"
 }
 resource azurerm_route_table demo-core-netmgmt-rg__Demo-MGMT-DB-RT {
-  name                = "Demo-MGMT-DB-RT"
+  name                = "${var.envprefix}-MGMT-DB-RT"
   location            = "${var.location}"
   resource_group_name = "${azurerm_resource_group.Demo-Core-NetMGMT-RG.name}"
   route {
@@ -43,19 +43,19 @@ resource azurerm_route_table demo-core-netmgmt-rg__Demo-MGMT-DB-RT {
     next_hop_type  = "VnetLocal"
   }
   route {
-    name                   = "Demo-MGMT-VNET"
+    name                   = "${var.envprefix}-MGMT-VNET"
     address_prefix         = "100.96.120.0/21"
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "100.96.116.4"
   }
   route {
-    name                   = "Demo-Management"
+    name                   = "${var.envprefix}-Management"
     address_prefix         = "100.96.116.64/27"
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "100.96.116.4"
   }
   route {
-    name                   = "Demo-Core-VNET"
+    name                   = "${var.envprefix}-Core-VNET"
     address_prefix         = "100.96.112.0/21"
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "100.96.116.4"
@@ -69,7 +69,7 @@ resource azurerm_route_table demo-core-netmgmt-rg__Demo-MGMT-DB-RT {
   tags = "${var.tags}"
 }
 resource azurerm_route_table demo-core-netmgmt-rg__Demo-MGMT-PAZ-RT {
-  name                = "Demo-MGMT-PAZ-RT"
+  name                = "${var.envprefix}-MGMT-PAZ-RT"
   location            = "${var.location}"
   resource_group_name = "${azurerm_resource_group.Demo-Core-NetMGMT-RG.name}"
   route {
@@ -78,19 +78,19 @@ resource azurerm_route_table demo-core-netmgmt-rg__Demo-MGMT-PAZ-RT {
     next_hop_type  = "VnetLocal"
   }
   route {
-    name                   = "Demo-MGMT-VNET"
+    name                   = "${var.envprefix}-MGMT-VNET"
     address_prefix         = "100.96.120.0/21"
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "100.96.116.4"
   }
   route {
-    name                   = "Demo-Management"
+    name                   = "${var.envprefix}-Management"
     address_prefix         = "100.96.116.64/27"
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "100.96.116.4"
   }
   route {
-    name                   = "Demo-Core-VNET"
+    name                   = "${var.envprefix}-Core-VNET"
     address_prefix         = "100.96.112.0/21"
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "100.96.116.4"

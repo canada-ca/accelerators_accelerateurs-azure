@@ -3,6 +3,11 @@ variable "location" {
   default     = "canadacentral"
 }
 
+variable "envprefix" {
+  description = "Prefix for the environment"
+  default     = "Demo"
+}
+
 variable "tags" {
   default = {
     "Organizations"     = "PwP0-CCC-E&O"

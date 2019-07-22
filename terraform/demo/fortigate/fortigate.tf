@@ -1,17 +1,17 @@
 resource azurerm_availability_set demo-core-fwcore-rg__demofwcore-availabilityset {
-  name                         = "${var.fwprefix}-AvailabilitySet"
+  name                         = "${local.fwprefix}-AvailabilitySet"
   location                     = "${var.location}"
-  resource_group_name          = "${var.rgname.fortigate}"
+  resource_group_name          = "${local.rgname.fortigate}"
   platform_fault_domain_count  = "2"
   platform_update_domain_count = "2"
   managed                      = "true"
-  tags                         = "${var.tags}"
+  tags                         = "${local.tags}"
 }
 
 resource azurerm_network_security_group demo-core-fwcore-rg__DemoFWCore-2hwmajahfzosu-NSG {
-  name                = "${var.fwprefix}-2hwmajahfzosu-NSG"
+  name                = "${local.fwprefix}-2hwmajahfzosu-NSG"
   location            = "${var.location}"
-  resource_group_name = "${var.rgname.fortigate}"
+  resource_group_name = "${local.rgname.fortigate}"
   security_rule {
     name                       = "AllowAllInbound"
     description                = "Allow all in"
@@ -36,14 +36,14 @@ resource azurerm_network_security_group demo-core-fwcore-rg__DemoFWCore-2hwmajah
     destination_port_range     = "*"
     destination_address_prefix = "*"
   }
-  tags = "${var.tags}"
+  tags = "${local.tags}"
 }
 
 
 resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-A-Nic1 {
-  name                          = "${var.fwprefix}-A-Nic1"
+  name                          = "${local.fwprefix}-A-Nic1"
   location                      = "${var.location}"
-  resource_group_name           = "${var.rgname.fortigate}"
+  resource_group_name           = "${local.rgname.fortigate}"
   enable_ip_forwarding          = true
   enable_accelerated_networking = false
   network_security_group_id     = "${azurerm_network_security_group.demo-core-fwcore-rg__DemoFWCore-2hwmajahfzosu-NSG.id}"
@@ -58,9 +58,9 @@ resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-A-Nic1 {
 }
 
 resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-A-Nic2 {
-  name                          = "${var.fwprefix}-A-Nic2"
+  name                          = "${local.fwprefix}-A-Nic2"
   location                      = "${var.location}"
-  resource_group_name           = "${var.rgname.fortigate}"
+  resource_group_name           = "${local.rgname.fortigate}"
   enable_ip_forwarding          = true
   enable_accelerated_networking = false
   network_security_group_id     = "${azurerm_network_security_group.demo-core-fwcore-rg__DemoFWCore-2hwmajahfzosu-NSG.id}"
@@ -74,9 +74,9 @@ resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-A-Nic2 {
 }
 
 resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-A-Nic3 {
-  name                          = "${var.fwprefix}-A-Nic3"
+  name                          = "${local.fwprefix}-A-Nic3"
   location                      = "${var.location}"
-  resource_group_name           = "${var.rgname.fortigate}"
+  resource_group_name           = "${local.rgname.fortigate}"
   enable_ip_forwarding          = true
   enable_accelerated_networking = false
   network_security_group_id     = "${azurerm_network_security_group.demo-core-fwcore-rg__DemoFWCore-2hwmajahfzosu-NSG.id}"
@@ -90,9 +90,9 @@ resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-A-Nic3 {
 }
 
 resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-A-Nic4 {
-  name                          = "${var.fwprefix}-A-Nic4"
+  name                          = "${local.fwprefix}-A-Nic4"
   location                      = "${var.location}"
-  resource_group_name           = "${var.rgname.fortigate}"
+  resource_group_name           = "${local.rgname.fortigate}"
   enable_ip_forwarding          = true
   enable_accelerated_networking = false
   network_security_group_id     = "${azurerm_network_security_group.demo-core-fwcore-rg__DemoFWCore-2hwmajahfzosu-NSG.id}"
@@ -106,9 +106,9 @@ resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-A-Nic4 {
 }
 
 resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-B-Nic1 {
-  name                          = "${var.fwprefix}-B-Nic1"
+  name                          = "${local.fwprefix}-B-Nic1"
   location                      = "${var.location}"
-  resource_group_name           = "${var.rgname.fortigate}"
+  resource_group_name           = "${local.rgname.fortigate}"
   enable_ip_forwarding          = true
   enable_accelerated_networking = false
   network_security_group_id     = "${azurerm_network_security_group.demo-core-fwcore-rg__DemoFWCore-2hwmajahfzosu-NSG.id}"
@@ -123,9 +123,9 @@ resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-B-Nic1 {
 }
 
 resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-B-Nic2 {
-  name                          = "${var.fwprefix}-B-Nic2"
+  name                          = "${local.fwprefix}-B-Nic2"
   location                      = "${var.location}"
-  resource_group_name           = "${var.rgname.fortigate}"
+  resource_group_name           = "${local.rgname.fortigate}"
   enable_ip_forwarding          = true
   enable_accelerated_networking = false
   network_security_group_id     = "${azurerm_network_security_group.demo-core-fwcore-rg__DemoFWCore-2hwmajahfzosu-NSG.id}"
@@ -139,9 +139,9 @@ resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-B-Nic2 {
 }
 
 resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-B-Nic3 {
-  name                          = "${var.fwprefix}-B-Nic3"
+  name                          = "${local.fwprefix}-B-Nic3"
   location                      = "${var.location}"
-  resource_group_name           = "${var.rgname.fortigate}"
+  resource_group_name           = "${local.rgname.fortigate}"
   enable_ip_forwarding          = true
   enable_accelerated_networking = false
   network_security_group_id     = "${azurerm_network_security_group.demo-core-fwcore-rg__DemoFWCore-2hwmajahfzosu-NSG.id}"
@@ -155,9 +155,9 @@ resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-B-Nic3 {
 }
 
 resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-B-Nic4 {
-  name                          = "${var.fwprefix}-B-Nic4"
+  name                          = "${local.fwprefix}-B-Nic4"
   location                      = "${var.location}"
-  resource_group_name           = "${var.rgname.fortigate}"
+  resource_group_name           = "${local.rgname.fortigate}"
   enable_ip_forwarding          = true
   enable_accelerated_networking = false
   network_security_group_id     = "${azurerm_network_security_group.demo-core-fwcore-rg__DemoFWCore-2hwmajahfzosu-NSG.id}"
@@ -171,54 +171,54 @@ resource azurerm_network_interface demo-core-fwcore-rg__DemoFWCore-B-Nic4 {
 }
 
 resource azurerm_public_ip demo-core-fwcore-rg__DemoFWCore-A-EXT-PubIP {
-  name                = "${var.fwprefix}-A-EXT-PubIP"
+  name                = "${local.fwprefix}-A-EXT-PubIP"
   location            = "${var.location}"
-  resource_group_name = "${var.rgname.fortigate}"
+  resource_group_name = "${local.rgname.fortigate}"
   sku                 = "Standard"
   allocation_method   = "Static"
-  tags                = "${var.tags}"
+  tags                = "${local.tags}"
 }
 
 resource azurerm_public_ip demo-core-fwcore-rg__DemoFWCore-A-MGMT-PubIP {
-  name                = "${var.fwprefix}-A-MGMT-PubIP"
+  name                = "${local.fwprefix}-A-MGMT-PubIP"
   location            = "${var.location}"
-  resource_group_name = "${var.rgname.fortigate}"
+  resource_group_name = "${local.rgname.fortigate}"
   sku                 = "Standard"
   allocation_method   = "Static"
-  tags                = "${var.tags}"
+  tags                = "${local.tags}"
 }
 
 resource azurerm_public_ip demo-core-fwcore-rg__DemoFWCore-B-EXT-PubIP {
-  name                = "${var.fwprefix}-B-EXT-PubIP"
+  name                = "${local.fwprefix}-B-EXT-PubIP"
   location            = "${var.location}"
-  resource_group_name = "${var.rgname.fortigate}"
+  resource_group_name = "${local.rgname.fortigate}"
   sku                 = "Standard"
   allocation_method   = "Static"
-  tags                = "${var.tags}"
+  tags                = "${local.tags}"
 }
 
 resource azurerm_public_ip demo-core-fwcore-rg__DemoFWCore-B-MGMT-PubIP {
-  name                = "${var.fwprefix}-B-MGMT-PubIP"
+  name                = "${local.fwprefix}-B-MGMT-PubIP"
   location            = "${var.location}"
-  resource_group_name = "${var.rgname.fortigate}"
+  resource_group_name = "${local.rgname.fortigate}"
   sku                 = "Standard"
   allocation_method   = "Static"
-  tags                = "${var.tags}"
+  tags                = "${local.tags}"
 }
 
 resource azurerm_public_ip demo-core-fwcore-rg__DemoFWCore-ELB-PubIP {
-  name                = "${var.fwprefix}-ELB-PubIP"
+  name                = "${local.fwprefix}-ELB-PubIP"
   location            = "${var.location}"
-  resource_group_name = "${var.rgname.fortigate}"
+  resource_group_name = "${local.rgname.fortigate}"
   sku                 = "Standard"
   allocation_method   = "Static"
-  tags                = "${var.tags}"
+  tags                = "${local.tags}"
 }
 
 resource azurerm_virtual_machine demo-core-fwcore-rg__DemoFWCore-A {
-  name                = "${var.fwprefix}-A"
+  name                = "${local.fwprefix}-A"
   location            = "${var.location}"
-  resource_group_name = "${var.rgname.fortigate}"
+  resource_group_name = "${local.rgname.fortigate}"
   availability_set_id = "${azurerm_availability_set.demo-core-fwcore-rg__demofwcore-availabilityset.id}"
   vm_size             = "Standard_F4"
   network_interface_ids = [
@@ -230,10 +230,10 @@ resource azurerm_virtual_machine demo-core-fwcore-rg__DemoFWCore-A {
   delete_data_disks_on_termination = "false"
   delete_os_disk_on_termination    = "false"
   os_profile {
-    computer_name  = "${var.fwprefix}-A"
+    computer_name  = "${local.fwprefix}-A"
     admin_username = "fwadmin"
     admin_password = "${data.azurerm_key_vault_secret.fwpasswordsecret.value}"
-    custom_data    = "${file("fwconfig/coreA.conf")}"
+    custom_data    = "${file("fwconfig/coreA-lic.conf")}"
   }
   storage_image_reference {
     publisher = "fortinet"
@@ -250,26 +250,26 @@ resource azurerm_virtual_machine demo-core-fwcore-rg__DemoFWCore-A {
     disable_password_authentication = false
   }
   storage_os_disk {
-    name          = "${var.fwprefix}-A_OsDisk_1"
+    name          = "${local.fwprefix}-A_OsDisk_1"
     caching       = "ReadWrite"
     create_option = "FromImage"
     os_type       = "Linux"
     disk_size_gb  = "2"
   }
   storage_data_disk {
-    name          = "${var.fwprefix}-A_DataDisk_1"
+    name          = "${local.fwprefix}-A_DataDisk_1"
     lun           = 0
     caching       = "None"
     create_option = "Empty"
     disk_size_gb  = "30"
   }
-  tags = "${var.tags}"
+  tags = "${local.tags}"
 }
 
 resource azurerm_virtual_machine demo-core-fwcore-rg__DemoFWCore-B {
-  name                = "${var.fwprefix}-B"
+  name                = "${local.fwprefix}-B"
   location            = "${var.location}"
-  resource_group_name = "${var.rgname.fortigate}"
+  resource_group_name = "${local.rgname.fortigate}"
   availability_set_id = "${azurerm_availability_set.demo-core-fwcore-rg__demofwcore-availabilityset.id}"
   vm_size             = "Standard_F4"
   network_interface_ids = [
@@ -281,10 +281,10 @@ resource azurerm_virtual_machine demo-core-fwcore-rg__DemoFWCore-B {
   delete_data_disks_on_termination = "false"
   delete_os_disk_on_termination    = "false"
   os_profile {
-    computer_name  = "${var.fwprefix}-B"
+    computer_name  = "${local.fwprefix}-B"
     admin_username = "fwadmin"
     admin_password = "${data.azurerm_key_vault_secret.fwpasswordsecret.value}"
-    custom_data    = "${file("fwconfig/coreB.conf")}"
+    custom_data    = "${file("fwconfig/coreB-lic.conf")}"
   }
   storage_image_reference {
     publisher = "fortinet"
@@ -301,18 +301,18 @@ resource azurerm_virtual_machine demo-core-fwcore-rg__DemoFWCore-B {
     disable_password_authentication = false
   }
   storage_os_disk {
-    name          = "${var.fwprefix}-B_OsDisk_1"
+    name          = "${local.fwprefix}-B_OsDisk_1"
     caching       = "ReadWrite"
     create_option = "FromImage"
     os_type       = "Linux"
     disk_size_gb  = "2"
   }
   storage_data_disk {
-    name          = "${var.fwprefix}-B_DataDisk_1"
+    name          = "${local.fwprefix}-B_DataDisk_1"
     lun           = 0
     caching       = "None"
     create_option = "Empty"
     disk_size_gb  = "30"
   }
-  tags = "${var.tags}"
+  tags = "${local.tags}"
 }
