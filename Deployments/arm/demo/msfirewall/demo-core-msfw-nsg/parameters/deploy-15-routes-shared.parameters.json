@@ -5,10 +5,10 @@
         "routeTables": {
             "value": [
                 {
-                    "name": "Demo-Infra-NetMGMT-Default-RT",
-                    "resourceGroup": "Demo-Infra-NetMGMT-RG",
+                    "name": "Demo-Infra-NetShared-Default-RT",
+                    "resourceGroup": "Demo-Infra-NetShared-RG",
                     "properties": {
-                        "disableBgpRoutePropagation": false,
+                        "disableBgpRoutePropagation": true,
                         "routes": [
                             {
                                 "name": "default",
@@ -26,7 +26,7 @@
                         "Enviroment": "Sandbox",
                         "Classification": "Unclassified",
                         "Organizations": "Demo-CCC-E&O",
-                        "DeploymentVersion": "2019-01-09-07"
+                        "DeploymentVersion": "2018-12-19-01"
                     }
                 }
             ]

@@ -5,11 +5,19 @@
         "routeTables": {
             "value": [
                 {
-                    "name": "Demo-Infra-NetShared-Default-RT",
-                    "resourceGroup": "Demo-Infra-NetShared-RG",
+                    "name": "Demo-Infra-NetCore-AzureFirewallSubnet-RT",
+                    "resourceGroup": "Demo-Infra-NetCore-RG",
                     "properties": {
-                        "disableBgpRoutePropagation": false,
+                        "disableBgpRoutePropagation": true,
                         "routes": [
+                            {
+                                "name": "Outside",
+                                "properties": {
+                                    "addressPrefix": "10.10.10.128/26",
+                                    "nextHopType": "VirtualAppliance",
+                                    "nextHopIpAddress": "10.10.10.4"
+                                }
+                            },
                             {
                                 "name": "default",
                                 "properties": {
@@ -26,7 +34,7 @@
                         "Enviroment": "Sandbox",
                         "Classification": "Unclassified",
                         "Organizations": "Demo-CCC-E&O",
-                        "DeploymentVersion": "2018-12-19-01"
+                        "DeploymentVersion": "2019-01-09-04"
                     }
                 }
             ]
