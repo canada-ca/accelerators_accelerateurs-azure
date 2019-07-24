@@ -1,7 +1,7 @@
-resource "azurerm_key_vault" "demo-core-keyvault-rg__Demo-Core-KV" {
-  name                            = "${var.envprefix}-Core-KV-${substr(sha1("${data.azurerm_client_config.current.subscription_id}Demo-Core-Keyvault-RG"),0,8)}"
+resource "azurerm_key_vault" "core-keyvault-rg__Core-KV" {
+  name                            = "${var.envprefix}-Core-KV-${substr(sha1("${data.azurerm_client_config.current.subscription_id}${var.envprefix}-Core-Keyvault-RG"),0,8)}"
   location                        = "${var.location}"
-  resource_group_name             = "${azurerm_resource_group.Demo-Core-Keyvault-RG.name}"
+  resource_group_name             = "${azurerm_resource_group.Core-Keyvault-RG.name}"
   sku_name                        = "standard"
   tenant_id                       = "${data.azurerm_client_config.current.tenant_id}"
   enabled_for_deployment          = true
@@ -54,14 +54,14 @@ resource "azurerm_key_vault" "demo-core-keyvault-rg__Demo-Core-KV" {
 resource "azurerm_key_vault_secret" "test1" {
   name         = "server2016DefaultPassword"
   value        = "Canada123!"
-  key_vault_id = "${azurerm_key_vault.demo-core-keyvault-rg__Demo-Core-KV.id}"
+  key_vault_id = "${azurerm_key_vault.core-keyvault-rg__Core-KV.id}"
 
   tags = "${var.tags}"
 }
 resource "azurerm_key_vault_secret" "test2" {
   name         = "linuxDefaultPassword"
   value        = "Canada123!"
-  key_vault_id = "${azurerm_key_vault.demo-core-keyvault-rg__Demo-Core-KV.id}"
+  key_vault_id = "${azurerm_key_vault.core-keyvault-rg__Core-KV.id}"
 
   tags = "${var.tags}"
   depends_on = ["azurerm_key_vault_secret.test1"]
@@ -69,7 +69,7 @@ resource "azurerm_key_vault_secret" "test2" {
 resource "azurerm_key_vault_secret" "test3" {
   name         = "adDefaultPassword"
   value        = "Canada123!"
-  key_vault_id = "${azurerm_key_vault.demo-core-keyvault-rg__Demo-Core-KV.id}"
+  key_vault_id = "${azurerm_key_vault.core-keyvault-rg__Core-KV.id}"
 
   tags = "${var.tags}"
   depends_on = ["azurerm_key_vault_secret.test2"]
@@ -77,7 +77,7 @@ resource "azurerm_key_vault_secret" "test3" {
 resource "azurerm_key_vault_secret" "test4" {
   name         = "defaultAdminUsername"
   value        = "Canada123!"
-  key_vault_id = "${azurerm_key_vault.demo-core-keyvault-rg__Demo-Core-KV.id}"
+  key_vault_id = "${azurerm_key_vault.core-keyvault-rg__Core-KV.id}"
 
   tags = "${var.tags}"
   depends_on = ["azurerm_key_vault_secret.test3"]
@@ -85,7 +85,7 @@ resource "azurerm_key_vault_secret" "test4" {
 resource "azurerm_key_vault_secret" "test5" {
   name         = "fwpassword"
   value        = "Canada123!"
-  key_vault_id = "${azurerm_key_vault.demo-core-keyvault-rg__Demo-Core-KV.id}"
+  key_vault_id = "${azurerm_key_vault.core-keyvault-rg__Core-KV.id}"
 
   tags = "${var.tags}"
   depends_on = ["azurerm_key_vault_secret.test4"]

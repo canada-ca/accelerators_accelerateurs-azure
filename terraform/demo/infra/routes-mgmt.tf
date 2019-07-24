@@ -1,7 +1,7 @@
-resource azurerm_route_table demo-core-netmgmt-rg__Demo-MGMT-APP-RT {
+resource azurerm_route_table core-netmgmt-rg__MGMT-APP-RT {
   name                = "${var.envprefix}-MGMT-APP-RT"
   location            = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.Demo-Core-NetMGMT-RG.name}"
+  resource_group_name = "${azurerm_resource_group.Core-NetMGMT-RG.name}"
   route {
     name           = "local-Subnet"
     address_prefix = "100.96.122.0/24"
@@ -33,10 +33,10 @@ resource azurerm_route_table demo-core-netmgmt-rg__Demo-MGMT-APP-RT {
   }
   tags = "${var.tags}"
 }
-resource azurerm_route_table demo-core-netmgmt-rg__Demo-MGMT-DB-RT {
+resource azurerm_route_table core-netmgmt-rg__MGMT-DB-RT {
   name                = "${var.envprefix}-MGMT-DB-RT"
   location            = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.Demo-Core-NetMGMT-RG.name}"
+  resource_group_name = "${azurerm_resource_group.Core-NetMGMT-RG.name}"
   route {
     name           = "local-Subnet"
     address_prefix = "100.96.124.0/24"
@@ -68,10 +68,10 @@ resource azurerm_route_table demo-core-netmgmt-rg__Demo-MGMT-DB-RT {
   }
   tags = "${var.tags}"
 }
-resource azurerm_route_table demo-core-netmgmt-rg__Demo-MGMT-PAZ-RT {
+resource azurerm_route_table core-netmgmt-rg__MGMT-PAZ-RT {
   name                = "${var.envprefix}-MGMT-PAZ-RT"
   location            = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.Demo-Core-NetMGMT-RG.name}"
+  resource_group_name = "${azurerm_resource_group.Core-NetMGMT-RG.name}"
   route {
     name           = "local-Subnet"
     address_prefix = "100.96.120.0/24"
