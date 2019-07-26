@@ -2,18 +2,19 @@
 
 This folder contains example deployments you can use to get familiar with Azure and understand how you can deploy complex infrastructure using Terraform configuration files and modules.
 
-The besic steps to deploy a Demo infrastructure in your own subscription are the following:
+The basic steps to deploy a Demo infrastructure in your own subscription are the following:
 
-1. open a powershell prompt and login to your azure subscription with:
+1. open a powershell prompt, clone this github repo and login to your azure subscription with:
 
 ```powershell
+git clone https://github.com/canada-ca/accelerators_accelerateurs-azure.git
 az login
 ```
 
 2. Go in the 1st demo folder with:
 
 ```powershell
-cd infra
+cd accelerators_accelerateurs-azure/Deployments/terraform/demo/infra
 ```
 
 3. Edit the main.tf file to replace the example subscription id with your own.
