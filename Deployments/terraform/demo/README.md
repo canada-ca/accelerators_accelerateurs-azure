@@ -27,21 +27,24 @@ terraform apply
 
 5. Go in the fortigate folder, copy the fwconfig/coreA-lic-demo.conf to fwconfig/coreA-lic.conf and fwconfig/coreB-lic-demo.conf to fwconfig/coreB-lic.conf
 6. Replace the license section at the bottom of the files with your own fortigate license
-7. Initialise and deploy the HA firewall infrastructure with:
+7. Edit the main.tf file to replace the example subscription id with your own
+8. Initialise and deploy the HA firewall infrastructure with:
 
 ```powershell
 terraform init
 terraform apply
 ```
 
-8. Go in the demo-servers folder and nitialise and deploy the demo server infrastructure with:
+9. Go in the demo-servers folder
+10. Edit the main.tf file to replace the example subscription id with your own
+11. Initialise and deploy the demo server infrastructure with:
 
 ```powershell
 terraform init
 terraform apply
 ```
 
-9. In the Azure Portal look at the Demo-FW-B-EXT-PubIP resource in the Demo-Core-FWCore-RG resourcegroup to obtain the IP address you will need to connect to the demo web server and jumpbox with:
+12. In the Azure Portal look at the Demo-FW-B-EXT-PubIP resource in the Demo-Core-FWCore-RG resourcegroup to obtain the IP address you will need to connect to the demo web server and jumpbox with:
 
 ```text
 http://<Demo-FW-B-EXT-PubIP>
