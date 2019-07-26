@@ -15,7 +15,8 @@ variable "envprefix" {
 }
 
 module "fortigateap" {
-  source = "github.com/canada-ca-terraform-modules/terraform-azurerm-fortigateap?ref=20190724.2"
+  source = "github.com/canada-ca-terraform-modules/terraform-azurerm-fortigateap?ref=20190725.1"
+  #source = "./terraform-azurerm-fortigateap"
 
   location  = "canadacentral"
   envprefix = "${var.envprefix}"

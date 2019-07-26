@@ -3,18 +3,6 @@ resource azurerm_virtual_network core-netmgmt-rg__Core-NetMGMT-VNET {
   location            = "${var.location}"
   resource_group_name = "${azurerm_resource_group.Core-NetMGMT-RG.name}"
   address_space       = ["100.96.120.0/21"]
-  subnet {
-    name           = "${var.envprefix}-MGMT-PAZ"
-    address_prefix = "100.96.120.0/24"
-  }
-  subnet {
-    name           = "${var.envprefix}-MGMT-APP"
-    address_prefix = "100.96.122.0/24"
-  }
-  subnet {
-    name           = "${var.envprefix}-MGMT-DB"
-    address_prefix = "100.96.124.0/24"
-  }
   tags = "${var.tags}"
 }
 
