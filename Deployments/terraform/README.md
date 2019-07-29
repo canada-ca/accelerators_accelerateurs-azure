@@ -16,7 +16,7 @@ az account set --subscription <subscriptionID from previous command>
 2. Go in the 1st demo folder with:
 
 ```powershell
-cd accelerators_accelerateurs-azure/Deployments/terraform/demo/infra
+cd accelerators_accelerateurs-azure/Deployments/terraform/demo/<firewall of choice>/infra
 ```
 
 3. Initialise and deploy the base network and keyvault infrastructure with:
