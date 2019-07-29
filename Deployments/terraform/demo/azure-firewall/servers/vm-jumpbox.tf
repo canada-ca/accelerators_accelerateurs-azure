@@ -1,6 +1,6 @@
 module "jumpbox" {
-  #source = "github.com/canada-ca-terraform-modules/terraform-azurerm-basicwindowsvm?ref=20190725.1"
-  source = "./terraform-azurerm-basicwindowsvm"
+  source = "github.com/canada-ca-terraform-modules/terraform-azurerm-basicwindowsvm?ref=20190729.1"
+  #source = "./terraform-azurerm-basicwindowsvm"
 
   name                              = "jumpbox"
   resource_group_name               = "${var.envprefix}-MGMT-RDS-RG"

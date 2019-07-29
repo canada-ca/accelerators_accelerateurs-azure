@@ -62,32 +62,8 @@ Process {
     Set-ItemProperty -Path $UserKey -Name "IsInstalled" -Value 0 
     Stop-Process -Name Explorer
 
-    #copy batch file to install VSC extention on the public desktop 
-    Copy-Item -Path "$scriptpath\InstallVSCExtensions.bat" -Destination "C:\Users\Public\Desktop\InstallVSCExtensions.bat"
-
-    #adding a VSC shortcut on the public desktop
-    $WshShell = New-Object -comObject WScript.Shell
-    $Shortcut = $WshShell.CreateShortcut("c:\Users\Public\Desktop\Visual Studio Code.lnk")
-    $Shortcut.TargetPath = "C:\Program Files\Microsoft VS Code\Code.exe"
-    $Shortcut.Arguments = '"C:\Azure\accelerators_accelerateurs-azure"'
-    $Shortcut.Save()
-
-    #adding Azure Deployment Library shortcut on the desktop
-    $WshShell = New-Object -comObject WScript.Shell
-    $Shortcut = $WshShell.CreateShortcut("c:\Users\Public\Desktop\Azure Accelerators.lnk")
-    $Shortcut.TargetPath = "https://github.com/canada-ca/accelerators_accelerateurs-azure"
-    $Shortcut.IconLocation = "$scriptPath\ADLicon.ico"
-    $Shortcut.Save()
-
     #disable server manager at login time
     Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose 
-  
-
-    # Clone Azure Accelerators repo
-    New-Item -ItemType directory -Path "C:\Azure"
-    Set-Location -Path "C:\Azure"
-    . "C:\Program Files\Git\bin\git.exe" clone https://github.com/canada-ca/accelerators_accelerateurs-azure
-    Set-Location -Path $scriptPath
 
     $temptime = Get-Date -f yyyy-MM-dd--HH:mm:ss
     "Ending deployment script - $temptime" | Out-File $deploylogfile -Append
