@@ -8,20 +8,8 @@ resource azurerm_route_table core-netmgmt-rg__MGMT-APP-RT {
     next_hop_type  = "VnetLocal"
   }
   route {
-    name                   = "${var.envprefix}-MGMT-VNET"
-    address_prefix         = "100.96.120.0/21"
-    next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = "10.10.10.4"
-  }
-  route {
     name                   = "${var.envprefix}-Management"
     address_prefix         = "100.96.116.64/27"
-    next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = "10.10.10.4"
-  }
-  route {
-    name                   = "${var.envprefix}-Core-VNET"
-    address_prefix         = "100.96.112.0/21"
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "10.10.10.4"
   }
@@ -43,20 +31,8 @@ resource azurerm_route_table core-netmgmt-rg__MGMT-DB-RT {
     next_hop_type  = "VnetLocal"
   }
   route {
-    name                   = "${var.envprefix}-MGMT-VNET"
-    address_prefix         = "100.96.120.0/21"
-    next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = "10.10.10.4"
-  }
-  route {
     name                   = "${var.envprefix}-Management"
     address_prefix         = "100.96.116.64/27"
-    next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = "10.10.10.4"
-  }
-  route {
-    name                   = "${var.envprefix}-Core-VNET"
-    address_prefix         = "100.96.112.0/21"
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "10.10.10.4"
   }
@@ -78,20 +54,8 @@ resource azurerm_route_table core-netmgmt-rg__MGMT-PAZ-RT {
     next_hop_type  = "VnetLocal"
   }
   route {
-    name                   = "${var.envprefix}-MGMT-VNET"
-    address_prefix         = "100.96.120.0/21"
-    next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = "10.10.10.4"
-  }
-  route {
     name                   = "${var.envprefix}-Management"
     address_prefix         = "100.96.116.64/27"
-    next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = "10.10.10.4"
-  }
-  route {
-    name                   = "${var.envprefix}-Core-VNET"
-    address_prefix         = "100.96.112.0/21"
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "10.10.10.4"
   }
