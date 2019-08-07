@@ -13,7 +13,7 @@ module "addsvms" {
 
   ad_domain_name        = "mgmt.demo.gc.ca.local"
   reverse_Zone_Object   = "2.250.10"
-  ad_prefix             = "adds"
+  ad_prefix             = "${var.envprefix}ADDS"
   resourceGroupName     = "${var.envprefix}-MGMT-ADDS-RG"
   admin_username        = "azureadmin"
   secretPasswordName    = "server2016DefaultPassword"
