@@ -2,14 +2,16 @@
 
 ## Terraform Modules
 
-| Link                                                                                                              | Name                                                |
-| ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| [active-directory](https://github.com/canada-ca-terraform-modules/terraform-azurerm-active-directory)             | Microsoft Active Directory Domain Service           |
-| [azure firewall](https://github.com/canada-ca-terraform-modules/terraform-azurerm-firewall)                       | Azure Firewall                                      |
-| [basicwindowsvm](https://github.com/canada-ca-terraform-modules/terraform-azurerm-basicwindowsvm)                 | Basic Windows VM                                    |
-| [basiclinuxvm](https://github.com/canada-ca-terraform-modules/terraform-azurerm-basiclinuxvm)                     | Basic Linux VM                                      |
-| [fortigateap](https://github.com/canada-ca-terraform-modules/terraform-azurerm-fortigateap)                       | Fortigate Active Passive High Availability Firewall |
-| [remote-desktop-service](https://github.com/canada-ca-terraform-modules/terraform-azurerm-remote-desktop-service) | Microsoft Remote Desktop Service                    |
+| Link                                                                                                                     | Name                                                |
+| ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- |
+| [active-directory](https://github.com/canada-ca-terraform-modules/terraform-azurerm-active-directory)                    | Microsoft Active Directory Domain Service           |
+| [azure firewall](https://github.com/canada-ca-terraform-modules/terraform-azurerm-firewall)                              | Azure Firewall                                      |
+| [basicwindowsvm](https://github.com/canada-ca-terraform-modules/terraform-azurerm-basicwindowsvm)                        | Basic Windows VM                                    |
+| [basiclinuxvm](https://github.com/canada-ca-terraform-modules/terraform-azurerm-basiclinuxvm)                            | Basic Linux VM                                      |
+| [fortigateap](https://github.com/canada-ca-terraform-modules/terraform-azurerm-fortigateap)                              | Fortigate Active Passive High Availability Firewall |
+| [fortigate standalone 4 nic](https://github.com/canada-ca-terraform-modules/terraform-azurerm-fortigate-standalone-4nic) | Fortigate Standalone Firewall with 4 NICs           |
+| [remote-desktop-service](https://github.com/canada-ca-terraform-modules/terraform-azurerm-remote-desktop-service)        | Microsoft Remote Desktop Service                    |
+| [storage space direct](https://github.com/canada-ca-terraform-modules/terraform-azurerm-storage-space-direct)            | Storage Space Direct                                |
 
 ## ARM Library
 
