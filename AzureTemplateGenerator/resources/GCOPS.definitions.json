@@ -1,0 +1,34 @@
+[
+	{
+
+		"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/83a86a26-fd1f-447c-b59d-e51f44264114"
+	},
+	{
+		"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/2835b622-407b-4114-9198-6f7064cbe0dc"
+	},
+	{
+		"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/e56962a6-4747-49cd-b67b-bf8b01975c4c",
+			"parameters": {
+				"listOfAllowedLocations": {
+				"value": "[parameters('listofallowedlocations')]"
+					}
+				}
+	},
+	{
+		"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cccc23c7-8427-4f53-ad12-b6a63eb452b3",
+			"parameters": {
+				"listOfAllowedSKUs": {
+				"value": "[parameters('LISTOFALLOWEDSKUS_1')]"
+		   			}
+				}
+	},
+	{
+		"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/7433c107-6db4-4ad1-b57a-a76dce0154a1",
+			"parameters": {
+				"listOfAllowedSKUs": {
+				"value": "[parameters('LISTOFALLOWEDSKUS_2')]"
+		   			}
+				}
+	}
+ 
+]
