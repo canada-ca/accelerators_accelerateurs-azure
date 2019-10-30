@@ -1,0 +1,71 @@
+{
+    "EnvironmentValue": {
+        "type": "String",
+        "metadata": {
+            "displayName": "required value for Environment tag"
+        }
+    },
+    "Solution-nameValue": {
+            "type": "String",
+            "metadata": {
+                "displayName": "required value for Solution Name tag"
+            }
+    },
+    "Solution-versionValue": {
+        "type": "String",
+        "metadata": {
+            "displayName": "required value for Solution Version tag"
+        }
+    },
+    "project-nameValue": {
+        "type": "String",
+        "metadata": {
+            "displayName": "required value for Project Name tag"
+        }
+    },
+    "Cost-centerValue": {
+        "type": "String",
+        "metadata": {
+            "displayName": "required value for Cost-Center tag"
+        }
+    },
+    "Exp-DateValue": {
+        "type": "String",
+        "metadata": {
+            "displayName": "required value for Expiry Date tag"
+        }
+    },
+    "Tech-OwnerValue": {
+        "type": "String",
+        "metadata": {
+            "displayName": "required value for Technical owner tag"
+        }
+    },
+    "Business-unitValue": {
+        "type": "String",
+        "metadata": {
+            "displayName": "required value for Business unit tag"
+        }
+    },
+    "SensitivityValue": {
+        "type": "String",
+        "metadata": {
+            "displayName": "required value for Sensitivity Value tag"
+        }
+    },
+    "BusinessValueRatingValue": {
+        "type": "String",
+        "metadata": {
+            "displayName": "required value for Business Value Rating tag"
+        }
+    },
+    "TechContactValue": {
+        "type": "String",
+        "metadata": {
+            "displayName": "required value for Technical Contact tag"
+        }
+    }
+    
+    }
+
+

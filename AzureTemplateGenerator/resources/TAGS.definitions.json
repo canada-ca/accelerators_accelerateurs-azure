@@ -1,0 +1,123 @@
+[
+	{
+
+		"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+
+		"parameters": {
+			"tagName": {
+				"value": "Solution-name"
+			}
+		}
+	},
+
+	{
+
+		"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+
+		"parameters": {
+			"tagName": {
+				"value": "Environment"
+			}
+		}
+	},
+		
+  	{
+
+			"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+	
+			"parameters": {	
+				"tagName": {	
+					"value": "Solution-version"	
+				}
+			}	
+	},
+
+	{
+
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+		
+				"parameters": {		
+					"tagName": {		
+						"value": "Cost-center"		
+					}
+				}		
+	},
+
+	{
+
+			"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+	
+			"parameters": {	
+				"tagName": {	
+					"value": "Business-unit"	
+				}
+			}	
+	},
+
+	{
+
+			"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+	
+			"parameters": {	
+				"tagName": {	
+					"value": "Project-name"	
+				}
+			}	
+	},
+
+	{
+
+				"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+		
+				"parameters": {		
+					"tagName": {		
+						"value": "Tech-Owner"		
+					}
+				}		
+	},
+
+	{
+
+					"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+			
+					"parameters": {			
+						"tagName": {			
+							"value": "Exp-Date"			
+						}
+					}			
+	},
+
+	{
+
+					"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+
+					"parameters": {
+						"tagName": {
+							"value": "Sensitivity"
+						}
+					}
+	},
+
+	{
+					
+					"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+					
+					"parameters": {
+						"tagName": {
+							"value": "BusinessValueRating"
+						}
+					}
+	},
+
+	{
+
+					"policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+			
+					"parameters": {			
+						"tagName": {			
+							"value": "TechContact"			
+						}						
+					}			
+		} 
+  
+]
