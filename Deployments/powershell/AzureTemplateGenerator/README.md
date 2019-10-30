@@ -6,8 +6,6 @@
 
 **_NOTICE_**: _This is a work in progress and no warranty or guarantee is provided or implied. You will need to complete additional tasks (configure monitoring, Active Directory, MFA, etc...) in order to completely satisfy PBMM requirements and security controls for your SA&A._
 
-**_NOTICE 2_**: An issue with IP allocation has been discovered and a fix is coming!
-
 _More complete documentation is "COMING SOON"!_
 
 ## What does this thing do?
