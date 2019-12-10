@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "SQL Server IaaS Buffer Cache Hit Ratio"
+        },
+        "alertDescription": {
+            "value": "SQL Server IaaS Buffer Cache Hit Ratio"
+        },
+        "alertSeverity": {
+            "value": 2
+        },
+        "location": {
+            "value": "canadacentral"
+        },
+        "isEnabled": {
+            "value": "true"
+        },
+        "query": {
+            "value": "Perf\n| where ObjectName  == \"SQLServer:Buffer Manager\"\n| where CounterName==\"Buffer cache hit ratio\"\n| where Computer==\"SubstituteVMName\"\n| summarize AggregatedValue = avg(CounterValue) by bin(TimeGenerated, 5m)\n"
+        },
+        "queryType": {
+            "value": "ResultCount"
+        },
+        "schedule": {
+            "value": {
+              "frequencyInMinutes": 15,
+              "timeWindowInMinutes": 30
+            }
+        },
+        "trigger": {
+            "value": {
+                "thresholdOperator": "LessThan",
+                "threshold": 98,
+                "metricTrigger": {
+                  "thresholdOperator": "GreaterThan",
+                  "threshold": 2,
+                  "metricTriggerType": "Total"
+                }
+             }           
+        }
+    }
+}

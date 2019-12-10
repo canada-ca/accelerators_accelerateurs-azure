@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "Linux VM Low Disk Space"
+        },
+        "alertDescription": {
+            "value": "Linux VM Low Disk Space"
+        },
+        "alertSeverity": {
+            "value": 1
+        },
+        "location": {
+            "value": "canadacentral"
+        },
+        "isEnabled": {
+            "value": "true"
+        },
+        "query": {
+            "value": "Perf | where Computer == \"SubstituteVMName\" | where CounterName == \"% Used Space\" | summarize AggregatedValue = avg(CounterValue) by bin(TimeGenerated, 30m),InstanceName "
+        },
+        "queryType": {
+            "value": "ResultCount"
+        },
+        "schedule": {
+            "value": {
+              "frequencyInMinutes": 15,
+              "timeWindowInMinutes": 30
+            }
+        },
+        "trigger": {
+            "value": {
+                "thresholdOperator": "GreaterThan",
+                "threshold": 85,
+                "metricTrigger": {
+                  "thresholdOperator": "GreaterThan",
+                  "threshold": 0,
+                  "metricTriggerType": "Total",
+                  "metricColumn": "InstanceName"
+                }
+             }           
+        },
+        "suppressTimeInMinutes": {
+            "value": "1440"
+        }
+    }
+}

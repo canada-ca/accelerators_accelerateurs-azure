@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "SQL Server IaaS Blocked Processes"
+        },
+        "alertDescription": {
+            "value": "SQL Server IaaS Blocked Processes"
+        },
+        "alertSeverity": {
+            "value": 0
+        },
+        "location": {
+            "value": "canadacentral"
+        },
+        "isEnabled": {
+            "value": "true"
+        },
+        "query": {
+            "value": "Perf\n| where ObjectName  == \"SQLServer:General Statistics\"\n| where CounterName==\"Processes blocked\"\n| where Computer==\"SubstituteVMName\"\n| summarize AggregatedValue = avg(CounterValue) by bin(TimeGenerated, 5m)\n"
+        },
+        "queryType": {
+            "value": "ResultCount"
+        },
+        "schedule": {
+            "value": {
+              "frequencyInMinutes": 5,
+              "timeWindowInMinutes": 10
+            }
+        },
+        "trigger": {
+            "value": {
+                "thresholdOperator": "GreaterThan",
+                "threshold": 4,
+                "metricTrigger": {
+                  "thresholdOperator": "GreaterThan",
+                  "threshold": 1,
+                  "metricTriggerType": "Consecutive"
+                }
+             }           
+        }
+    }
+}

@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "Windows VM Low Memory"
+        },
+        "alertDescription": {
+            "value": "Windows VM Low Memory"
+        },
+        "alertSeverity": {
+            "value": 1
+        },
+        "location": {
+            "value": "canadacentral"
+        },
+        "isEnabled": {
+            "value": "true"
+        },
+        "query": {
+            "value": "Perf | where Computer == \"SubstituteVMName\" | where CounterName == \"Available MBytes\" | summarize AggregatedValue = avg(CounterValue) by bin(TimeGenerated, 30m)"
+        },
+        "queryType": {
+            "value": "ResultCount"
+        },
+        "schedule": {
+            "value": {
+              "frequencyInMinutes": 15,
+              "timeWindowInMinutes": 30
+            }
+        },
+        "trigger": {
+            "value": {
+                "thresholdOperator": "LessThan",
+                "threshold": 100,
+                "metricTrigger": {
+                  "thresholdOperator": "GreaterThan",
+                  "threshold": 0,
+                  "metricTriggerType": "Total"
+                }
+             }           
+        },
+        "suppressTimeInMinutes": {
+            "value": "1440"
+        }
+    }
+}
