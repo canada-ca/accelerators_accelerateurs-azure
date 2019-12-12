@@ -6,12 +6,13 @@ $ErrorActionPreference = "Stop"
 
 $repoOwner = "canada-ca"
 $repoName = "accelerators_accelerateurs-azure"
-$repoURL = "https://github.com/$repoOwner/$repoName/archive/master.zip"
 
 # Relative path from root of repo to the alert rule automation artifacts folder
 $alertRulesPathPrefix = "Quickstarts\MonitoringAndAlertingFramework"
 
 # ----------------------- Configurable settings end --------------------------------
+
+$repoURL = "https://github.com/$repoOwner/$repoName/archive/master.zip"
 
 Write-Output "Getting Run As Connection"
 
