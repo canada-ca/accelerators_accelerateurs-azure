@@ -2,12 +2,11 @@ $ErrorActionPreference = "Stop"
 
 # ----------------------- Configurable settings start ------------------------------
 
-# ZIP download URL of the GitHub repo containing the alert rule parameter files, etc
-
+# Update these defaults if you forked the canada-ca/accelerators_accelerateurs-azure repo
 $repoOwner = "canada-ca"
 $repoName = "accelerators_accelerateurs-azure"
 
-# Relative path from root of repo to the alert rule automation artifacts folder
+# Update the relative path from root of repo to the alert rule automation artifacts folder if you moved the folder
 $alertRulesPathPrefix = "Quickstarts\MonitoringAndAlertingFramework"
 
 # ----------------------- Configurable settings end --------------------------------
