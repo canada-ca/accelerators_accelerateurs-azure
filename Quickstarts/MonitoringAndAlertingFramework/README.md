@@ -5,7 +5,7 @@ The Monitoring and Alerting Framework for Azure enables performance and health m
 
 Notifications can be any of the notification actions supported by Azure Action Groups, including email notifications, phone calls notification, web hook invocations, etc
 
-Monitoring and alerting of resources is controlled through a simple and flexible tag based approach, and alert threshold conditions are defined in JSON parameter files and stored in this repo, and can be easily expanded or updated (eg. to custom trigger thresholds).
+Monitoring and alerting of resources is controlled through a simple and flexible tag based approach, and alert threshold conditions are defined in JSON parameter files and stored in this repo, and can be easily expanded or updated (eg. to specify a custom trigger threshold).
 
 To begin using the framework, please refer to "Monitoring and Alerting Framework for Azure Implementation Guide.docx" in this folder.  
 
