@@ -1,7 +1,7 @@
 
 # Azure Monitoring and Alerting Framework
 
-The Monitoring and Alerting Framework for Azure enables performance and health monitoring and alerting of a number of Azure resource types, including Virtual Machines, App Services (via Application Insights) and more.  
+The Monitoring and Alerting Framework for Azure enables performance and health monitoring and alerting of a number of Azure resource types, including Virtual Machines, App Services (via Application Insights) and more.  It builds on the native capabilities already provided by Azure Monitor.
 
 Notifications can be any of the notification actions supported by Azure Action Groups, including email notifications, phone calls notification, web hook invocations, etc
 
