@@ -9,6 +9,6 @@ Monitoring and alerting of resources is controlled through a simple and flexible
 
 To begin using the framework, please refer to "Monitoring and Alerting Framework for Azure Implementation Guide.docx" in this folder.  
 
-To understand the design of the framework and enhance/extend it, please refer to "Monitoring and Alerting Framework for Azure Solution Design.docx" in this folder.
+To understand the design of the framework in order to enhance/extend it, please refer to "Monitoring and Alerting Framework for Azure Solution Design.docx" in this folder.
 
 
