@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "SQL Server IaaS Lock Timeouts"
+        },
+        "alertDescription": {
+            "value": "SQL Server IaaS Lock Timeouts"
+        },
+        "alertSeverity": {
+            "value": 1
+        },
+        "location": {
+            "value": "canadacentral"
+        },
+        "isEnabled": {
+            "value": "true"
+        },
+        "query": {
+            "value": "Perf\n| where ObjectName  == \"SQLServer:Locks\"\n| where CounterName==\"Lock Timeouts (timeout > 0)/sec\"\n| where InstanceName==\"_Total\"\n|where Computer==\"SubstituteVMName\"\n| summarize AggregatedValue = max(CounterValue) by bin(TimeGenerated, 5m)\n"
+        },
+        "queryType": {
+            "value": "ResultCount"
+        },
+        "schedule": {
+            "value": {
+              "frequencyInMinutes": 15,
+              "timeWindowInMinutes": 30
+            }
+        },
+        "trigger": {
+            "value": {
+                "thresholdOperator": "GreaterThan",
+                "threshold": 0,
+                "metricTrigger": {
+                  "thresholdOperator": "GreaterThan",
+                  "threshold": 0,
+                  "metricTriggerType": "Total"
+                }
+             }           
+        }
+    }
+}

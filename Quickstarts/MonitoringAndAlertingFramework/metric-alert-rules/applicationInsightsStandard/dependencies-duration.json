@@ -1,0 +1,40 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "Application Insights dependencies duration alert rule"
+        },
+        "alertDescription": {
+            "value": "Application Insights dependencies duration alert rule"
+        },
+        "alertSeverity": {
+            "value": 1
+        },
+        "isEnabled": {
+            "value": true
+        },
+        "odataType": {
+            "value": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria" 
+        },
+        "criteria": {
+               "value": [
+                    {
+                    "name": "1st criterion",
+                    "metricName": "dependencies/duration",
+                    "dimensions": [
+                    ],
+                    "operator": "GreaterThan",
+                    "threshold": "1000",
+                    "timeAggregation": "Average"
+                }
+            ]
+        },
+        "windowSize": {
+            "value": "PT30M"
+        },
+        "evaluationFrequency": {
+            "value": "PT15M"
+        }
+    }
+}

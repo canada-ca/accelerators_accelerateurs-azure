@@ -1,0 +1,109 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Name of the alert"
+            }
+        },
+        "alertDescription": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Description of alert"
+            }
+        },
+        "alertSeverity": {
+            "type": "int",
+            "defaultValue": 3,
+            "allowedValues": [
+                0,
+                1,
+                2,
+                3,
+                4
+            ],
+            "metadata": {
+                "description": "Alert severity (0=Critical, 1=Error, 2=Warning, 3=Informational, 4=Verbose)"
+            }
+        },
+        "isEnabled": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Specifies whether the alert is enabled"
+            }
+        },
+        "scopes": {
+            "type": "array",
+            "metadata": {
+                "description": "Scope that the alert applies to. Array of subscription ids, resource group ids or resource ids."
+            }
+        },
+        "odataType": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "odata type"
+            }                          
+        },
+        "criteria":{
+            "type": "array",
+            "metadata": {
+                "description": "Criterion includes metric name, dimension values, threshold and an operator. The alert rule fires when ALL criteria are met"
+            }
+        },
+        "windowSize": {
+            "type": "string",
+            "metadata": {
+                "description": "Period of time used to monitor alert activity based on the threshold. Must be between five minutes and one day. ISO 8601 duration format."
+            }
+        },
+        "evaluationFrequency": {
+            "type": "string",
+            "metadata": {
+                "description": "How often the metric alert is evaluated represented in ISO 8601 duration format"
+            }
+        },
+        "actionGroupIds": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Array of action group ids to notify"
+            } 
+        },
+        "uniqueString": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Unique string passed in by the powershell script used to generate unique alert name"
+            }
+        }
+    },
+    "variables": {  },
+    "resources": [
+        {
+            "name": "[concat(parameters('uniqueString'),' ',parameters('alertName'))]",
+            "type": "Microsoft.Insights/metricAlerts",
+            "location": "global",
+            "apiVersion": "2018-03-01",
+            "tags": {},
+            "properties": {
+                "description": "[parameters('alertDescription')]",
+                "severity": "[parameters('alertSeverity')]",
+                "enabled": "[parameters('isEnabled')]",
+                "scopes": "[parameters('scopes')]",
+                "evaluationFrequency":"[parameters('evaluationFrequency')]",
+                "windowSize": "[parameters('windowSize')]",
+                "criteria": {
+                    "odata.type": "[parameters('odataType')]",
+                    "allOf": "[parameters('criteria')]"
+                },
+                "actions": "[parameters('actionGroupIds')]"
+            }
+        }
+    ]
+}

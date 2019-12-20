@@ -1,0 +1,41 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "Virtual Machine Average CPU alert rule"
+        },
+        "alertDescription": {
+            "value": "Virtual Machine Average CPU alert rule"
+        },
+        "alertSeverity": {
+            "value": 1
+        },
+        "isEnabled": {
+            "value": true
+        },
+        "odataType": {
+            "value": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria" 
+        },
+        "criteria": {
+               "value": [
+                    {
+                    "name": "1st criterion",
+                    "metricNamespace": "Microsoft.Compute/virtualMachines",
+                    "metricName": "Percentage CPU",
+                    "dimensions": [
+                    ],
+                    "operator": "GreaterThan",
+                    "threshold": "90",
+                    "timeAggregation": "Average"
+                }
+            ]
+        },
+        "windowSize": {
+            "value": "PT30M"
+        },
+        "evaluationFrequency": {
+            "value": "PT15M"
+        }
+    }
+}

@@ -1,0 +1,147 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Name of the alert"
+            }
+        },
+        "alertDescription": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Description of alert"
+            }
+        },
+        "alertSeverity": {
+            "type": "int",
+            "defaultValue": 3,
+            "allowedValues": [
+                0,
+                1,
+                2,
+                3,
+                4
+            ],
+            "metadata": {
+                "description": "Alert severity (0=Critical, 1=Error, 2=Warning, 3=Informational, 4=Verbose)"
+            }
+        },
+        "location": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Region for the alert"
+            }
+        },
+        "isEnabled": {
+            "type": "string",
+            "defaultValue": "true",
+            "metadata": {
+                "description": "Specifies whether the alert is enabled"
+            }
+        },
+        "query": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Log Analytics Kusto query"
+            }            
+        },
+        "queryType": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Type of Log Analytics query"
+            }            
+        },
+        "logAnalyticsWorkspaceResourceId": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Resource Id of the log analytics workspace the query is to be run against"
+            }            
+        },
+        "schedule": {
+            "type": "object",
+            "metadata": {
+                "description": "Frequency and time window for the query"
+            }            
+        },  
+        "actionGroupIds": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Array of action group ids to notify"
+            }   
+        },
+        "trigger": {
+            "type": "object",
+            "metadata": {
+                "description": "Trigger conditions for the alert"
+            }            
+        },
+        "emailSubject": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The subject of the notification email"
+            }
+        },
+        "customWebhookPayload": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Custom payload to include in webhook call"
+            }
+        },
+        "uniqueString": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Unique string passed in by the powershell script used to generate unique alert name"
+            }
+        },
+        "suppressTimeInMinutes": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Number of minutes to suppress additional alerts for this alert rule"
+            }
+        }       
+    },
+    "resources": [{
+        "name": "[concat(parameters('uniqueString'),' ',parameters('alertName'))]",
+        "type": "microsoft.insights/scheduledqueryrules",
+        "location": "[parameters('location')]",
+        "apiVersion": "2018-04-16",
+        "tags": {
+            "[concat('hidden-link:',parameters('logAnalyticsWorkspaceResourceId'))]": "Resource"
+        },
+        "properties": {
+            "description": "[parameters('alertDescription')]",
+            "source": {
+              "query": "[parameters('query')]",
+              "authorizedResources": [],
+              "dataSourceId": "[parameters('logAnalyticsWorkspaceResourceId')]",
+              "queryType": "ResultCount"
+            },
+            "schedule": "[parameters('schedule')]",
+            "enabled": "[parameters('isEnabled')]",
+            "action": {
+                "severity": "[parameters('alertSeverity')]",
+                "throttlingInMin": "[if(not(empty(parameters('suppressTimeInMinutes'))), parameters('suppressTimeInMinutes'), json('null'))]",
+                "aznsAction": {
+                    "actionGroup": "[parameters('actionGroupIds')]",
+                    "emailSubject": "[if(empty(parameters('emailSubject')), json('null'), parameters('emailSubject'))]",
+                    "customWebhookPayload": "[if(empty(parameters('customWebhookPayload')), json('null'), parameters('customWebhookPayload'))]"
+                },
+                "trigger": "[parameters('trigger')]",
+                "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction"
+            }
+        }
+    }]
+}

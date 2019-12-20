@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "Windows VM Slow Disk Read"
+        },
+        "alertDescription": {
+            "value": "Windows VM Slow Disk Read"
+        },
+        "alertSeverity": {
+            "value": 1
+        },
+        "location": {
+            "value": "canadacentral"
+        },
+        "isEnabled": {
+            "value": "false"
+        },
+        "query": {
+            "value": "Perf | where Computer == \"SubstituteVMName\" | where CounterName == \"Avg. Disk sec/Read\" | summarize AggregatedValue = avg(CounterValue)*1000 by bin(TimeGenerated, 30m),InstanceName "
+        },
+        "queryType": {
+            "value": "ResultCount"
+        },
+        "schedule": {
+            "value": {
+              "frequencyInMinutes": 15,
+              "timeWindowInMinutes": 30
+            }
+        },
+        "trigger": {
+            "value": {
+                "thresholdOperator": "GreaterThan",
+                "threshold": 150,
+                "metricTrigger": {
+                  "thresholdOperator": "GreaterThan",
+                  "threshold": 0,
+                  "metricTriggerType": "Total",
+                  "metricColumn": "InstanceName"
+                }
+             }           
+        },
+        "suppressTimeInMinutes": {
+            "value": "1440"
+        }
+    }
+}

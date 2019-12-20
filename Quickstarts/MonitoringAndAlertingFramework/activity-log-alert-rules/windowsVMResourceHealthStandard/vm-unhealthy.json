@@ -1,0 +1,88 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "Virtual Machine Resource Health"
+        },
+        "isEnabled": {
+            "value": true
+        },
+        "criteria": {
+            "value": 
+                [
+                        {
+                            "field": "category",
+                            "equals": "ResourceHealth",
+                            "containsAny": null
+                        },
+                        {
+                            "anyOf": [
+                                {
+                                    "field": "properties.currentHealthStatus",
+                                    "equals": "Available",
+                                    "containsAny": null
+                                },
+                                {
+                                    "field": "properties.currentHealthStatus",
+                                    "equals": "Unavailable",
+                                    "containsAny": null
+                                },
+                                {
+                                    "field": "properties.currentHealthStatus",
+                                    "equals": "Degraded",
+                                    "containsAny": null
+                                }
+                            ]
+                        },
+                        {
+                            "anyOf": [
+                                {
+                                    "field": "properties.previousHealthStatus",
+                                    "equals": "Available",
+                                    "containsAny": null
+                                },
+                                {
+                                    "field": "properties.previousHealthStatus",
+                                    "equals": "Unavailable",
+                                    "containsAny": null
+                                },
+                                {
+                                    "field": "properties.previousHealthStatus",
+                                    "equals": "Degraded",
+                                    "containsAny": null
+                                }
+                            ]
+                        },
+                        {
+                            "anyOf": [
+                                {
+                                    "field": "properties.cause",
+                                    "equals": "PlatformInitiated",
+                                    "containsAny": null
+                                }
+                            ]
+                        },
+                        {
+                            "anyOf": [
+                                {
+                                    "field": "status",
+                                    "equals": "Active",
+                                    "containsAny": null
+                                },
+                                {
+                                    "field": "status",
+                                    "equals": "Resolved",
+                                    "containsAny": null
+                                },
+                                {
+                                    "field": "status",
+                                    "equals": "Updated",
+                                    "containsAny": null
+                                }
+                            ]
+                        }
+                ]
+        }
+    }
+}

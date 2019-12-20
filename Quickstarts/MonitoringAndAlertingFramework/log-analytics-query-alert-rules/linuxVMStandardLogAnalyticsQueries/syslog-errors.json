@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "Linux VM Syslog failure"
+        },
+        "alertDescription": {
+            "value": "Linux VM Syslog failure"
+        },
+        "alertSeverity": {
+            "value": 0
+        },
+        "location": {
+            "value": "canadacentral"
+        },
+        "isEnabled": {
+            "value": "true"
+        },
+        "query": {
+            "value": "Syslog\n| where SeverityLevel== \"err\"\n| where Computer==\"SubstituteVMName\""
+         },
+        "queryType": {
+            "value": "ResultCount"
+        },
+        "schedule": {
+            "value": {
+                "frequencyInMinutes": 30,
+                "timeWindowInMinutes": 60
+            }
+        },
+        "trigger": {
+            "value": {
+                "thresholdOperator": "GreaterThan",
+                "threshold": 1
+            }
+        },
+        "suppressTimeInMinutes": {
+            "value": "1440"
+        }
+    }
+}
