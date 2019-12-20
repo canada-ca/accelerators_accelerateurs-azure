@@ -1,0 +1,65 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Name of the alert"
+            }
+        },
+        "isEnabled": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Specifies whether the alert is enabled"
+            }
+        },
+        "scopes": {
+            "type": "array",
+            "metadata": {
+                "description": "Scope that the alert applies to. Array of subscription ids, resource group ids or resource ids."
+            }
+        },
+        "criteria":{
+            "type": "array",
+            "metadata": {
+                "description": "Criteria includes list of fields and values to be monitored"
+            }
+        },
+        "actionGroupIds": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Array of action group ids to notify"
+            } 
+        },
+        "uniqueString": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Unique string passed in by the powershell script used to generate unique alert name"
+            }
+        }
+    },
+    "variables": {  },
+    "resources": [
+        {
+            "name": "[concat(parameters('uniqueString'),' ',parameters('alertName'))]",
+            "type": "Microsoft.Insights/activityLogAlerts",
+            "location": "Global",
+            "apiVersion": "2017-04-01",
+            "properties": {
+                "enabled": "[parameters('isEnabled')]",
+                "scopes": "[parameters('scopes')]",
+                "condition": {
+                    "allOf": "[parameters('criteria')]"
+                },
+                "actions": {
+                    "actionGroups": "[parameters('actionGroupIds')]"
+                }
+            }
+        }
+    ]
+}
