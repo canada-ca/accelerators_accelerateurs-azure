@@ -31,6 +31,20 @@ Assumes you've created a KeyVault (KV) and installed your SSL certificates there
 * Create Front End IP Configurations (need to create manually via Portal or via Powershell)
 * Support manually uploaded certs (.cer) to app gateway
 
+## Script Setup ##
+
+* Find the following section and update the values according to your environment:
+```
+$sAGWLive = "MyLiveAGW"
+$sAGWLiveLocation = "Canada Central"
+$sAGWDR = "MyDRAGW"
+$sAGWDRLocation = "Canada East"
+$sAppGWFEIP = "appGatewayFrontendIP"
+$certs = @("yourdept-GC-CAvaultCert","yourdept-CANADA-CAvaultCert")
+$sPort80Name = "yourPort80"
+$sPort443Name = "yourPort443"
+```
+
 ## Handy PS commands ##
 
 * `az network application-gateway ssl-cert list --gateway-name MyAppGateway --resource-group MyResourceGroup`
@@ -77,6 +91,20 @@ Suppose que vous avez créé un KeyVault (KV) et y avez installé vos certificat
 * Créer des configurations de port (besoin de créer manuellement via un écouteur d'espace réservé ou via Powershell)
 * Créer des configurations IP frontales (besoin de créer manuellement via le portail ou via Powershell)
 * Prise en charge des certificats téléchargés manuellement (.cer) sur la passerelle de l'application
+
+## Configuration du script ##
+
+* Recherchez la section suivante et mettez à jour les valeurs en fonction de votre environnement:
+```
+$sAGWLive = "MyLiveAGW"
+$sAGWLiveLocation = "Canada Central"
+$sAGWDR = "MyDRAGW"
+$sAGWDRLocation = "Canada East"
+$sAppGWFEIP = "appGatewayFrontendIP"
+$certs = @("yourdept-GC-CAvaultCert","yourdept-CANADA-CAvaultCert")
+$sPort80Name = "yourPort80"
+$sPort443Name = "yourPort443"
+```
 
 ## Commandes PS pratiques ##
 
