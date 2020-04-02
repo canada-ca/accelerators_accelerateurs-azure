@@ -42,7 +42,7 @@
 
     TODOs:
     1. 
-    
+
 .EXAMPLE
     .PS> .\AddAGWDomainSettings.ps1
 .LINK
@@ -62,14 +62,14 @@ $modes = @("[P]aaS","[I]aaS")
 $mode = "PaaS"
 
 #Set variables to suit environment needs.
-$sAGWLive = "CORE-CACN-MAIN-AGW"
+$sAGWLive = "MyLiveAGW"
 $sAGWLiveLocation = "Canada Central"
-$sAGWDR = "CORE-CAEA-MAIN-AGW"
+$sAGWDR = "MyDRAGW"
 $sAGWDRLocation = "Canada East"
 $sAppGWFEIP = "appGatewayFrontendIP"
-$certs = @("TC-GC-CAvaultCert","TC-CANADA-CAvaultCert")
-$sPort80Name = "appGatewayFrontendPort"
-$sPort443Name = "port_443"
+$certs = @("yourdept-GC-CAvaultCert","yourdept-CANADA-CAvaultCert")
+$sPort80Name = "yourPort80"
+$sPort443Name = "yourPort443"
 
 #region FUNCTIONS
 function AzConnected {
