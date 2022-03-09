@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "value": "Resource Health Log Analytics Query Rule"
+        },
+        "alertDescription": {
+            "value": "Resource Health Log Analytics Query Rule"
+        },
+        "alertSeverity": {
+            "value": 0
+        },
+        "location": {
+            "value": "canadacentral"
+        },
+        "isEnabled": {
+            "value": "true"
+        },
+        "query": {
+            "value": "AzureActivity\n| where CategoryValue == 'ResourceHealth'\n| evaluate bag_unpack(Properties_d,'Properties_')\n| extend ep = parse_json(Properties_eventProperties)\n| where ep.cause == 'PlatformInitiated'\n| where ep.currentHealthStatus in ('Available','Unavailable','Degraded')\n| where ep.previousHealthStatus in ('Available','Unavailable','Degraded')\n| where Properties_activityStatusValue in ('Active','Resolved','In Progress','Updated')\n| where Properties_resource =~ 'SubstituteVMName'"
+         },
+        "queryType": {
+            "value": "ResultCount"
+        },
+        "schedule": {
+            "value": {
+              "frequencyInMinutes": 5,
+              "timeWindowInMinutes": 10
+            }
+        },
+        "trigger": {
+            "value": {
+                "thresholdOperator": "GreaterThan",
+                "threshold": 0
+            }
+        }
+    }
+}
