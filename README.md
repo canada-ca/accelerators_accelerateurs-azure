@@ -14,9 +14,9 @@ Microsoft Canada has open-sourced Azure Landing Zone for Canadian Public Sector 
 
 See [Wiki](https://github.com/Azure/CanadaPubSecALZ/wiki) for more information on the architecture, 30 day guardrail guidance & deployment instructions.
 
-Deployment to Azure is supported using Azure DevOps Pipelines and can be adopted for other automated deployment systems like GitHub Actions, Jenkins, etc.
+Deployment to Azure is supported using Azure DevOps Pipelines and can be adapted for other automated deployment systems like GitHub Actions, Jenkins, etc.
 
-The automation is built with [Project Bicep](https://github.com/Azure/bicep/blob/main/README.md) and Azure Resource Manager template.
+The automation is built with [Project Bicep](https://github.com/Azure/bicep#azure-bicep) and Azure Resource Manager template.
 
 ## How to Contribute
 
