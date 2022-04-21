@@ -8,6 +8,16 @@ These tools and templates enable the GC's Cloud First direction and support for 
 
 The users of this project will be Government of Canada employees deploying cloud-based workloads.
 
+## Azure Landing Zones for Canadian Public Sector
+
+Microsoft Canada has open-sourced Azure Landing Zone for Canadian Public Sector in [GitHub](https://github.com/Azure/CanadaPubSecALZ). This is a purpose-built reference implementation to guide government departments to be compliant with Canadian standards and achieve Authority to Operate approval faster.  This implementation is based on [Cloud Adoption Framework for Azure](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/) and provides an opinionated implementation that enables ITSG-33 regulatory compliance by using [NIST SP 800-53 Rev. 4](https://docs.microsoft.com/azure/governance/policy/samples/nist-sp-800-53-r4) and [Canada Federal PBMM](https://docs.microsoft.com/azure/governance/policy/samples/canada-federal-pbmm) Regulatory Compliance Policy Sets.
+
+See [Wiki](https://github.com/Azure/CanadaPubSecALZ/wiki) for more information on the architecture, 30 day guardrail guidance & deployment instructions.
+
+Deployment to Azure is supported using Azure DevOps Pipelines and can be adapted for other automated deployment systems like GitHub Actions, Jenkins, etc.
+
+The automation is built with [Project Bicep](https://github.com/Azure/bicep#azure-bicep) and Azure Resource Manager template.
+
 ## How to Contribute
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
