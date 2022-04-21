@@ -1,13 +1,5 @@
 ([Français](#gc-accelerateurs-azure))
 
-# GC Accelerators (Azure)
-
-This project will host the tools and templates to accelerate Microsoft Azure deployments.
-
-These tools and templates enable the GC's Cloud First direction and support for the GC Digital Standards.
-
-The users of this project will be Government of Canada employees deploying cloud-based workloads.
-
 ## Azure Landing Zones for Canadian Public Sector
 
 Microsoft Canada has open-sourced Azure Landing Zone for Canadian Public Sector in [GitHub](https://github.com/Azure/CanadaPubSecALZ). This is a purpose-built reference implementation to guide government departments to be compliant with Canadian standards and achieve Authority to Operate approval faster.  This implementation is based on [Cloud Adoption Framework for Azure](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/) and provides an opinionated implementation that enables ITSG-33 regulatory compliance by using [NIST SP 800-53 Rev. 4](https://docs.microsoft.com/azure/governance/policy/samples/nist-sp-800-53-r4) and [Canada Federal PBMM](https://docs.microsoft.com/azure/governance/policy/samples/canada-federal-pbmm) Regulatory Compliance Policy Sets.
